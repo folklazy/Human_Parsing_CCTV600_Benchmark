@@ -1,5 +1,5 @@
 {
-  "status": "PARENT_M2FP_RUNNING_CORRECTION_CPU_ACCEPTED",
+  "status": "QUALITY_RUNNING_QANET_CORRECTION_READBACK_PASS",
   "run_id": "parsing600-20261117T030309293781Z-timer-r2",
   "protocol_sha256": "9162ea7b245280c1d5c1402f7b300746bbe68fb87c3271b87c2592f1c94b08ba",
   "config_sha256": "d59622b334a9be33c11b81c7f0ef55e2bfc2fa7317432792d5f8c9b4cce03c77",
@@ -185,5 +185,18 @@
     "model_API_calls": 700,
     "source_launch_commit": "12d2ff70e14af57f7cd6668ad4f63841754425bb",
     "status": "QUEUED_WAITING_PARENT_MODEL_COMPLETION"
-  }
+  },
+  "M2FP_prediction_completion": {
+    "expected": 600,
+    "completed": 600,
+    "missing": 0,
+    "unexpected": 0,
+    "duplicate": 0,
+    "failed": 0,
+    "invalid": 0,
+    "model_calls": 764,
+    "warmup_calls": 1
+  },
+  "QANet_corrected_first_packet": "PASS_NATIVE20_GEOMETRY_OWNERSHIP_MODULE_TIMER",
+  "QANet_observed_completed_frames": 38
 }
