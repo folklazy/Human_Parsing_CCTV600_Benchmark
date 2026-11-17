@@ -65,3 +65,7 @@ Updated README/STATUS only for benchmark state. Frozen scientific source/config,
 ## 2026-11-17 — Agreed test outputs and launch preparation status
 
 บันทึกตารางตัวชี้วัดที่ตกลงกับผู้ใช้ใน README รวม cross-class/binary confusion, TP=0 part counts, เวลา, peak VRAM และ STRICT_COMPLETE ตรวจสคริปต์จริงพบว่ามี binary confusion และ raw peak allocated/reserved logs แล้ว ส่วน cross-class matrix, scoped partial-person reporter, ตัวนับส่วนพลาดทั้งหมด และ peak summary ต้องเตรียมใน source แยกก่อนเปิดคิวใหม่ GT-domain preflight ผ่าน600ภาพแล้ว รอบตรวจสถานะนี้มี model calls0
+
+## 2026-11-17 — User requests all parser predictions fresh
+
+ผู้ใช้เปลี่ยนคำสั่งเป็นเริ่ม parsing ใหม่ทั้งหมด ตั้ง parser_prediction_reuse0 และเก็บรอบก่อนเป็นประวัติ แยก scoped_run/scoped_metrics/scoped_acceptance จาก frozen sources ใช้ GT ส่งมอบล่าสุดกับ frozen detector/RGB input assets เดิม CPU fixtures ผ่านทั้ง literal cross-class/binary counts, Face-local, missed/empty/VOID/duplicate/null handling, source-ID geometry conversion, atomic packets, timer/VRAM reporting, current native-config bindings และ worker failure หลัง packet สุดท้าย Resource limits และ inference settings เดิมคงตาม source bindings เปิดคิว sequential ใน tmux หลัง preparation/readiness ผ่าน ไม่มี model retry อัตโนมัติ

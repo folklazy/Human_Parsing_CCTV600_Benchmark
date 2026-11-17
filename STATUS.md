@@ -1,8 +1,10 @@
 # สถานะ Human Parsing CCTV600
 
-**ตรวจข้อมูลก่อนเปิดรอบใหม่ — คิว inference พักอยู่**
+**เตรียม fresh run ทั้งเก้าโมเดล — parser prediction reuse0**
 
-ขอบเขตตัวชี้วัดตกลงแล้วตาม [แผนการทดสอบ](README.md#ขอบเขตการทดสอบที่ตกลงไว้) GT-domain preflight บน CPU ผ่านครบ600 ภาพ ขั้นเตรียมสคริปต์ยังมี GT bindings/config ใหม่, scoped scorer/reporter, CPU acceptance ของส่วนที่เพิ่ม และ reconciliation/launch ใน tmux ก่อนเริ่ม collection ต่อ ข้อมูล progress ของรอบก่อนเก็บแยกตาม run records
+ผู้ใช้สั่งเริ่มผล parsing ใหม่ทั้งหมด ใช้ scoped_run.py และ scoped_metrics.py แยกจาก frozen source CPU acceptance ผ่านทั้ง reference fixtures และ fixtures เพิ่มเรื่อง cross-class matrix, partial-person nulls, TP=0 parts, packet readback, native config bindings, timer/VRAM summary และ worker failure หลัง packet สุดท้าย รอผล preparation และตรวจ launch จริงเพื่อบันทึก session/PID
+
+ขอบเขตตัวชี้วัดตกลงแล้วตาม [แผนการทดสอบ](README.md#ขอบเขตการทดสอบที่ตกลงไว้) GT-domain preflight บน CPU ผ่านครบ600 ภาพ รอบใหม่สร้าง GT bindings/config ใหม่ และเก็บ native quality predictions ใหม่ทุก ROI ของทุกโมเดล ข้อมูล progress ของรอบก่อนเก็บแยกตาม run records
 
 Dataset ส่งมอบมี 600 ภาพ, 774 bbox, 2,449 part shapes และ 171 ignore shapes ผลตรวจไฟล์/schema ผ่านครบชุด ผู้จัดทำยืนยันว่ามีคนบางส่วนที่ไม่ได้ annotate และปิดขอบเขตข้อมูลตามชุดนี้แล้ว Source ID0 คงเป็น Unassigned อ่าน [เอกสาร dataset](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
 

@@ -6,6 +6,8 @@
 
 ## ข้อมูลและขอบเขตการประเมิน
 
+ผู้ใช้สั่งให้เริ่มผล parsing ใหม่ทั้งหมด รอบนี้ตั้ง parser prediction reuse เป็น0 ทุก checkpoint ใช้ quality inference ใหม่บน600ภาพ พร้อม TRAIN warmupหนึ่ง call ต่อ process และรอบจับเวลาที่อนุญาตไว้ ผลรอบก่อนเก็บเป็นประวัติแยกจาก current run ส่วน frozen YOLO cache และ RGB crops เป็น model inputs ร่วมของทั้งเก้าระบบ
+
 Dataset ส่งมอบมี 600 ภาพและ annotation ของบุคคลที่เลือก ผู้จัดทำยืนยันว่ามีคนบางส่วนไม่ได้ annotate Source ID0 ใช้ Unassigned คะแนน parsing จะอ้าง GT person-parts ที่มีคำตอบ ส่วน unmatched detections เก็บเป็น diagnostics และ person recall มี denominator เป็นคนที่มี GT การรายงาน full-scene AP/precision/F1 ต้องมี negative domain ที่รับรองครบ
 
 ผลตรวจ GT domain ด้วย CPU ครบ600 ภาพให้ตัวหาร Hair544/Face384/Upper745/Lower668 และคนผ่านเกณฑ์769 รายการ คิว inference ยังพักระหว่างเตรียม GT bindings และ reporter ของรอบใหม่ รายละเอียดที่ต้องแก้อยู่ใน [STATUS](STATUS.md) การตรวจ dataset ครั้งนี้มี model calls0
@@ -33,8 +35,8 @@ Prediction OTHER ใน cross-class matrix รวมผลทำนายนอ�
 ### ขั้นเตรียมเปิดรัน
 
 1. สร้าง GT bindings, matching และ config ของรอบใหม่จาก manifest ส่งมอบ พร้อม source/protocol hashes
-2. ปรับ scorer/reporter แยกจาก frozen source ให้รองรับ partial-person diagnostics, cross-class matrix, TP=0 part counts และสรุป peak VRAM ตามขอบเขตข้างต้น
-3. ตรวจ CPU acceptance และ reconcile saved native packets ก่อน freeze reused/pending membership
+2. ใช้ scoped_metrics.py แยกจาก frozen source สำหรับ partial-person diagnostics, cross-class matrix, TP=0 part counts และสรุป peak VRAM ตามขอบเขตข้างต้น
+3. ตรวจ CPU acceptance และ freeze membership โดย reused parser predictions เป็น0 และ pending ครบทุก ROI job ต่อโมเดล
 4. ตรวจ GPU/disk/process guards แล้วเปิดคิว sequential ใน tmux เก็บ log และสถานะที่ตรวจได้ หยุดหลังเก้า checkpoints และรอบจับเวลาที่อนุญาต
 5. เก็บ progress และ execution diagnostics ระหว่าง inference แล้วประเมินคุณภาพหลัง collection จบ ตรวจ STRICT_COMPLETE และสร้างรายงานจาก saved outputs
 
@@ -163,11 +165,18 @@ Dataset ยังมีข้อจำกัดเรื่อง cross-zone gar
 รันจาก workspace `Human-Body-Extraction`
 
 ```bash
-.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/reference_parts600.py --progress --watch
-tmux attach -t parsing_cctv600_r3
+.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/scoped_run.py --status --watch
 ```
 
-Progress viewer แสดง reused/new native ROIs และ PID ที่ทำงานจริง กด Ctrl+C ใน viewer เพื่อออก กด Ctrl+B แล้ว D เพื่อ detach tmux
+Progress viewer แสดง reused/new native ROIs และ PID ที่ทำงานจริง กด Ctrl+C ใน viewer เพื่อออก Session tmux ที่ใช้จริงอ้างจาก LAUNCH.json ของ current run กด Ctrl+B แล้ว D เพื่อ detach tmux
+
+คำสั่งเปิดรอบ fresh ใหม่ครบเก้าโมเดล ตรวจ readiness และ CPU acceptance ก่อนเปิด tmux อัตโนมัติ
+
+```bash
+.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/scoped_run.py --start
+```
+
+คำสั่งนี้ตรวจ duplicate controller/worker และสร้าง output ใหม่ ใช้สำหรับสั่งเปิดรอบใหม่ การดูงานที่กำลังรันให้ใช้ --status --watch
 
 Artifact root ปัจจุบันอยู่ใน `outputs/CURRENT.json` เมื่อจบมี `BATCH_COMPLETION.json` และรายงานหลัก `BATCH_REPORT_TH.md` พร้อม `TARGET_RESULTS.csv`, `TIMING_SUMMARY.json`, รายโมเดล `METRICS.json` และ `PER_IMAGE_RUNTIME.csv` ชุดภาพ 16 ภาพเดิมอยู่ที่ `gallery/index.html` พร้อม manifest ภาพจริงและ raw outputs เก็บแบบ private
 
