@@ -170,6 +170,8 @@ Dataset ยังมีข้อจำกัดเรื่อง cross-zone gar
 
 Progress viewer แสดง reused/new native ROIs และ PID ที่ทำงานจริง กด Ctrl+C ใน viewer เพื่อออก Session tmux ที่ใช้จริงอ้างจาก LAUNCH.json ของ current run กด Ctrl+B แล้ว D เพื่อ detach tmux
 
+Ctrl+C ในหน้าที่กำลังรัน controller จะสั่งหยุดคิวและ worker ที่ controller ดูแล ส่วน Ctrl+C ในหน้าคำสั่ง --status --watch จะหยุดเฉพาะ viewer การออกจาก tmux โดยให้งานทำต่อให้กด Ctrl+B แล้ว D
+
 คำสั่งเปิดรอบ fresh ใหม่ครบเก้าโมเดล ตรวจ readiness และ CPU acceptance ก่อนเปิด tmux อัตโนมัติ
 
 ```bash

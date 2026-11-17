@@ -1,6 +1,6 @@
 # สถานะ Human Parsing CCTV600
 
-**FRESH QUALITY RUNNING — ตรวจยืนยัน 2026-11-17T16:34:18+07:00**
+**FRESH QUALITY RUNNING — ตรวจยืนยัน 2026-11-17T16:42:57+07:00**
 
 รอบใหม่ทำ parsing ใหม่ทั้ง9โมเดลบน600ภาพ ใช้ GT ส่งมอบล่าสุดและ frozen YOLO/RGB crop inputs ชุดเดียวกัน Parser prediction reuse0 ผลรอบก่อนเก็บใน archive index และ run records แยกจาก current run
 
@@ -8,13 +8,13 @@
 
 | รายการ | ผล |
 | --- | --- |
-| Run | `cctv600-fresh-20261117T092941639648Z` |
-| tmux | `cctv600_fresh_20261117T092941639648Z` |
-| Controller PID | 3955217 |
-| Worker PID ณ snapshot | 3955495 |
+| Run | `cctv600-fresh-20261117T093921424617Z` |
+| tmux | `cctv600_fresh_20261117T093921424617Z` |
+| Controller PID | 3968077 |
+| Worker PID ณ snapshot | 3968392 |
 | โมเดลแรก | QANet |
-| Completed images ณ snapshot | 85/600 |
-| Completed ROI calls ณ snapshot | 114/763 |
+| Completed images ณ snapshot | 43/600 |
+| Completed ROI calls ณ snapshot | 68/763 |
 | Failed / invalid ณ snapshot | 0 / 0 |
 | CPU acceptance / model readiness | PASS |
 | Native packet / geometry / YOLO ownership / config binding | PASS |
@@ -41,3 +41,9 @@ Current run อ้างจาก `outputs/CURRENT.json` ภายใน run ม
 จบรอบเมื่อมี `BATCH_COMPLETION.json` และ `BATCH_REPORT_TH.md` พร้อม metrics/CSV/TIMING_SUMMARY/gallery หากหยุดผิดปกติอ่าน `CONTROLLER_FAILURE.json` หรือ model failure records คะแนนหลักของระบบที่ไม่ครบเป็น null
 
 [แผนและนิยาม](README.md) · [Dataset](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
+
+## การเปิดใหม่หลัง Ctrl+C
+
+ผู้ใช้เผลอกด Ctrl+C ในหน้า controller รอบก่อนหยุดด้วย KeyboardInterrupt และ worker รับ SIGTERM ผลที่เขียนไว้228ภาพ/283ROIsเก็บเป็นประวัติพร้อม interruption record ผู้ใช้อนุญาตเริ่มใหม่ทั้งหมด รอบปัจจุบันจึง parser prediction reuse0 และทำ parsing ใหม่ทั้งเก้าโมเดล
+
+Tmux ของรอบปัจจุบันมีหน้าชื่อ status เป็นหน้าที่เข้าดูเริ่มต้น Ctrl+C ที่หน้านี้หยุดเฉพาะ viewer ส่วนหน้าชื่อ controller ใช้ควบคุมคิว ออกจาก tmux โดยให้งานทำต่อกด Ctrl+B แล้ว D

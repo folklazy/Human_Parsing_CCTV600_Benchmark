@@ -73,3 +73,7 @@ Updated README/STATUS only for benchmark state. Frozen scientific source/config,
 ## 2026-11-17T16:34:18+07:00 — Fresh run launch verified
 
 Run cctv600-fresh-20261117T092941639648Z ใน tmux cctv600_fresh_20261117T092941639648Z Controller 3955217 และ QANet worker 3955495 มีผลใหม่จริง 85/600ภาพ 114/763ROIs ณ snapshot failed/invalid0 First native packet readback, integer labels, original-grid geometry, frozen YOLO ownership และ current config binding ผ่าน Source/code freeze อ้าง launch commit b42f435338cc79e0d12f68841aa052e0cb06cef3 Main launch command จบแล้วและ controller มี parent เป็น tmux server ผู้ใช้ดูสถานะต่อได้โดยไม่ต้องให้ Codexเฝ้า Quality scoresยังไม่คำนวณระหว่าง collection
+
+## 2026-11-17T16:42:57+07:00 — Fresh restart after accidental terminal interrupt
+
+หลักฐานรอบก่อนยืนยัน controller KeyboardInterrupt และ worker InterruptedError signal15 มี atomic commits228ภาพ/283ROIs และไม่มี partial packet paths เก็บ raw failure counters และ interruption reconciliation แยก ผู้ใช้อนุญาต fresh restartทั้งหมด เปิด run cctv600-fresh-20261117T093921424617Z ใน tmux cctv600_fresh_20261117T093921424617Z Controller 3968077 worker 3968392 ตรวจผลใหม่ 43/600ภาพ 68/763ROIs failed/invalid0 First packet original-grid geometry, ownership และ config bindings ผ่าน ตั้ง tmux status windowเป็นหน้าที่เข้าดูเริ่มต้นเพื่อให้ Ctrl+C ใน viewerหยุดเฉพาะ viewer Scientific source/config ไม่เปลี่ยนจาก fresh run ที่ตรวจรับ
