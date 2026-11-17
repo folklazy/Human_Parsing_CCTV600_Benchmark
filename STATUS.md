@@ -2,7 +2,9 @@
 
 **พักคิวเพื่อใช้ GT revision ที่ผู้จัดทำกำลังตรวจแก้ — 17 พฤศจิกายน 2026**
 
-ผู้จัดทำแก้ annotation 23 ไฟล์จาก dataset รุ่น 1.0.0 การตรวจ dataset รุ่น 1.0.1-rc.1 ผ่านไฟล์และโครงสร้าง 600/600 ภาพ มี part shapes 2,449 ชิ้น และมี class/owner overlap ที่ต้องตรวจต่อ ดู [เอกสาร dataset ปัจจุบัน](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset) ผลคะแนนที่ใช้ GT ใหม่ต้องมี GT bindings, matching และตัวหารที่สร้างจาก revision ใหม่
+ผู้จัดทำแก้ annotation 23 ไฟล์จาก dataset รุ่น 1.0.0 การตรวจ dataset รุ่น 1.0.1-rc.1 ผ่านไฟล์และโครงสร้าง 600/600 ภาพ มี part shapes 2,449 ชิ้น ผู้จัดทำตรวจและยืนยันรูปทรงซ้อนในสามกรณีที่แจ้งแล้ว โดยอธิบายเรื่องกล้องมุมกดลง ดู [เอกสาร dataset ปัจจุบัน](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset) ผลคะแนนที่ใช้ GT ใหม่ต้องมี GT bindings, matching และตัวหารที่สร้างจาก revision ใหม่
+
+ตรวจผลของ export เดิมเฉพาะสามกรณีพบ Hair หนึ่งส่วนเหลือ valid support 0 px และอีกส่วนเหลือ 41 px เนื่องจาก shared valid domain ยกเว้น cross-class overlaps ต้องรายงาน support และส่วนที่หลุดจาก denominator ตามจริง คำยืนยันรูปทรง source บันทึกแยกจากข้อจำกัดนี้
 
 Controller เดิมหยุดแล้ว Sapiens2 0.4B worker ที่ปล่อยให้เก็บ native outputs ต่อจบเมื่อ 17 พฤศจิกายน 2026 เวลา 13:30:49 น. Asia/Bangkok `COMPLETION.json` ของ collector ระบุ exact 600 IDs, failed/invalid 0 และ state ระบุ 763 ROIs ผล native ของหกโมเดลก่อนหน้ามี assembled completion ครบ 600 ภาพต่อโมเดล ส่วน 0.4B ยังต้องตรวจรวมเข้ากับ continuation view ตามกระบวนการเดิม
 

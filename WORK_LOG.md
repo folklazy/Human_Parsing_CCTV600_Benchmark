@@ -51,3 +51,7 @@
 R3 controller หยุดเพื่อรอ GT revision ส่วน native Sapiens2 0.4B ที่ปล่อยให้จบมี collector completion exact 600 IDs และ state 763 ROIs จบ 2026-11-17T13:30:49+07:00 failed/invalid 0 หกโมเดลก่อนหน้ามี assembled completion ครบ600 ภาพ ข้อมูลนี้เป็นสถานะ native outputs การนำ 0.4B เข้ารอบใหม่ต้องผ่าน reconciliation งาน0.8B/1B, scoring และ timing ยังพัก การตรวจ dataset รอบนี้ใช้ CPU และ model calls0
 
 Updated README/STATUS only for benchmark state. Frozen scientific source/config, prior prediction packets and historical run records remain bound to their original revision. The requested post-edit launcher was deferred when the user redirected work to dataset validation and Markdown documentation.
+
+## 2026-11-17 — User adjudication of the three overlap examples
+
+ผู้จัดทำตรวจสามกรณี Hair/Upper ที่แจ้งแล้วและยืนยันรูปทรงตาม source โดยอธิบายว่าเป็นผลจากกล้องมุมกดลง บันทึกสถานะ USER_REVIEWED_ACCEPTED_OVERLAP ในพื้นที่ข้อมูล private และเอกสาร dataset การตรวจ CPU เฉพาะสามกรณีด้วย gt_export เดิมพบ Hair valid support หนึ่งส่วนเป็น0px อีกส่วน41px หลังยกเว้น cross-class overlaps จึงเพิ่มข้อจำกัด support/eligibility ในเอกสาร คะแนนต่อไปต้องเปิดเผยตัวหารตาม export จริง รอบนี้เก็บ source polygons และ membership hash เดิม พร้อมบันทึกคำยืนยันและผลกระทบต่อการวัดแยกกัน

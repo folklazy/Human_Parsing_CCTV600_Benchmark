@@ -6,7 +6,7 @@
 
 ## สถานะ GT revision วันที่ 17 พฤศจิกายน 2026
 
-คิวรอบนี้พักไว้หลังผู้จัดทำแก้ annotation เพิ่มเติม Dataset ปัจจุบันเป็นรุ่นตรวจสอบ 1.0.1-rc.1 มี annotation เปลี่ยน 23 ไฟล์และ part shapes 2,449 ชิ้น ภาพต้นฉบับและ GT bbox geometry/owners คงเดิมครบ 600 ภาพ ผลตรวจโครงสร้างผ่านพร้อมรายการ QA ค้าง รายละเอียดอยู่ในเอกสาร dataset ที่ลิงก์ข้างต้น
+คิวรอบนี้พักไว้หลังผู้จัดทำแก้ annotation เพิ่มเติม Dataset ปัจจุบันเป็นรุ่นตรวจสอบ 1.0.1-rc.1 มี annotation เปลี่ยน 23 ไฟล์และ part shapes 2,449 ชิ้น ภาพต้นฉบับและ GT bbox geometry/owners คงเดิมครบ 600 ภาพ ผลตรวจโครงสร้างผ่าน ผู้จัดทำยืนยันรูปทรงซ้อนในสามตัวอย่างแล้ว และมีข้อจำกัดของ support หลัง export กำกับ รายละเอียดอยู่ในเอกสาร dataset ที่ลิงก์ข้างต้น
 
 จำนวน GT parts และ bindings ในรอบ R3 ที่อธิบายต่อจากนี้อ้าง dataset 1.0.0 การประเมิน GT ใหม่ต้องสร้าง snapshot, matching และตัวหารใหม่พร้อมตรวจ reuse compatibility ของ saved native predictions สถานะ native collections ที่ตรวจล่าสุดอยู่ใน [STATUS](STATUS.md)
 
