@@ -1,0 +1,175 @@
+{
+  "status": "CPU_VERIFIED_PRE_LAUNCH",
+  "run_id": "parsing600-20261117T030309293781Z",
+  "protocol_sha256": "9162ea7b245280c1d5c1402f7b300746bbe68fb87c3271b87c2592f1c94b08ba",
+  "config_sha256": "6a766a2db3b7044071a6e78565b6a6db5c82f6c64d8b6937f4981bdae4d89eff",
+  "GT_bindings": {
+    "valid_pixels": 7373840,
+    "conflict_pixels": 7934,
+    "QA_excluded_shapes": 1,
+    "support": [
+      0,
+      828310,
+      276021,
+      4391862,
+      1877647
+    ],
+    "eligible_person_parts": [
+      544,
+      390,
+      740,
+      665
+    ],
+    "eligible_boxes": 769,
+    "identical_GT_box_pairs": 0,
+    "identical_detector_box_pairs": 0
+  },
+  "resource_plan": {
+    "free_disk_GiB": 150.03882598876953,
+    "prepared_bytes": 47363116,
+    "frame_prediction_arrays_uncompressed_per_model": 5686886400,
+    "ROI_selected_plus_one_candidate_uncompressed_per_model": 53924442,
+    "total_nine_uncompressed_prediction_reference_GiB": 48.11892060376704,
+    "variable_candidates_and_native_exports": "not bounded by one candidate estimate; runtime model/run/disk guards apply",
+    "maximum_run_GiB": 80,
+    "minimum_free_disk_GiB": 50,
+    "timing_frames": 100,
+    "timing_ROI_calls_per_round": 124,
+    "quality_new_ROI_calls_per_model": 763,
+    "quality_warmup_calls_per_model": 1
+  },
+  "models": {
+    "QANet_CIHP_HRNetW48_512x384": {
+      "model_id": "QANet_CIHP_HRNetW48_512x384",
+      "family": "QANet",
+      "checkpoint": "models/human_parsing/qanet/QANet_CIHP_HRNetW48_512x384/weights_latest.pth",
+      "checkpoint_sha256": "cf7374ea109e05c18f06f9b6aa4747336914fa0523663b01cc771513c1cec365",
+      "checkpoint_bytes": 277950114,
+      "source": "third_party/human_parsing/QANet",
+      "source_commit": "61615c4491979569771020bc4beff86d63974829",
+      "native_config": "Human_Parsing_MHPv2_Study/provenance/RUN_MANIFESTS/implementation-handoff-20261015T063548Z/native_smoke/configs/QANet_CIHP_HRNetW48_512x384.yaml",
+      "native_config_sha256": "7a6dedb38c7f7a5add292c6a8587ac2c9a04a2cf111d69af47e059046d2a3f11",
+      "environment": ".venvs/parser-legacy-cu113",
+      "native_semantic_classes": 20,
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    },
+    "M2FP_R101_CIHP": {
+      "model_id": "M2FP_R101_CIHP",
+      "family": "M2FP",
+      "checkpoint": "models/human_parsing/m2fp/M2FP_R101_CIHP/model.pth",
+      "checkpoint_sha256": "7451e822298c8dee3781444ebd490bc43f192ca135b66ada841f16245746bad1",
+      "checkpoint_bytes": 757764792,
+      "source": "third_party/human_parsing/M2FP",
+      "source_commit": "17a89decacfca347ed18bed66baec7a5847ea43c",
+      "native_config": "third_party/human_parsing/M2FP/configs/cihp/m2fp_R101_bs16_265k.yaml",
+      "native_config_sha256": "c0e0b243100f9e3163cc88eaec6112dd918ca9526575976852ce3633541475a4",
+      "environment": ".venvs/parser-legacy-cu113",
+      "native_semantic_classes": 20,
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    },
+    "D2FP_R101_CIHP": {
+      "model_id": "D2FP_R101_CIHP",
+      "family": "D2FP",
+      "checkpoint": "models/human_parsing/d2fp/D2FP_R101_CIHP/model.pth",
+      "checkpoint_sha256": "acdfb2eceff5768235c944a5342189303c0bb9b2512aff2a79c6cf1f5129359e",
+      "checkpoint_bytes": 958247405,
+      "source": "third_party/human_parsing/D2FP",
+      "source_commit": "9d415948de94b1a0bb74b18cfdace68dcd75acb8",
+      "native_config": "third_party/human_parsing/D2FP/configs/cihp/d2fp_R101_bs4_1060k_prior100.yaml",
+      "native_config_sha256": "968b590f4f877f1a7c739031211ecd220a45c33989650c88d31088c17464a291",
+      "environment": ".venvs/parser-legacy-cu113",
+      "native_semantic_classes": 20,
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    },
+    "RPR_CIHP": {
+      "model_id": "RPR_CIHP",
+      "family": "RP-R-CNN",
+      "checkpoint": "models/human_parsing/rp_r_cnn/RPR_CIHP/model.pth",
+      "checkpoint_sha256": "6b596210f3ea67c79aae94c4769716b3cd41d781e2dbf36e0900c1b020721d98",
+      "checkpoint_bytes": 234931960,
+      "source": "third_party/human_parsing/RP-R-CNN",
+      "source_commit": "dfcc227723d4bf6566356cda4513a84ed9a8ba30",
+      "native_config": "Human_Parsing_CCIHP_10_Image_Pilot/configs/RPR_CIHP.yaml",
+      "native_config_sha256": "44f4c4d08b917c9e141104cc225863231ceb0fac5c84566a22e04d3c793b6bd2",
+      "environment": ".venvs/parser-legacy-cu113",
+      "native_semantic_classes": 20,
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    },
+    "CPI_R50_CIHP": {
+      "model_id": "CPI_R50_CIHP",
+      "family": "CPI-Parser",
+      "checkpoint": "models/human_parsing/cpi_parser/CPI_R50_CIHP/model.pth",
+      "checkpoint_sha256": "e58f8cb4b4fb3b7513e4dd2efb2c8aece07fd237404789204b8b9863f2b7cf35",
+      "checkpoint_bytes": 571901148,
+      "source": "third_party/human_parsing/CPI-Parser",
+      "source_commit": "d62cae523ba913fec4a7fda5816bc1d96bbf644d",
+      "native_config": "third_party/human_parsing/CPI-Parser/configs/COSParser/causal_parser_r50_inter_8_135k_cihp.py",
+      "native_config_sha256": "62b39d8753d5ce8afc137fab5857757024e999ac49a3023645c239a8c4511575",
+      "environment": ".venvs/parser-legacy-cu113",
+      "native_semantic_classes": 20,
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    },
+    "CPI_ConvNeXtB_CIHP": {
+      "model_id": "CPI_ConvNeXtB_CIHP",
+      "family": "CPI-Parser",
+      "checkpoint": "models/human_parsing/cpi_parser/CPI_ConvNeXtB_CIHP/model.pth",
+      "checkpoint_sha256": "25b7b12527e550f161b7ad538bd9300a74a0ae73c59a2dfb392ad22161a318c5",
+      "checkpoint_bytes": 1301413296,
+      "source": "third_party/human_parsing/CPI-Parser",
+      "source_commit": "d62cae523ba913fec4a7fda5816bc1d96bbf644d",
+      "native_config": "third_party/human_parsing/CPI-Parser/configs/COSParser/causal_parser_convnext_b_inter_8_135k_cihp.py",
+      "native_config_sha256": "3756068bcc364afcdec9c385d11872f59f92661a98d1eb9bf1e83851f9b29117",
+      "environment": ".venvs/parser-legacy-cu113",
+      "native_semantic_classes": 20,
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    },
+    "Sapiens2_0.4b": {
+      "model_id": "Sapiens2_0.4b",
+      "family": "Sapiens2",
+      "checkpoint": "models/human_parsing/sapiens2/0.4b/sapiens2_0.4b_seg.safetensors",
+      "checkpoint_sha256": "b85fdb50b7d6123a967d5ee4a505e222baff8d2f7ad6bbf353578c1a61dfbac9",
+      "native_config": "third_party/human_parsing/sapiens2/sapiens/dense/configs/seg/shutterstock_goliath/sapiens2_0.4b_seg_shutterstock_goliath-1024x768.py",
+      "native_config_sha256": "f4bd201e0293278807e2a8c02e700163972d095df9288beede84aabfee1725d5",
+      "source": "third_party/human_parsing/sapiens2",
+      "source_commit": "7e5bae88456ac418ff0e58e74106c9fe192055d4",
+      "environment": ".venvs/sapiens2-pilot",
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    },
+    "Sapiens2_0.8b": {
+      "model_id": "Sapiens2_0.8b",
+      "family": "Sapiens2",
+      "checkpoint": "models/human_parsing/sapiens2/0.8b/sapiens2_0.8b_seg.safetensors",
+      "checkpoint_sha256": "e7c1655b7e11678ba200d4ce743be13aeb97eb5ce0a0907f8e6817aabe6b2eec",
+      "native_config": "third_party/human_parsing/sapiens2/sapiens/dense/configs/seg/shutterstock_goliath/sapiens2_0.8b_seg_shutterstock_goliath-1024x768.py",
+      "native_config_sha256": "967f27e2a596da57cb87598412197138eb73674d4e83c12ccab73e41c0df738a",
+      "source": "third_party/human_parsing/sapiens2",
+      "source_commit": "7e5bae88456ac418ff0e58e74106c9fe192055d4",
+      "environment": ".venvs/sapiens2-pilot",
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    },
+    "Sapiens2_1b": {
+      "model_id": "Sapiens2_1b",
+      "family": "Sapiens2",
+      "checkpoint": "models/human_parsing/sapiens2/1b/sapiens2_1b_seg.safetensors",
+      "checkpoint_sha256": "4b73c44963b377e93fcb4c4053f72a189836a22d05e12c30383046b9cd3c5bd4",
+      "native_config": "third_party/human_parsing/sapiens2/sapiens/dense/configs/seg/shutterstock_goliath/sapiens2_1b_seg_shutterstock_goliath-1024x768.py",
+      "native_config_sha256": "d33d8802741cb7b0cddc09ac3b2f780a801932bdeb88dc097c22a43996fef61d",
+      "source": "third_party/human_parsing/sapiens2",
+      "source_commit": "7e5bae88456ac418ff0e58e74106c9fe192055d4",
+      "environment": ".venvs/sapiens2-pilot",
+      "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+    }
+  },
+  "source_bindings_count": 1612,
+  "CPI_parity_evidence": {
+    "path": "Human_Parsing_Benchmark/runs/cpi-common-c4p-20261030/PARITY_REVIEW.json",
+    "sha256": "43f694d73d66e58007e26ff860a72a8553052354b50c055c61c4cb0b47494c2a",
+    "status": "BOUNDED_PARITY_EVIDENCE_ACCEPTED_WITH_LIMITATION",
+    "not_population_bitwise_equivalence": true,
+    "revisions": [
+      "CPI_PERSON_CHUNK_RESTORATION_1",
+      "CPI_FEATURE_BUFFER_REUSE_2",
+      "CPI_FEATURE_BRANCH_SCHEDULE_3"
+    ]
+  }
+}

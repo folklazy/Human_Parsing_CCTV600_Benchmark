@@ -1,0 +1,12 @@
+# Use the existing separately bound model environments. Do not pip-install this
+# list into a working YOLO/native-parser environment.
+# CPU preparation/evaluation uses workspace .venv (recorded package metadata).
+numpy
+Pillow
+scipy
+pycocotools
+opencv-python
+# Inference uses .venvs/parser-legacy-cu113 for the six legacy parsers and
+# .venvs/sapiens2-pilot for Sapiens2. Checkpoint/native config/source/shim hashes
+# and complete environment package versions are frozen in outputs/<run>/CONFIG.json
+# and outputs/<run>/environments/. No new weights or packages are downloaded.

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "test_cases": 16,
+  "failures": 0,
+  "config_sha256": "6a766a2db3b7044071a6e78565b6a6db5c82f6c64d8b6937f4981bdae4d89eff",
+  "protocol_sha256": "9162ea7b245280c1d5c1402f7b300746bbe68fb87c3271b87c2592f1c94b08ba",
+  "expected_values": "independent literal tiny fixtures; real immutable packet -> scorer -> reporter"
+}

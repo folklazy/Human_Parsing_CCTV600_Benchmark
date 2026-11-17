@@ -1,0 +1,40 @@
+{
+  "protocol": "CCTV600_RGB_ROI_AD4_REV1",
+  "status": "FROZEN_REV1",
+  "seed": 20261117,
+  "population": 600,
+  "dataset_membership_sha256": "d9a5cdc80d3b1f462125776e02c2ef1e87be1b881bdd3482e81d72fdaf25d6fc",
+  "targets": ["OTHER", "Hair", "Face_dataset_reference_Sapiens_proxy", "Upper_non_Dress_native_mapping", "Lower_non_Dress_native_mapping"],
+  "mapping": {
+    "CIHP20": [0,0,1,0,0,3,0,3,0,4,0,0,4,2,0,0,0,0,0,0],
+    "SAPIENS29": [0,0,0,2,1,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,3,2,2,2,2,2]
+  },
+  "GT": {
+    "minimum_person_long_side_px": 50,
+    "raster": "Pillow ImageDraw source floating-point coordinates, image-clipped inclusive fill",
+    "valid": "accepted annotated target pixels only, excluding explicit ignore, under50 boxes, conflicting class/owner, degenerate shapes and one previously visually confirmed class-error shape",
+    "unassigned": "VOID_UNKNOWN, including pixels outside all boxes",
+    "overlap": "same owner and class union, conflicting owner or class shared VOID",
+    "missing_part": "unknown eligibility, excluded from that person-part denominator",
+    "full_frame_primary": null,
+    "annotation_supported_primary": "AD4_mIoU4, conditional on annotated target domain",
+    "absence_of_negative_GT": "OTHER GT support is zero. Precision/IoU exclude spill into unannotated pixels and cannot establish full-frame precision."
+  },
+  "route": {
+    "name": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP",
+    "detector_confidence": 0.25,
+    "crop_context_each_side": 0.1,
+    "expand_crop_to_contain_detector_mask": true,
+    "RGB_before_parser": "unmasked original pixels",
+    "post_mask": "clip selected native parsing plane by its frozen YOLO instance mask",
+    "native_instance_selection": "prediction-only designated box IoU >=0.50, highest IoU then score then box geometry then native index",
+    "compose": "after ownership clipping, nonzero native labels overwrite in ascending YOLO confidence; equal scores reverse canonical box geometry so smaller geometry wins; exact equal box geometry retains native detector ID order",
+    "project": "compose all nonzero native labels including Dress/Apparel/OTHER before total label mapping",
+    "no_detections": "valid empty prediction, zero parser calls"
+  },
+  "execution": {"precision":"FP32", "batch_size":1, "AMP":false, "TF32":false, "extra_TTA":false, "warmup_TRAIN_calls":1, "automatic_retry":0, "fallback":false},
+  "person_matching": {"bbox_iou_thresholds":[0.5,0.75], "method":"existing CCTV600 detector scorer, descending score then box geometry greedy GT-first matching, highest IoU then GT box geometry", "ignore_unmatched_box_IoA":0.5, "identical_geometry":"stable source order; ID-renaming invariance guaranteed for distinct box geometries only; identical boxes counted as ambiguous", "semantic_scores_used":false},
+  "metrics": {"global":"sum 5x5 integer confusion before ratios; conditional AD4 IoU/precision/recall/F1-Dice per target", "person":"each GT person-target with positive valid support is one unit; absent annotation excluded, missed GT contributes zero; divide by derived eligible person-parts per target", "person_domain":"all shared valid annotated pixels; wrong owner target pixels contribute FP to the matched prediction", "zero_denominator":null, "C3":"global mean Hair/Upper/Lower only; Face remains valid non-target", "STRICT_COMPLETE":"exact 600 unique packet IDs and all expected ROI packets, no failed/invalid IDs, binding checks and saved-mask scores"},
+  "resources": {"quality_policy":"GPU_ADMISSION_WITH_SHARED_QUALITY_ONLY_DIAGNOSTICS", "minimum_free_disk_GiB":50, "max_run_GiB":80, "max_model_GiB":80, "max_model_hours":24, "minimum_pre_forward_free_MiB":1024, "admission_free_MiB":{"QANet_CIHP_HRNetW48_512x384":2560,"M2FP_R101_CIHP":8192,"D2FP_R101_CIHP":9216,"RPR_CIHP":6144,"CPI_R50_CIHP":14500,"CPI_ConvNeXtB_CIHP":13500,"Sapiens2_0.4b":4608,"Sapiens2_0.8b":6656,"Sapiens2_1b":9600}},
+  "timing": {"sample":"reuse the frozen detector 100-image timing membership", "rounds":3, "warmup_calls_per_round":10, "order":"round-wise cyclic roster rotation", "clean":"no other compute PID and GPU utilization <=5 before load; no other compute PID before/after measured calls", "contaminated":"retain diagnostics and mark round invalid, no automatic retry", "report":"ROI adapter latency includes native classes and native internal detector/export where present; instrument learned module calls separately; sum actual ROI calls per image, all-image totals; cached detector timings linked separately; never claim a newly measured end-to-end YOLO+parser run"}
+}
