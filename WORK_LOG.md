@@ -55,3 +55,9 @@ Updated README/STATUS only for benchmark state. Frozen scientific source/config,
 ## 2026-11-17 — User adjudication of the three overlap examples
 
 ผู้จัดทำตรวจสามกรณี Hair/Upper ที่แจ้งแล้วและยืนยันรูปทรงตาม source โดยอธิบายว่าเป็นผลจากกล้องมุมกดลง บันทึกสถานะ USER_REVIEWED_ACCEPTED_OVERLAP ในพื้นที่ข้อมูล private และเอกสาร dataset การตรวจ CPU เฉพาะสามกรณีด้วย gt_export เดิมพบ Hair valid support หนึ่งส่วนเป็น0px อีกส่วน41px หลังยกเว้น cross-class overlaps จึงเพิ่มข้อจำกัด support/eligibility ในเอกสาร คะแนนต่อไปต้องเปิดเผยตัวหารตาม export จริง รอบนี้เก็บ source polygons และ membership hash เดิม พร้อมบันทึกคำยืนยันและผลกระทบต่อการวัดแยกกัน
+
+## 2026-11-17 — Partial-person coverage confirmed before parsing restart
+
+ผู้จัดทำยืนยันว่ามีคนบางส่วนที่ยังไม่ได้ annotate และปิดขอบเขตงานตามชุด600 ภาพ Source ID0 จึงคงเป็น Unassigned เอกสาร dataset เพิ่มขอบเขต annotated-person-part agreement และแยก unmatched detections ออกจาก confirmed FP ของ detector คะแนน full-scene ที่ยังไม่มี negative domain รับรองใช้ null
+
+ตรวจ CPU GT-domain preflight บน manifest ที่มี membership SHA256 256a191352a2f32150fdf2d6a8ddc24845780f5885a8d7b2f785008a505a3706 ได้769size-eligible GT people และ Hair/Face/Upper/Lower parts544/384/745/668 พบ Hair1ส่วนไม่มี valid support และ bbox geometry ต่างจาก native-run GT2ภาพ Input image identityตรง600 แต่ GT bindingsเดิมใช้ต่อกับคำตอบใหม่ไม่ได้ Full-scene person scalar counts ของ frozen scorer ต้องมี reporter scope correction ในรอบใหม่ แก้เฉพาะเอกสารและเก็บผลตรวจ private ไม่มี model calls หรือการแก้ frozen scientific source/config

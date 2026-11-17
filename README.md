@@ -4,11 +4,13 @@
 
 [สถานะ](STATUS.md) · [Protocol ที่ใช้จริง](configs/SHARED_REFERENCE_V1.json) · [Scorer](src/reference_parts600.py) · [Controller/continuation](src/reference_collection.py) · [บันทึกงาน](WORK_LOG.md) · [Dataset CCTV600](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
 
-## สถานะ GT revision วันที่ 17 พฤศจิกายน 2026
+## ข้อมูลและขอบเขตการประเมิน
 
-คิวรอบนี้พักไว้หลังผู้จัดทำแก้ annotation เพิ่มเติม Dataset ปัจจุบันเป็นรุ่นตรวจสอบ 1.0.1-rc.1 มี annotation เปลี่ยน 23 ไฟล์และ part shapes 2,449 ชิ้น ภาพต้นฉบับและ GT bbox geometry/owners คงเดิมครบ 600 ภาพ ผลตรวจโครงสร้างผ่าน ผู้จัดทำยืนยันรูปทรงซ้อนในสามตัวอย่างแล้ว และมีข้อจำกัดของ support หลัง export กำกับ รายละเอียดอยู่ในเอกสาร dataset ที่ลิงก์ข้างต้น
+Dataset ส่งมอบมี 600 ภาพและ annotation ของบุคคลที่เลือก ผู้จัดทำยืนยันว่ามีคนบางส่วนไม่ได้ annotate Source ID0 ใช้ Unassigned คะแนน parsing จะอ้าง GT person-parts ที่มีคำตอบ ส่วน unmatched detections เก็บเป็น diagnostics และ person recall มี denominator เป็นคนที่มี GT การรายงาน full-scene AP/precision/F1 ต้องมี negative domain ที่รับรองครบ
 
-จำนวน GT parts และ bindings ในรอบ R3 ที่อธิบายต่อจากนี้อ้าง dataset 1.0.0 การประเมิน GT ใหม่ต้องสร้าง snapshot, matching และตัวหารใหม่พร้อมตรวจ reuse compatibility ของ saved native predictions สถานะ native collections ที่ตรวจล่าสุดอยู่ใน [STATUS](STATUS.md)
+ผลตรวจ GT domain ด้วย CPU ครบ600 ภาพให้ตัวหาร Hair544/Face384/Upper745/Lower668 และคนผ่านเกณฑ์769 รายการ คิว inference ยังพักระหว่างเตรียม GT bindings และ reporter ของรอบใหม่ รายละเอียดที่ต้องแก้อยู่ใน [STATUS](STATUS.md) การตรวจ dataset ครั้งนี้มี model calls0
+
+จำนวน GT และรายละเอียดการเปิด R3 ในหัวข้อถัดไปเก็บเป็นประวัติการทดลอง ส่วนแหล่งข้อมูลและคำตอบปัจจุบันให้ยึด dataset CURRENT.json และ membership hash ที่ประกาศใน STATUS
 
 ## งานเดิมที่ใช้อ้างอิง
 
