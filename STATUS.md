@@ -17,3 +17,5 @@ Canonical operational status อยู่ใน `outputs/CURRENT.json` และ
 ```
 
 [Protocol และคำอธิบายคะแนน](README.md)
+
+ตรวจเริ่ม continuation เมื่อ 2026-11-17T10:38:18+07:00 Controller PID 3579861 อยู่ใน tmux `parsing_cctv600_r2` และรอ parent M2FP PID 3563174 ซึ่งบันทึกแล้ว 550/600 ภาพ ตัวเลขนี้เป็น launch snapshot ใช้ progress viewer ดูจำนวนปัจจุบัน

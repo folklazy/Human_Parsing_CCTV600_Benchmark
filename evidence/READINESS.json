@@ -176,5 +176,14 @@
   "parent_run_id": "parsing600-20261117T030309293781Z",
   "first_new_prediction_packet_check": "M2FP native packet readback, map-back, ownership, labels and timer decomposition PASS",
   "parent_QANet_model_calls": 0,
-  "CPU_acceptance_cases": 17
+  "CPU_acceptance_cases": 17,
+  "launch_check": {
+    "controller_pid": 3579861,
+    "parent_worker_pid": 3563174,
+    "tmux_session": "parsing_cctv600_r2",
+    "observed_M2FP_completed_frames": 550,
+    "model_API_calls": 700,
+    "source_launch_commit": "12d2ff70e14af57f7cd6668ad4f63841754425bb",
+    "status": "QUEUED_WAITING_PARENT_MODEL_COMPLETION"
+  }
 }
