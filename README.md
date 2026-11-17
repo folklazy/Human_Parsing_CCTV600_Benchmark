@@ -12,6 +12,34 @@ Dataset ส่งมอบมี 600 ภาพและ annotation ของบ�
 
 จำนวน GT และรายละเอียดการเปิด R3 ในหัวข้อถัดไปเก็บเป็นประวัติการทดลอง ส่วนแหล่งข้อมูลและคำตอบปัจจุบันให้ยึด dataset CURRENT.json และ membership hash ที่ประกาศใน STATUS
 
+## ขอบเขตการทดสอบที่ตกลงไว้
+
+ประชากร600ภาพ ใช้ GT ของบุคคลที่เลือก annotate, source ID0 เป็น Unassigned และใช้ YOLO crop/ownership ตาม pipeline ที่ประกาศ แต่ละ parser ทำนาย native classes ทั้งหมดก่อน project ไปยังสี่เป้าหมาย
+
+| ผลส่งมอบ | นิยามที่ต้องใช้ |
+| --- | --- |
+| IoU รายคลาส | Mean-part IoU พร้อม pooled IoU โดย Face ใช้ Face-local |
+| Precision / Recall / F1-Dice รายคลาส | รวม TP/FP/FN ของ GT person-part tasks ก่อนหาร |
+| Confusion matrix | GTสี่คลาสไปยัง predictionสี่คลาสและ OTHER บน GT positive domain พร้อม binary matrixรายคลาสสำหรับ TP/FP/FN/TN |
+| ค่าเฉลี่ยสี่คลาส | Macro4-local เฉลี่ย Hair/Face-local/Upper/Lower คลาสละ25% พร้อม mIoU3 (part-mean) ตาม protocol |
+| ส่วนที่พลาดทั้งหมด | จำนวนและสัดส่วน eligible GT parts ที่ TP=0 รวมกรณีเจ้าของที่จับคู่ไม่ได้ |
+| เวลาประมวลผล | Per-ROI, per-image และผลรวม parsing work พร้อม scope ของ interval และ timer completeness |
+| Peak VRAM | Peak allocated/reserved ของ process พร้อม resource-policy และ sharing observations |
+| ความครบถ้วน | Exact600 IDs ไม่ซ้ำ พร้อม ROI membership, failed/invalid/missing และ STRICT_COMPLETE |
+| Person diagnostics | Annotated-person recall และ unmatched predictions ส่วน full-scene AP/Precision/F1 ใช้ null ตาม coverage |
+
+Prediction OTHER ใน cross-class matrix รวมผลทำนายนอกสี่เป้าหมายตาม mapping ที่ประกาศ การนับใน matrix นี้อ้างเฉพาะ GT positive pixels ส่วน binary matrices ใช้ domain ของแต่ละ person-part จึงครอบคลุมการทายเกินขอบ GT ด้วย Source Unassigned มีความหมายตาม dataset
+
+### ขั้นเตรียมเปิดรัน
+
+1. สร้าง GT bindings, matching และ config ของรอบใหม่จาก manifest ส่งมอบ พร้อม source/protocol hashes
+2. ปรับ scorer/reporter แยกจาก frozen source ให้รองรับ partial-person diagnostics, cross-class matrix, TP=0 part counts และสรุป peak VRAM ตามขอบเขตข้างต้น
+3. ตรวจ CPU acceptance และ reconcile saved native packets ก่อน freeze reused/pending membership
+4. ตรวจ GPU/disk/process guards แล้วเปิดคิว sequential ใน tmux เก็บ log และสถานะที่ตรวจได้ หยุดหลังเก้า checkpoints และรอบจับเวลาที่อนุญาต
+5. เก็บ progress และ execution diagnostics ระหว่าง inference แล้วประเมินคุณภาพหลัง collection จบ ตรวจ STRICT_COMPLETE และสร้างรายงานจาก saved outputs
+
+สถานะ implementation และผลตรวจจริงให้อ้าง [STATUS](STATUS.md)
+
 ## งานเดิมที่ใช้อ้างอิง
 
 ตรวจทั้ง working copy และ publication repository `folklazy/Human_Parsing_Study` ก่อนปรับรอบนี้ แหล่งที่เลือกใช้คือ shared-reference run `shared-c3-face-local-20261108T083533Z` ซึ่งใช้กติกาเดียวกันใน CIHP 5,000 ภาพและ CCTV 90 ภาพ

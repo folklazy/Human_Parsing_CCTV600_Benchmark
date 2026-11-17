@@ -2,6 +2,8 @@
 
 **ตรวจข้อมูลก่อนเปิดรอบใหม่ — คิว inference พักอยู่**
 
+ขอบเขตตัวชี้วัดตกลงแล้วตาม [แผนการทดสอบ](README.md#ขอบเขตการทดสอบที่ตกลงไว้) GT-domain preflight บน CPU ผ่านครบ600 ภาพ ขั้นเตรียมสคริปต์ยังมี GT bindings/config ใหม่, scoped scorer/reporter, CPU acceptance ของส่วนที่เพิ่ม และ reconciliation/launch ใน tmux ก่อนเริ่ม collection ต่อ ข้อมูล progress ของรอบก่อนเก็บแยกตาม run records
+
 Dataset ส่งมอบมี 600 ภาพ, 774 bbox, 2,449 part shapes และ 171 ignore shapes ผลตรวจไฟล์/schema ผ่านครบชุด ผู้จัดทำยืนยันว่ามีคนบางส่วนที่ไม่ได้ annotate และปิดขอบเขตข้อมูลตามชุดนี้แล้ว Source ID0 คงเป็น Unassigned อ่าน [เอกสาร dataset](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
 
 ## ผลตรวจ GT domain บน CPU
@@ -23,7 +25,7 @@ Membership SHA256 ของคำตอบที่ใช้ตรวจคื�
 1. ใช้ manifest จาก private dataset CURRENT.json สร้าง GT masks, shared valid domains, bbox matches และ eligibility ใหม่ Source IDs Hair1/Face2 ต้องแปลงเป็น reference target IDs Hair2/Face1 ให้ตรง scorer
 2. ประกาศขอบเขตเป็น annotated-person-part agreement ใช้ Macro4-local, mIoU3 (part-mean), Mean-part IoU และ pooled Precision/Recall/F1-Dice ตาม domain ที่กำหนด Positive GT parts ของคนที่พลาดใช้ empty prediction และคงอยู่ในตัวหาร
 3. ให้ reporter แสดง annotated-person recall และ unmatched predictions การนับทุก unmatched เป็น confirmed FP ไม่สอดคล้องกับ partial-person coverage Person AP/Precision/F1 ทั้งภาพและ global semantic metrics ที่ยังไม่มี negative domain รับรองให้เป็น null พร้อมเหตุผล
-4. ตรวจ CPU acceptance เรื่องคนที่ไม่ได้ annotate, source0, prediction background, native ID mappings, conflicts และ STRICT_COMPLETE ก่อน freeze config ของรอบใหม่ Source/scorer/config ที่ freeze แล้วเก็บเป็นหลักฐานเดิม
+4. เพิ่ม cross-class confusion matrix และ TP=0 part counts พร้อมสรุป peak VRAM จาก ledger แล้วตรวจ CPU acceptance เรื่องคนที่ไม่ได้ annotate, source0, prediction background, native ID mappings, conflicts และ STRICT_COMPLETE ก่อน freeze config ของรอบใหม่ Source/scorer/config ที่ freeze แล้วเก็บเป็นหลักฐานเดิม
 5. ตรวจ reuse compatibility ของ native ROI packets พร้อม crop/model/checkpoint/source hashes แล้วรวบรวมเฉพาะ native outputs ที่ยังขาด การเปลี่ยน GT ใช้เป็นเหตุผลในการสร้าง bindings และคะแนนใหม่ ส่วนการ inference เพิ่มขึ้นกับความตรงกันของ model inputs และ packets
 
 ## ผล native ที่เก็บอยู่

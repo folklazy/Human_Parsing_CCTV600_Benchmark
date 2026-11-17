@@ -61,3 +61,7 @@ Updated README/STATUS only for benchmark state. Frozen scientific source/config,
 ผู้จัดทำยืนยันว่ามีคนบางส่วนที่ยังไม่ได้ annotate และปิดขอบเขตงานตามชุด600 ภาพ Source ID0 จึงคงเป็น Unassigned เอกสาร dataset เพิ่มขอบเขต annotated-person-part agreement และแยก unmatched detections ออกจาก confirmed FP ของ detector คะแนน full-scene ที่ยังไม่มี negative domain รับรองใช้ null
 
 ตรวจ CPU GT-domain preflight บน manifest ที่มี membership SHA256 256a191352a2f32150fdf2d6a8ddc24845780f5885a8d7b2f785008a505a3706 ได้769size-eligible GT people และ Hair/Face/Upper/Lower parts544/384/745/668 พบ Hair1ส่วนไม่มี valid support และ bbox geometry ต่างจาก native-run GT2ภาพ Input image identityตรง600 แต่ GT bindingsเดิมใช้ต่อกับคำตอบใหม่ไม่ได้ Full-scene person scalar counts ของ frozen scorer ต้องมี reporter scope correction ในรอบใหม่ แก้เฉพาะเอกสารและเก็บผลตรวจ private ไม่มี model calls หรือการแก้ frozen scientific source/config
+
+## 2026-11-17 — Agreed test outputs and launch preparation status
+
+บันทึกตารางตัวชี้วัดที่ตกลงกับผู้ใช้ใน README รวม cross-class/binary confusion, TP=0 part counts, เวลา, peak VRAM และ STRICT_COMPLETE ตรวจสคริปต์จริงพบว่ามี binary confusion และ raw peak allocated/reserved logs แล้ว ส่วน cross-class matrix, scoped partial-person reporter, ตัวนับส่วนพลาดทั้งหมด และ peak summary ต้องเตรียมใน source แยกก่อนเปิดคิวใหม่ GT-domain preflight ผ่าน600ภาพแล้ว รอบตรวจสถานะนี้มี model calls0
