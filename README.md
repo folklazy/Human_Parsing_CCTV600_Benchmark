@@ -142,7 +142,7 @@ Clean round ต้องไม่มี external compute PID และ GPU utili
 
 ```bash
 .venv/bin/python Human_Parsing_CCTV600_Benchmark/src/progress.py --watch
-tmux attach -t parsing_cctv600
+tmux attach -t parsing_cctv600_r2
 ```
 
 กด `Ctrl+B` แล้ว `D` เพื่อออกจาก tmux โดยงานยังทำต่อ กด `Ctrl+C` ใน progress viewer หยุดเฉพาะ viewer ส่วน `Ctrl+C` ในหน้าต่าง controller อาจขัดจังหวะ batch
@@ -151,11 +151,15 @@ Private artifact root อยู่ใน `outputs/CURRENT.json` ใช้ `BATCH
 
 เมื่อจบ batch มี `gallery/index.html` และ PNG ชุด 16 ภาพเดิมจาก detector manifest แสดง original, GT และเก้าโมเดลบนพิกัดเดียวกัน พร้อม SHA256/provenance ภาพทั้งหมดคงอยู่ใน private outputs ตามนโยบาย dataset
 
-คำสั่งเปิด batch ใช้หลัง preparation, CPU acceptance และ commit ตรงกับ frozen bindings แล้ว launcher จะปฏิเสธ run ที่เคยเปิดไว้
+Launcher รอบแรกใช้หลัง preparation, CPU acceptance และ commit ตรงกับ frozen bindings และปฏิเสธ run ที่เคยเปิดไว้
 
 ```bash
 .venv/bin/python Human_Parsing_CCTV600_Benchmark/src/launch.py
 ```
+
+รอบที่กำลังทำใช้ continuation `timer-r2` ผ่าน `src/correct_qanet.py` เพื่อแก้ timer attachment ของ QANet ซึ่ง native API เป็น methods รอบแรกหยุดที่ setup ก่อน model calls ทุกครั้ง CPU correction acceptance ผ่าน 17 cases รวม method-style dispatch ตัว controller เดิมปิดคิวขณะ M2FP worker ที่แยก session ทำงานต่อ จากนั้น continuation รับผล M2FP เดิมแล้วทำ QANet และโมเดลที่เหลือตาม roster โดยเก็บ native inference/scorer เดิมและประวัติ setup failure
+
+ช่วง `QUEUED_WAITING_PARENT_MODEL_COMPLETION` หมายถึง controller ใหม่รอ M2FP เดิมจบ เมื่อผ่านจุดนั้นจะเปิด worker ตามคิว `CURRENT_WORKER.json` และ progress viewer ระบุ PID ที่ทำงานจริง รายละเอียดคำสั่ง launch และ parent/config/source hashes อยู่ใน private `LAUNCH.json` กับ `SCIENTIFIC_FREEZE.json`
 
 แต่ละ ROI เก็บ native selected crop mask, native candidates, geometry และ hashes แต่ละภาพเก็บ original-grid owned native planes, YOLO extents/IDs/boxes/scores, composed native และ projected mask พร้อม references ไป ROI packets เก็บ raw native inputs/outputs เพื่อ rescore protocol revision ถัดไปได้โดยไม่รัน parser ซ้ำ
 
@@ -174,6 +178,12 @@ Packet commit ใช้ temporary directory, fsync และ atomic rename ห�
 ```
 
 ใช้ independent literal fixtures ตรวจ union, OTHER-before-overlap, unknown/VOID, under-50, ties/ID renaming, missed/duplicate/wrong-owner, denominator-zero, geometry/channel order และ timer boundary รวม packet → scorer → reporter พร้อม corruption/binding/immutability checks อ่าน accepted packet ของ QANet/M2FP/D2FP/RP-R-CNN อย่างละหนึ่งแบบ read-only โดยไม่ใช้ผลเก่าเป็นคะแนน CCTV600
+
+ทดสอบ timer correction บน CPU แยกได้ด้วยคำสั่งนี้
+
+```bash
+.venv/bin/python -m unittest discover -s Human_Parsing_CCTV600_Benchmark/src -p correct_qanet.py -v
+```
 
 ## แหล่งนิยามและข้อจำกัดการใช้โมเดล
 

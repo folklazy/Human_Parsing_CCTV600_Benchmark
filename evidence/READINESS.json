@@ -1,8 +1,8 @@
 {
-  "status": "CPU_VERIFIED_PRE_LAUNCH",
-  "run_id": "parsing600-20261117T030309293781Z",
+  "status": "PARENT_M2FP_RUNNING_CORRECTION_CPU_ACCEPTED",
+  "run_id": "parsing600-20261117T030309293781Z-timer-r2",
   "protocol_sha256": "9162ea7b245280c1d5c1402f7b300746bbe68fb87c3271b87c2592f1c94b08ba",
-  "config_sha256": "6a766a2db3b7044071a6e78565b6a6db5c82f6c64d8b6937f4981bdae4d89eff",
+  "config_sha256": "d59622b334a9be33c11b81c7f0ef55e2bfc2fa7317432792d5f8c9b4cce03c77",
   "GT_bindings": {
     "valid_pixels": 7373840,
     "conflict_pixels": 7934,
@@ -160,7 +160,7 @@
       "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
     }
   },
-  "source_bindings_count": 1612,
+  "source_bindings_count": 1613,
   "CPI_parity_evidence": {
     "path": "Human_Parsing_Benchmark/runs/cpi-common-c4p-20261030/PARITY_REVIEW.json",
     "sha256": "43f694d73d66e58007e26ff860a72a8553052354b50c055c61c4cb0b47494c2a",
@@ -171,5 +171,10 @@
       "CPI_FEATURE_BUFFER_REUSE_2",
       "CPI_FEATURE_BRANCH_SCHEDULE_3"
     ]
-  }
+  },
+  "setup_correction": "QANET_NATIVE_METHOD_TIMER_2",
+  "parent_run_id": "parsing600-20261117T030309293781Z",
+  "first_new_prediction_packet_check": "M2FP native packet readback, map-back, ownership, labels and timer decomposition PASS",
+  "parent_QANet_model_calls": 0,
+  "CPU_acceptance_cases": 17
 }

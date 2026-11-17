@@ -1,8 +1,8 @@
 {
   "status": "PASS",
-  "test_cases": 16,
+  "test_cases": 17,
   "failures": 0,
-  "config_sha256": "6a766a2db3b7044071a6e78565b6a6db5c82f6c64d8b6937f4981bdae4d89eff",
+  "config_sha256": "d59622b334a9be33c11b81c7f0ef55e2bfc2fa7317432792d5f8c9b4cce03c77",
   "protocol_sha256": "9162ea7b245280c1d5c1402f7b300746bbe68fb87c3271b87c2592f1c94b08ba",
-  "expected_values": "independent literal tiny fixtures; real immutable packet -> scorer -> reporter"
+  "revision": "QANET_NATIVE_METHOD_TIMER_2"
 }
