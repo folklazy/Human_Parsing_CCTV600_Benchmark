@@ -42,3 +42,4 @@
 - ตรวจ empty-output repair ของ RP-R-CNN บน CPU และตรวจ unused-cache-only release ของ CPI โดยคง physical guard เดิม ไม่เปลี่ยน allocator environment หรือ inference settings
 - Actual packet integration ใช้สี่โมเดลที่ครบแบบ read-only บนตัวอย่างที่มีครบสี่ target เพื่อทดสอบ contract ไม่มีการใช้คะแนนเลือก mapping/settings
 - Prelaunch reconciliation ตรวจผ่าน 3,282 ROIs เหลือ 3,585 ROIs โดย invalid/partial/orphan เป็นศูนย์ เก็บค่ารายโมเดลพร้อม packet/config/model/input bindings
+- เปิด R3 detached controller PID 3684804 บน tmux parsing_cctv600_r3 ด้วย commit c409eb2 ตรวจ RP-R-CNN worker PID 3686707 และ packet ใหม่ของ failed ROI เดิมผ่าน Native BoxList มีศูนย์คนจริงจึงเก็บ empty prediction ตาม contract ผลช่วง nonempty ใช้ native API เดิม

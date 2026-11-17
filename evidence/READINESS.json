@@ -1,7 +1,7 @@
 {
   "active_protocol": "CCTV600_SHARED_REFERENCE_PARTS_V1",
   "run_id": "cctv600-reference-parts-r3-20261117T043023373772Z",
-  "status": "REFERENCE_PRELAUNCH_ACCEPTED",
+  "status": "REFERENCE_NATIVE_CONTINUATION_RUNNING",
   "protocol_sha256": "81c02f21ffdf75250dc330eaa6eeef9d3d93a9da9aa706fef3b211f3e15b2d2c",
   "config_sha256": "a8c45fa8d8054ed64c1d755050431044e0bfd57ba0d05aca202597a3ea6b1eb5",
   "GT_bindings": {
@@ -217,5 +217,12 @@
   "reference_method": "Mean-part IoU, Face-local, mIoU3 part-mean, Macro4-local",
   "matching": "bbox IoU for CCTV600",
   "dataset_release": "d77ad2e",
-  "source_bindings_count": 1619
+  "source_bindings_count": 1619,
+  "launch_check": {
+    "controller_pid": 3684804,
+    "worker_pid": 3686707,
+    "tmux_session": "parsing_cctv600_r3",
+    "RPR_first_recovery_packet": "PASS_PROVEN_NATIVE_EMPTY_OUTPUT",
+    "new_committed_RPR_ROIs_snapshot": 228
+  }
 }

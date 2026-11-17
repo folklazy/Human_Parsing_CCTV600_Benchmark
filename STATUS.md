@@ -1,6 +1,6 @@
 # สถานะ Human Parsing CCTV600
 
-**REFERENCE_PARTS_R3 — พร้อมเปิด continuation ตามวิธี CIHP/CCTV เดิม**
+**REFERENCE_PARTS_R3 — QUALITY_COLLECTION กำลังทำงานบน tmux**
 
 ผู้ใช้สั่งเริ่มวิธีประเมินใหม่วันที่ 17 พฤศจิกายน 2026 ใช้ Mean-part IoU, Face-local, mIoU3 (part-mean), Macro4-local และ pooled Precision/Recall/F1 ตาม shared-reference run เดิมของ CIHP/CCTV
 
@@ -40,3 +40,7 @@ tmux attach -t parsing_cctv600_r3
 Current run root อ้างจาก `outputs/CURRENT.json` การจบมี `BATCH_COMPLETION.json` และ `BATCH_REPORT_TH.md` พร้อม canonical metrics/CSV/ภาพชุดเดิม ตารางคะแนนของระบบที่ยังไม่ครบเป็น null พร้อมสาเหตุ
 
 [รายละเอียดและนิยาม](README.md) · [Active protocol](configs/SHARED_REFERENCE_V1.json)
+
+## ตรวจเริ่มงานจริง
+
+เมื่อ 2026-11-17T12:07:21+07:00 Controller PID 3684804 อยู่ใน tmux `parsing_cctv600_r3` RP-R-CNN worker PID 3686707 ทำงานจริงและบันทึก native packets ใหม่แล้ว 228 ROIs ตรวจ packet ของกรณีที่เคย KeyError ผ่าน โดยยืนยัน native empty result และ integer-mask geometry ตาม contract จำนวนนี้เป็น launch snapshot ใช้ progress viewer ดูค่าปัจจุบัน
