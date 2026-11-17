@@ -2,13 +2,17 @@
 
 การทดลองนี้เปรียบเทียบเก้า pretrained checkpoints สำหรับ Hair, Face, Upper และ Lower บนภาพ CCTV 600 ภาพ ใช้ผล YOLO26x-Seg ชุดเดียวเป็นต้นทาง แล้วส่งภาพ RGB crop ให้ parser ทุกตัว GT มี person boxes และ masks สี่ส่วน โดยใช้บุคคลด้านยาวตั้งแต่ 50 px ในคะแนนกลุ่มหลัก
 
+**ชื่อคะแนนหลักที่ใช้แสดงผลคือ “mIoU เฉลี่ย 4 คลาส — เฉพาะพิกเซลที่ GT ระบุคลาส”** ตารางผลต้องระบุพื้นที่คำนวณนี้กำกับ รหัส `AD4_mIoU4` ใน JSON ใช้อ้างผลเดียวกัน ส่วนค่าเฉลี่ยสามคลาสและคะแนนรายคนมีชื่อเต็มในหัวข้อตัวชี้วัดด้านล่าง
+
 [สถานะและคำสั่งดูงาน](STATUS.md) · [ข้อกำหนดที่ใช้จริง](configs/PROTOCOL.json) · [บันทึกงาน](WORK_LOG.md) · [Dataset](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset) · [ผล detector CCTV600](https://github.com/folklazy/YOLO_Instance_Segmentation_CCTV600_Scaling_Study)
 
 ## ขอบเขตคะแนนที่ข้อมูลรองรับ
 
-Annotation ชุดนี้ยังแยกพื้นที่ไม่มีคำตอบออกจากพื้นหลังที่ตรวจรับแล้วไม่ได้ บริเวณไม่มี polygon จึงคงเป็น unknown คะแนนรอบนี้ใช้ **AD4 หรือ annotation-supported four-target evaluation** ซึ่งวัดบนพิกเซลที่มี target annotation ชัดเจนร่วมกันทุกโมเดล ค่า IoU/Precision/F1 จึงยังไม่ครอบคลุมการทำนายเกินเข้า unknown ส่วนคะแนนเต็มภาพคงเป็น `null`
+Repo ส่งมอบยืนยันว่าผู้จัดทำตรวจแก้ครบ 600 ภาพแล้ว นิยามของรหัส 0 คือพื้นที่นอก part shapes ซึ่งอาจเป็นฉากหลัง ส่วนอื่นของคน หรือพื้นที่ที่ยังไม่มีคำตอบ ใน schema กำหนด `unassigned_negative_domain = not_certified` และให้แต่ละการทดลองกำหนด valid domain ของตัวเอง ข้อความนี้บอกสถานะการใช้พิกเซลเพื่อคำนวณคะแนน หลักฐานการขาด annotation ต้องพิจารณาภาพและรายการตรวจรับเพิ่มเติม [README ของ dataset รุ่นที่ตรวจ](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset/blob/d77ad2eec84e3e44b1465abd17031c8f57e1f18f/README.md), [ตารางรหัสและกติกา unassigned](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset/blob/d77ad2eec84e3e44b1465abd17031c8f57e1f18f/schema/labels.json)
 
-การเลือก domain นี้เป็นการตัดสินใจก่อน inference รอบ CCTV600 เพื่อใช้ข้อมูลที่มีอยู่โดยรักษาความหมายของ GT หากต้องการ full-frame semantic benchmark ต้องตรวจรับ negative/OTHER และความครบถ้วนของ annotation เพิ่ม แล้วเปิด GT/protocol revision ใหม่สำหรับ rescoring ทุกระบบจาก saved native masks
+รอบทดลองนี้เลือกใช้เฉพาะพิกเซล GT ของ Hair/Face/Upper/Lower ที่ผ่านกติกา ignore และข้อสังเกต QA ร่วมกันทุกโมเดล การเลือกนี้เป็นกติกาของ benchmark ที่ตรึงไว้ก่อน inference ชื่อแสดงผลจึงระบุ “เฉพาะพิกเซลที่ GT ระบุคลาส” ทุกคะแนน semantic ใช้พื้นที่คำนวณชุดเดียวกัน และยังประเมินการระบายเกินเข้า unassigned ได้ไม่ครบ รหัสเดิม `AD4` เก็บไว้เชื่อมกับ config/JSON ของรอบที่กำลังรัน
+
+หากยืนยันได้ว่าทุกส่วนที่ต้องประเมินของทุกคนที่เข้าเกณฑ์ได้รับการกำกับครบ และกำหนดพื้นที่ที่เหลือเป็น OTHER พร้อม ignore ที่ชัดเจน จะสร้าง GT/protocol revision สำหรับคะแนนบนพื้นที่ภาพที่ประเมินได้ทั้งหมดได้ โดยใช้ saved native masks ของทุกระบบคำนวณคะแนนตาม revision นั้น การรับรอง negative domain อาศัยความครบถ้วนของสี่ส่วนและกติกา OTHER/ignore
 
 ชุดข้อมูลผ่านการยืนยัน snapshot โดยผู้จัดทำ มีประวัติใช้ annotation helpers และยังไม่มี independent review ทุกพิกเซล รายงานนี้จึงใช้คำว่า accepted snapshot และระบุข้อจำกัดไว้กับผลคะแนน
 
@@ -83,7 +87,49 @@ Sapiens Face_Neck แยก neck ออกด้วย hard labels ไม่ไ�
 
 Source upper/lower ไม่มี cross-zone garment tags ครบ การกำหนด Dress/Apparel เป็น OTHER ยังไม่พิสูจน์ว่า annotation เสื้อผ้าทุกชิ้นตรง taxonomy ของ prediction ห้ามแบ่ง dress ด้วยเส้นตัดหรือใช้ GT เลือก prediction
 
-## ตัวชี้วัด
+## ตัวชี้วัดและวิธีอ่านชื่อ
+
+ชื่อ metric ที่แสดงให้ผู้อ่านใช้คำเต็มพร้อมหน่วยและพื้นที่คำนวณ รหัสใน JSON มีไว้ตรวจย้อนกลับ สูตรและกติกาของรอบที่กำลังรันผูกกับ frozen protocol เดิม
+
+| ชื่อที่ใช้ในรายงาน | รหัสเดิมในผลลัพธ์ | หน่วยและหน่วยนับ | วิธีรวมคะแนน |
+| --- | --- | --- | --- |
+| IoU รายคลาส — เฉพาะพิกเซลที่ GT ระบุคลาส | `IoU` ช่อง Hair/Face/Upper/Lower | % ของพื้นที่พิกเซล | รวม TP/FP/FN จากทุกภาพก่อนหาร แสดงหนึ่งค่าต่อคลาส |
+| Precision รายคลาส — เฉพาะพิกเซลที่ GT ระบุคลาส | `precision` | % ของพิกเซลที่ทำนายคลาสนั้นในพื้นที่คำนวณ | TP ÷ (TP+FP) |
+| Recall รายคลาส — เฉพาะพิกเซลที่ GT ระบุคลาส | `recall` | % ของพิกเซล GT คลาสนั้น | TP ÷ (TP+FN) |
+| F1/Dice รายคลาส — เฉพาะพิกเซลที่ GT ระบุคลาส | `F1_Dice` | % จากจำนวนพิกเซล | 2TP ÷ (2TP+FP+FN) |
+| mIoU เฉลี่ย 4 คลาส — เฉพาะพิกเซลที่ GT ระบุคลาส | `AD4_mIoU4`, เดิมแสดง AD4 | % เฉลี่ยสี่คลาส | บวก IoU ของผม ใบหน้า เสื้อผ้าบน เสื้อผ้าล่าง แล้วหาร 4 แต่ละคลาสมีน้ำหนักเท่ากัน |
+| mIoU เฉลี่ย 3 คลาส — ผม เสื้อผ้าบน เสื้อผ้าล่าง | `C3_global` | % บนพื้นที่คำนวณเดียวกัน | บวก IoU ของสามคลาสแล้วหาร 3 พิกเซล GT ใบหน้ายังอยู่ในการคิด FP ของสามคลาสนี้ |
+| IoU รายคนเฉลี่ย 4 คลาส — จับคู่กรอบที่ IoU ≥0.50 หรือ ≥0.75 | `Q_AD4_GT` ในแต่ละ matching threshold | % เฉลี่ยจาก person-parts ที่มี GT | คำนวณ IoU ของแต่ละคนต่อคลาส เฉลี่ยรายคลาสก่อน แล้วเฉลี่ยสี่คลาสเท่ากัน คนที่จับคู่ไม่เจอได้ 0 สำหรับส่วนที่มี GT |
+| Precision/Recall/F1 ของการจับคู่คน | `person` → `precision`, `recall`, `F1` | % จากจำนวนกรอบบุคคล | ใช้ TP/FP/FN ของ bbox matching แต่ละ threshold |
+
+ตัวอย่างสมมติของ mIoU เฉลี่ย 4 คลาส ถ้า IoU ผม=60%, ใบหน้า=40%, เสื้อผ้าบน=80%, เสื้อผ้าล่าง=60% จะได้ `(60+40+80+60)/4 = 60%` พื้นที่ของแต่ละคลาสยังมีผลต่อ IoU ของคลาสนั้น ส่วนขั้นเฉลี่ยสี่คลาสถ่วงแต่ละคลาสเท่ากัน
+
+คะแนนรายคนให้น้ำหนักตาม person-parts ที่มีคำตอบในแต่ละคลาส ส่วน global IoU ให้น้ำหนักตามจำนวนพิกเซลที่รวมในคลาสนั้น ตัวอย่างเช่น ใบหน้าของคนเล็กกับคนใหญ่เป็นสองหน่วยในค่าเฉลี่ยรายคน ขณะที่ global counts รวมพิกเซลใบหน้าของทั้งสองคนก่อนหาร
+
+GT bindings ของรอบนี้มีคู่คน–ส่วนที่ใช้ประเมิน ผม 544, ใบหน้า 390, เสื้อผ้าบน 740 และเสื้อผ้าล่าง 665 คู่ แต่ละคลาสจึงมีตัวหารรายคนของตัวเอง IoU/Precision/Recall/F1 ใช้สูตรจาก TP/FP/FN ส่วนขั้นเฉลี่ยคะแนนรายคนและถ่วงคลาสเท่ากันเป็น aggregation ที่โครงการกำหนด อ่านสูตรที่รันจริงได้ใน [scorer](src/evaluation.py) และ [frozen protocol](configs/PROTOCOL.json)
+
+### คำที่ใช้บอกพื้นที่และสถานะ
+
+| คำ | ความหมายในรอบนี้ |
+| --- | --- |
+| GT หรือคำตอบอ้างอิง | Annotation snapshot ที่ผู้จัดทำตรวจรับและผูก hashes ไว้ |
+| พิกเซลที่ GT ระบุคลาส | พิกเซล Hair/Face/Upper/Lower ที่ผ่าน common ignore/QA เป็นพื้นที่คำนวณของคะแนน semantic รอบนี้ |
+| Unassigned หรือพื้นที่ยังไม่กำหนดคลาส | พื้นที่นอก part shapes ตามรหัส 0 ของ dataset อาจประกอบด้วยฉากหลัง ส่วนอื่นของคน และบริเวณที่ยังไม่มีคำตอบ |
+| OTHER หรือส่วนอื่นนอกสี่เป้าหมาย | กลุ่มผลทำนายที่รวม native background และคลาสอื่นนอก Hair/Face/Upper/Lower รวม Dress/Apparel ตาม mapping |
+| Ignore/VOID หรือพิกเซลยกเว้น | พื้นที่ที่กติกากำหนดให้เว้นจากคะแนน เช่น explicit ignore คนต่ำกว่า 50 px และพิกเซลที่คลาส/เจ้าของขัดกัน |
+| GT support | จำนวนพิกเซล GT ของคลาสนั้นที่เข้าสู่การคำนวณ |
+| Prediction support | จำนวนพิกเซลที่ทำนายเป็นคลาสนั้นภายในพื้นที่คำนวณเดียวกัน |
+| Union | TP+FP+FN ใช้เป็นตัวหารของ IoU |
+| มี predictions ครบ | บันทึกผลครบประชากรและผ่าน completion checks ขั้นคำนวณคะแนนมีสถานะแยกกำกับ |
+
+ค่า `null` ต้องแสดงเหตุผลประกอบเสมอ
+
+| เหตุผลใน record | ข้อความแสดงผล |
+| --- | --- |
+| คะแนนทั้งภาพอยู่นอก domain ที่เลือกไว้ | “ยังไม่ประเมินคะแนนทั้งภาพตามกติกาปัจจุบัน” |
+| เก็บ predictions ครบและรอ batch-end scoring | “ผลทำนายครบ รอคำนวณคะแนนหลังจบ batch” |
+| ขาดภาพหรือมี invalid/failure ตาม STRICT_COMPLETE | “คะแนนยังใช้ไม่ได้ ผลไม่ครบตามเกณฑ์” พร้อมจำนวนและสาเหตุ |
+| ตัวหารของ metric เป็นศูนย์ | “คำนวณค่านี้ไม่ได้ ตัวหารเป็นศูนย์” พร้อม GT/prediction support |
 
 ### Global semantic
 
@@ -95,8 +141,8 @@ Source upper/lower ไม่มี cross-zone garment tags ครบ การ�
 | Precision | TP / (TP+FP) | พิกเซลที่ทำนาย target ถูกคลาสเท่าไรบน annotated domain |
 | Recall | TP / (TP+FN) | เก็บ target GT ที่มีคำตอบได้เท่าไร |
 | F1 หรือ Dice | 2TP / (2TP+FP+FN) | สมดุลพื้นที่ถูกคลาส พื้นที่เกินใน domain และพื้นที่ตกหล่น |
-| AD4 mIoU4 | Mean IoU ของ Hair/Face/Upper/Lower | ค่าเฉลี่ยสี่ target บน domain ที่มีคำตอบ |
-| C3 global | Mean IoU ของ Hair/Upper/Lower | Sensitivity ที่ตัด Face ออกจากค่าเฉลี่ย แต่ยังใช้ GT Face เป็น valid non-target |
+| mIoU เฉลี่ย 4 คลาส — เฉพาะพิกเซลที่ GT ระบุคลาส | Mean IoU ของ Hair/Face/Upper/Lower | ค่าเฉลี่ยสี่ target บน domain ที่มีคำตอบ |
+| mIoU เฉลี่ย 3 คลาส — ผม เสื้อผ้าบน เสื้อผ้าล่าง | Mean IoU ของ Hair/Upper/Lower | ตัด Face ออกจากค่าเฉลี่ย แต่ยังใช้ GT Face เป็น valid non-target |
 
 ตัวหารศูนย์ให้ `null` หาก GT support ของ target ใดเป็นศูนย์ทั่วประชากร ค่า mean สี่ target เป็น `null` การ union subclasses คำนวณจาก mapped pixels ก่อนสร้าง confusion
 
@@ -108,7 +154,7 @@ Source upper/lower ไม่มี cross-zone garment tags ครบ การ�
 
 ต่อ GT person และ target ที่มี positive valid support ใช้ mask ของ prediction ที่จับคู่ได้ ประเมินบน shared valid domain โดยพิกเซล target ของเจ้าของอื่นที่ติดมาเป็น FP คนที่พลาดให้ IoU ศูนย์ ไม่มี annotation ของ part จะไม่เข้าสู่ตัวหาร target นั้น
 
-`Q_AD4_GT` ใน implementation คือค่าเฉลี่ยของ mean person-part IoU ราย target ทั้งสี่ ซึ่งถ่วง target เท่ากัน ตัวหารแต่ละ target มาจาก eligible person-parts ที่สร้างจริง ชื่อนี้แยกจาก `Q_C4_GT` ของ CIHP ที่ใช้ full-person matching/domains อีกชุด ไม่มี person metric C3 เพิ่ม
+**IoU รายคนเฉลี่ย 4 คลาส** ใช้รหัส `Q_AD4_GT` ในผลลัพธ์ implementation เฉลี่ย person-part IoU ราย target ก่อน แล้วเฉลี่ยสี่ target เท่ากัน ตัวหารแต่ละ target มาจาก GT person-parts ที่มี positive valid support ซึ่งสร้างจริง รายงานแยกเกณฑ์จับคู่กรอบ IoU ≥0.50 และ ≥0.75 ค่าของ CIHP เดิม `Q_C4_GT` อ้าง matcher และ GT domains ของการทดลองนั้น การอธิบายผล CCTV600 จึงใช้ชื่อตามหน่วยนับและ threshold ของรอบนี้
 
 ## เวลา ทรัพยากร และคิว
 
@@ -127,8 +173,8 @@ Quality pass ใช้ GPU worker ครั้งละหนึ่งโมเ�
 | Ownership | Map crop mask กลับ original grid และ clip ด้วย detector extent |
 | Composition/project | Resolve native overlaps แล้ว total-label mapping |
 | Output/validation | Atomic NPZ/metadata/commit และ readback |
-| Parsing work ต่อภาพ | ผลบวก adapter duration ของทุก ROI ในภาพนั้น |
-| Application from cached inputs | อ่านภาพและ cache จนเขียน frame packet ครบ โดยไม่มี YOLO inference ใหม่ |
+| เวลางาน parsing รวมทุกคนต่อภาพ (ms/ภาพ) | ผลบวก adapter duration ของทุก ROI ในภาพนั้น |
+| เวลาต่อภาพจาก YOLO cache จนบันทึกผล (ms/ภาพ) | อ่านภาพและ cache จนเขียน frame packet ครบ โดยอ้าง detector predictions ที่บันทึกแล้ว |
 
 QANet จับเวลา backbone/parsing-head calls ส่วน RP-R-CNN เรียก box_net/parsing_net ตรงจึงใช้ nonnested top-level child modules Native detector/parser APIs บางตัวทำ postprocessing และ file I/O ภายใน module boundary จึงต้องตีความ timer ตามขอบเขตที่ระบุ โมเดลทำนาย native classes ทั้งหมดใน forward เดียว ไม่มี latency ราย target ที่เป็นอิสระกัน
 
@@ -141,13 +187,15 @@ Clean round ต้องไม่มี external compute PID และ GPU utili
 รันคำสั่งจาก workspace `Human-Body-Extraction` ใช้ Python ตาม environment โดยตรง
 
 ```bash
-.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/progress.py --watch
+.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/readable_report.py --watch-status
 tmux attach -t parsing_cctv600_r2
 ```
 
 กด `Ctrl+B` แล้ว `D` เพื่อออกจาก tmux โดยงานยังทำต่อ กด `Ctrl+C` ใน progress viewer หยุดเฉพาะ viewer ส่วน `Ctrl+C` ในหน้าต่าง controller อาจขัดจังหวะ batch
 
 Private artifact root อยู่ใน `outputs/CURRENT.json` ใช้ `BATCH_STATE.json`, `CURRENT_WORKER.json`, `logs/`, model `STATE.json` และ immutable `ATTEMPTS.jsonl` ตรวจสุขภาพงาน เมื่อมี `BATCH_COMPLETION.json` แสดงว่า batch หยุดตามขอบเขต ต้องอ่าน completed/failed counts ประกอบ รายงานสุดท้ายอัตโนมัติอยู่ที่ `BATCH_REPORT_TH.md`
+
+การปรับชื่อ metric ใช้ `src/readable_report.py` ในขั้นแสดงผล เมื่อ batch จบจะปรับรายงาน `BATCH_REPORT_TH.md` เดิมด้วยชื่อเต็มและคำอธิบาย เก็บสำเนารายงานก่อนปรับชื่อและตรวจ hashes ของ canonical JSON พร้อมยืนยันว่าตัวเลขในตารางตรงเดิม การปรับนี้มี model/scorer calls เท่ากับศูนย์ รหัสใน frozen config และ canonical results ใช้ตรวจย้อนกลับตามเดิม
 
 เมื่อจบ batch มี `gallery/index.html` และ PNG ชุด 16 ภาพเดิมจาก detector manifest แสดง original, GT และเก้าโมเดลบนพิกัดเดียวกัน พร้อม SHA256/provenance ภาพทั้งหมดคงอยู่ใน private outputs ตามนโยบาย dataset
 

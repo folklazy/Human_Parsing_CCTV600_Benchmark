@@ -21,3 +21,12 @@
 - Parent config/source/GT/prediction bytes เก็บตามเดิม Continuation ผูก reuse compatibility, protocol/GT/source/config hashes และแต่ละผลระบุ source segment Native model retry/OOM retry ยังคงเป็นศูนย์ ส่วน QANet setup correction เป็น bounded attempt ที่ประกาศแยก
 - เปิด detached continuation controller PID 3579861 บน tmux `parsing_cctv600_r2` ด้วย launch commit `12d2ff7` ตรวจ process/session จริงและ parent M2FP มี packets ใหม่เพิ่มต่อเนื่อง
 - ตรวจ automatic handover สำเร็จ M2FP ปิด prediction collection ครบ 600 ภาพ/763 ROIs/764 API calls รวม warmup หนึ่งครั้ง Controller เปิด QANet corrected worker PID 3584087 ต่อ และตรวจ native20 packet ใหม่พร้อม module timer บน GPU จริงผ่าน ผลคะแนนคงรอ batch-end scoring
+
+### ปรับชื่อและคำอธิบาย metric
+
+- ผู้ใช้ขอให้ชื่อ metric สื่อความหมายและย้ำว่ามี repo dataset ส่งมอบแล้ว อ่าน README/ANNOTATION_SPEC/labels.json/DATASET.json ซ้ำ ตรวจ remote HEAD ตรง local `d77ad2eec84e3e44b1465abd17031c8f57e1f18f`
+- อธิบายคำยืนยันตรวจแก้ครบ 600 ภาพควบคู่กับ field `unassigned_negative_domain=not_certified` ใน schema การตีความ field นี้ใช้กำหนดพื้นที่คะแนน ส่วนข้อสรุปว่ามี annotation ขาดต้องอ้างการตรวจภาพเพิ่มเติม
+- ใช้ชื่อแสดงผล “mIoU เฉลี่ย 4 คลาส — เฉพาะพิกเซลที่ GT ระบุคลาส”, “mIoU เฉลี่ย 3 คลาส — ผม เสื้อผ้าบน เสื้อผ้าล่าง” และ “IoU รายคนเฉลี่ย 4 คลาส” พร้อมสูตร หน่วย denominator และ raw-key references
+- เพิ่มการอธิบาย null ตามเหตุผล ผลไม่ครบ รอ scoring ตัวหารศูนย์ และพื้นที่ทั้งภาพที่กติกาปัจจุบันยังไม่ประเมิน
+- เพิ่ม renderer ชื่อ metric และสถานะภาษาไทยเป็นขั้นแสดงผลหลัง batch พร้อมตรวจ numeric table cells, canonical small-record hashes, backup และ idempotence จาก synthetic fixture ใช้ model/scorer calls ศูนย์
+- เปิดขั้นแสดงผลใน tmux window `metric_labels` PID 3625445 ให้รอ BATCH_COMPLETION แล้วปรับรายงานไฟล์เดิม ตรวจ process จริงและ scientific source hashes ของ parent/continuation ตรงเดิม
