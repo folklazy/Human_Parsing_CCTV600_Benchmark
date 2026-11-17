@@ -69,3 +69,7 @@ Updated README/STATUS only for benchmark state. Frozen scientific source/config,
 ## 2026-11-17 — User requests all parser predictions fresh
 
 ผู้ใช้เปลี่ยนคำสั่งเป็นเริ่ม parsing ใหม่ทั้งหมด ตั้ง parser_prediction_reuse0 และเก็บรอบก่อนเป็นประวัติ แยก scoped_run/scoped_metrics/scoped_acceptance จาก frozen sources ใช้ GT ส่งมอบล่าสุดกับ frozen detector/RGB input assets เดิม CPU fixtures ผ่านทั้ง literal cross-class/binary counts, Face-local, missed/empty/VOID/duplicate/null handling, source-ID geometry conversion, atomic packets, timer/VRAM reporting, current native-config bindings และ worker failure หลัง packet สุดท้าย Resource limits และ inference settings เดิมคงตาม source bindings เปิดคิว sequential ใน tmux หลัง preparation/readiness ผ่าน ไม่มี model retry อัตโนมัติ
+
+## 2026-11-17T16:34:18+07:00 — Fresh run launch verified
+
+Run cctv600-fresh-20261117T092941639648Z ใน tmux cctv600_fresh_20261117T092941639648Z Controller 3955217 และ QANet worker 3955495 มีผลใหม่จริง 85/600ภาพ 114/763ROIs ณ snapshot failed/invalid0 First native packet readback, integer labels, original-grid geometry, frozen YOLO ownership และ current config binding ผ่าน Source/code freeze อ้าง launch commit b42f435338cc79e0d12f68841aa052e0cb06cef3 Main launch command จบแล้วและ controller มี parent เป็น tmux server ผู้ใช้ดูสถานะต่อได้โดยไม่ต้องให้ Codexเฝ้า Quality scoresยังไม่คำนวณระหว่าง collection

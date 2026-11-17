@@ -1,44 +1,43 @@
 # สถานะ Human Parsing CCTV600
 
-**เตรียม fresh run ทั้งเก้าโมเดล — parser prediction reuse0**
+**FRESH QUALITY RUNNING — ตรวจยืนยัน 2026-11-17T16:34:18+07:00**
 
-ผู้ใช้สั่งเริ่มผล parsing ใหม่ทั้งหมด ใช้ scoped_run.py และ scoped_metrics.py แยกจาก frozen source CPU acceptance ผ่านทั้ง reference fixtures และ fixtures เพิ่มเรื่อง cross-class matrix, partial-person nulls, TP=0 parts, packet readback, native config bindings, timer/VRAM summary และ worker failure หลัง packet สุดท้าย รอผล preparation และตรวจ launch จริงเพื่อบันทึก session/PID
+รอบใหม่ทำ parsing ใหม่ทั้ง9โมเดลบน600ภาพ ใช้ GT ส่งมอบล่าสุดและ frozen YOLO/RGB crop inputs ชุดเดียวกัน Parser prediction reuse0 ผลรอบก่อนเก็บใน archive index และ run records แยกจาก current run
 
-ขอบเขตตัวชี้วัดตกลงแล้วตาม [แผนการทดสอบ](README.md#ขอบเขตการทดสอบที่ตกลงไว้) GT-domain preflight บน CPU ผ่านครบ600 ภาพ รอบใหม่สร้าง GT bindings/config ใหม่ และเก็บ native quality predictions ใหม่ทุก ROI ของทุกโมเดล ข้อมูล progress ของรอบก่อนเก็บแยกตาม run records
-
-Dataset ส่งมอบมี 600 ภาพ, 774 bbox, 2,449 part shapes และ 171 ignore shapes ผลตรวจไฟล์/schema ผ่านครบชุด ผู้จัดทำยืนยันว่ามีคนบางส่วนที่ไม่ได้ annotate และปิดขอบเขตข้อมูลตามชุดนี้แล้ว Source ID0 คงเป็น Unassigned อ่าน [เอกสาร dataset](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
-
-## ผลตรวจ GT domain บน CPU
+## ตรวจเปิดงานจริง
 
 | รายการ | ผล |
 | --- | --- |
-| Exact population | 600 unique IDs |
-| คนผ่านเกณฑ์ด้านยาว ≥50 px | 769 |
-| Hair / Face / Upper / Lower GT parts หลัง shared domain | 544 / 384 / 745 / 668 |
-| Hair parts ที่ถูกยกเว้นทั้งหมดจาก conflict domain | 1 |
-| Image identity เทียบ native input manifest | ตรงครบ600 |
-| GT bbox geometry เปลี่ยน | 2 ภาพ ต้องผูก GT/matching ใหม่ |
-| Model calls ในการตรวจข้อมูลครั้งนี้ | 0 |
+| Run | `cctv600-fresh-20261117T092941639648Z` |
+| tmux | `cctv600_fresh_20261117T092941639648Z` |
+| Controller PID | 3955217 |
+| Worker PID ณ snapshot | 3955495 |
+| โมเดลแรก | QANet |
+| Completed images ณ snapshot | 85/600 |
+| Completed ROI calls ณ snapshot | 114/763 |
+| Failed / invalid ณ snapshot | 0 / 0 |
+| CPU acceptance / model readiness | PASS |
+| Native packet / geometry / YOLO ownership / config binding | PASS |
+| GPU ที่ใช้ | NVIDIA Tesla T4 |
 
-Membership SHA256 ของคำตอบที่ใช้ตรวจคือ `256a191352a2f32150fdf2d6a8ddc24845780f5885a8d7b2f785008a505a3706` ผล bindings ของรอบเก่ายังคงอ้างคำตอบเดิม การเตรียมรอบใหม่ต้องสร้าง GT bindings และ output แยก
+ค่าความคืบหน้าในตารางเป็น launch snapshot ดูสถานะปัจจุบันด้วยคำสั่งจาก workspace
 
-## สิ่งที่ต้องปรับก่อนเปิดรอบใหม่
+```bash
+.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/scoped_run.py --status --watch
+```
 
-1. ใช้ manifest จาก private dataset CURRENT.json สร้าง GT masks, shared valid domains, bbox matches และ eligibility ใหม่ Source IDs Hair1/Face2 ต้องแปลงเป็น reference target IDs Hair2/Face1 ให้ตรง scorer
-2. ประกาศขอบเขตเป็น annotated-person-part agreement ใช้ Macro4-local, mIoU3 (part-mean), Mean-part IoU และ pooled Precision/Recall/F1-Dice ตาม domain ที่กำหนด Positive GT parts ของคนที่พลาดใช้ empty prediction และคงอยู่ในตัวหาร
-3. ให้ reporter แสดง annotated-person recall และ unmatched predictions การนับทุก unmatched เป็น confirmed FP ไม่สอดคล้องกับ partial-person coverage Person AP/Precision/F1 ทั้งภาพและ global semantic metrics ที่ยังไม่มี negative domain รับรองให้เป็น null พร้อมเหตุผล
-4. เพิ่ม cross-class confusion matrix และ TP=0 part counts พร้อมสรุป peak VRAM จาก ledger แล้วตรวจ CPU acceptance เรื่องคนที่ไม่ได้ annotate, source0, prediction background, native ID mappings, conflicts และ STRICT_COMPLETE ก่อน freeze config ของรอบใหม่ Source/scorer/config ที่ freeze แล้วเก็บเป็นหลักฐานเดิม
-5. ตรวจ reuse compatibility ของ native ROI packets พร้อม crop/model/checkpoint/source hashes แล้วรวบรวมเฉพาะ native outputs ที่ยังขาด การเปลี่ยน GT ใช้เป็นเหตุผลในการสร้าง bindings และคะแนนใหม่ ส่วนการ inference เพิ่มขึ้นกับความตรงกันของ model inputs และ packets
+## การทำงานต่ออัตโนมัติ
 
-## ผล native ที่เก็บอยู่
+Controller ไล่โมเดลตาม frozen roster ทีละตัว เก็บ native predictions ใหม่ atomic packets และ failure records คุณภาพคำนวณหลัง collection batch หยุด แล้วดำเนิน dedicated timing ตาม100ภาพ ×3รอบที่อนุญาตไว้ Clean resource checks ยังใช้เกณฑ์เดิม ไม่มี automatic model/OOM retry เมื่อจบหยุดหลังเก้า checkpoints
 
-หกโมเดล QANet/M2FP/D2FP/RP-R-CNN/CPI R50/CPI ConvNeXt-B มี assembled prediction completion ครบ600 ภาพต่อโมเดล Sapiens2 0.4B มี collector completion600 IDs และ763ROIs โดยต้องผ่าน reconciliation สำหรับรอบใหม่ Sapiens2 0.8B/1B ยังอยู่ในคิวที่พักไว้ คะแนนจาก GT ปัจจุบันยังไม่ได้คำนวณ
+## GT และขอบเขตคะแนน
 
-## ตำแหน่งตรวจงาน
+GT มี769คนผ่านเกณฑ์และ Hair/Face/Upper/Lower parts544/384/745/668หลัง shared domain Membership SHA256 `256a191352a2f32150fdf2d6a8ddc24845780f5885a8d7b2f785008a505a3706` มีคนบางส่วนไม่มี annotation Source ID0คง Unassigned Person diagnostics ใช้ annotated-person recall และ unmatched predictions ส่วน full-scene person AP/Precision/F1 เป็น null ตาม coverage คะแนนสี่ส่วนใช้ Macro4-local พร้อม IoU/Precision/Recall/F1-Dice และ confusion matrices ที่ประกาศ
 
-- Dataset bindings อ้างจาก private dataset CURRENT.json
-- ผล preflight เก็บใน private dataset provenance และเชื่อมไว้ใน CURRENT.json
-- Native run และ logs อ้างจาก outputs/CURRENT.json ของ benchmark
-- บันทึกการเปิดและพักงานอยู่ใน WORK_LOG.md และ immutable run records
+## ตำแหน่งหลักฐานและจุดจบ
 
-[นิยามและ pipeline](README.md) · [Frozen reference protocol เดิม](configs/SHARED_REFERENCE_V1.json)
+Current run อ้างจาก `outputs/CURRENT.json` ภายใน run มี `controller.log`, `logs/<model>.log`, `BATCH_STATE.json`, `CURRENT_WORKER.json`, `LAUNCH.json` และ `LAUNCH_VERIFICATION.json` การเปิดโปรแกรม/ปิดบทสนทนาแยกจาก tmux session ที่ยืนยัน PID จริงแล้ว
+
+จบรอบเมื่อมี `BATCH_COMPLETION.json` และ `BATCH_REPORT_TH.md` พร้อม metrics/CSV/TIMING_SUMMARY/gallery หากหยุดผิดปกติอ่าน `CONTROLLER_FAILURE.json` หรือ model failure records คะแนนหลักของระบบที่ไม่ครบเป็น null
+
+[แผนและนิยาม](README.md) · [Dataset](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
