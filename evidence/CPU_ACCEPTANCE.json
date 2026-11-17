@@ -1,8 +1,30 @@
 {
   "status": "PASS",
-  "test_cases": 17,
-  "failures": 0,
-  "config_sha256": "d59622b334a9be33c11b81c7f0ef55e2bfc2fa7317432792d5f8c9b4cce03c77",
-  "protocol_sha256": "9162ea7b245280c1d5c1402f7b300746bbe68fb87c3271b87c2592f1c94b08ba",
-  "revision": "QANET_NATIVE_METHOD_TIMER_2"
+  "at_utc": "2026-11-17T04:52:34.065305+00:00",
+  "config_sha256": "a8c45fa8d8054ed64c1d755050431044e0bfd57ba0d05aca202597a3ea6b1eb5",
+  "protocol_sha256": "81c02f21ffdf75250dc330eaa6eeef9d3d93a9da9aa706fef3b211f3e15b2d2c",
+  "fixtures": [
+    "full-grid FP on unassigned reference pixels",
+    "Face-local rectangle FP and outside exclusion",
+    "missed GT zero",
+    "shared VOID",
+    "mean-part versus pooled",
+    "GT-first bbox ignore",
+    "ID renaming",
+    "empty predictions",
+    "native20/29 mapping and unknown labels",
+    "GT component union and conflicts",
+    "RPR proven empty output",
+    "CPI unused-cache-only release",
+    "atomic packet scorer reporter",
+    "STRICT_COMPLETE and null"
+  ],
+  "source_hashes_verified": true,
+  "model_calls": 0,
+  "actual_packet_integration_models": [
+    "QANet_CIHP_HRNetW48_512x384",
+    "M2FP_R101_CIHP",
+    "D2FP_R101_CIHP",
+    "CPI_ConvNeXtB_CIHP"
+  ]
 }

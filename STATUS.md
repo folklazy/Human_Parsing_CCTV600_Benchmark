@@ -1,27 +1,42 @@
 # สถานะ Human Parsing CCTV600
 
-**QUALITY_BATCH_RUNNING — 17 พฤศจิกายน 2026**
+**REFERENCE_PARTS_R3 — พร้อมเปิด continuation ตามวิธี CIHP/CCTV เดิม**
 
-เตรียม exact 600 IDs และ 763 predicted ROIs ต่อโมเดลแล้ว ใช้ YOLO26x-Seg cache เดิม GT eligible boxes 769 รายการ ส่วนตัวหาร person-parts Hair/Face/Upper/Lower หลัง common VOID เท่ากับ 544/390/740/665
+ผู้ใช้สั่งเริ่มวิธีประเมินใหม่วันที่ 17 พฤศจิกายน 2026 ใช้ Mean-part IoU, Face-local, mIoU3 (part-mean), Macro4-local และ pooled Precision/Recall/F1 ตาม shared-reference run เดิมของ CIHP/CCTV
 
-CPU acceptance ของ continuation ผ่าน 17 cases และตรวจ M2FP packet ใหม่ผ่าน hashes, native integer labels, dimensions, ROI map-back, YOLO ownership และการบวก timer พร้อมเปิดภาพ overlay เพื่อตรวจ geometry หนึ่งภาพ คะแนนหลักใช้ชื่อ “mIoU เฉลี่ย 4 คลาส — เฉพาะพิกเซลที่ GT ระบุคลาส” พื้นที่ unassigned ถูกเว้นจากคะแนน ส่วนคะแนนพื้นที่ทั้งภาพแสดง “ยังไม่ประเมินตามกติกาปัจจุบัน”
+CCTV600 ใช้ bbox matching ที่ 0.50 สำหรับคะแนนรายส่วน พร้อม person diagnostics ที่ 0.75 เพราะ dataset มี bbox GT และ masks สี่ส่วน ข้อแตกต่างจาก GT-person-mask matching ของงานเดิมระบุใน protocol
 
-รอบแรก `parsing600-20261117T030309293781Z` พบ QANet timer setup error ก่อน model calls และเก็บ failure ไว้ M2FP PID 3563174 ทำงานต่อใน session ของตัวเอง ส่วน continuation `parsing600-20261117T030309293781Z-timer-r2` รับผล parent และเปิดคิวที่เหลือหลัง M2FP จบ โดยใช้ timer correction `QANET_NATIVE_METHOD_TIMER_2` Native inference, mappings และ scorer ยังคงผูกกับ source hashes เดิม
+ประชากร exact 600 ภาพและ frozen YOLO26x cache 763 ROIs ต่อโมเดล GT people ≥50 px มี 769 รายการ Eligible Hair/Face/Upper/Lower มี 544/390/740/665 person-parts
 
-**ตรวจ handover แล้ว** M2FP มี prediction packets ครบ exact 600 ภาพ, 763 ROIs และ model API calls 764 รวม TRAIN warmup หนึ่งครั้ง Completion missing/duplicate/failed/invalid เป็นศูนย์ ส่วนคะแนนยังรอ saved-mask scoring หลัง quality batch ทั้งเก้าหยุด
+## ผล native ที่ตรวจแล้วก่อนเปิดรอบใหม่
 
-QANet ที่แก้ timer แล้วเริ่ม GPU inference สำเร็จ PID 3584087 ตรวจ packet ใหม่ผ่าน native20 integer labels, original-grid geometry, ownership และ actual module timers Controller PID 3579861 ทำคิวต่ออัตโนมัติใน tmux `parsing_cctv600_r2`
+| Model | Reused ROIs | Pending ROIs |
+| --- | --- | --- |
+| QANet_CIHP_HRNetW48_512x384 | 763 | 0 |
+| M2FP_R101_CIHP | 763 | 0 |
+| D2FP_R101_CIHP | 763 | 0 |
+| RPR_CIHP | 228 | 535 |
+| CPI_R50_CIHP | 2 | 761 |
+| CPI_ConvNeXtB_CIHP | 763 | 0 |
+| Sapiens2_0.4b | 0 | 763 |
+| Sapiens2_0.8b | 0 | 763 |
+| Sapiens2_1b | 0 | 763 |
 
-Resource guards ใช้ตาม protocol GPU มีบริการเว็บร่วมอยู่ จึงเก็บ quality timings เป็น diagnostics Model admission ที่ผ่านไม่รับประกันทุกภาพว่าจะผ่าน และ clean timing ต้องผ่าน admission แยกตามรอบ
+ทุกชุดที่ตรวจมี invalid/partial/orphan เป็นศูนย์ ณ prelaunch snapshot ผลครบสี่โมเดลเก็บแล้ว 600 ภาพต่อโมเดล โดยรอคะแนนของ protocol ใหม่หลัง quality batch จบ
 
-Canonical operational status อยู่ใน `outputs/CURRENT.json` และ private run `BATCH_STATE.json` เมื่อจบมี `BATCH_COMPLETION.json` และ `BATCH_REPORT_TH.md` การจบ controller ยังต้องอ่านจำนวนโมเดลที่ครบและ failures
+## การแก้ที่ประกาศไว้
+
+- RP-R-CNN รับ empty prediction เฉพาะเมื่อ native traceback ยืนยัน BoxList มีจำนวนศูนย์
+- CPI คืนเฉพาะ unused cache ของตัวเองเมื่อ physical free ต่ำกว่า guard แล้วตรวจ threshold เดิม การกระทำนี้เกิดก่อน model call และบันทึก resource event
+- ผลจาก failed attempts เดิมเก็บใน parent records และไม่มี automatic model/OOM retry
+
+CPU fixtures และ actual saved-packet integration ของสี่โมเดลผ่านแล้ว Scorer ใช้ counts/summarize เดิม พร้อม source/protocol/GT hashes ที่ตรึงก่อนคำนวณคะแนน CCTV600
 
 ```bash
-.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/readable_report.py --watch-status
+.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/reference_parts600.py --progress --watch
+tmux attach -t parsing_cctv600_r3
 ```
 
-[Protocol และคำอธิบายคะแนน](README.md)
+Current run root อ้างจาก `outputs/CURRENT.json` การจบมี `BATCH_COMPLETION.json` และ `BATCH_REPORT_TH.md` พร้อม canonical metrics/CSV/ภาพชุดเดิม ตารางคะแนนของระบบที่ยังไม่ครบเป็น null พร้อมสาเหตุ
 
-ตรวจ dataset repo ทั้ง local และ GitHub ที่ commit `d77ad2e` อีกครั้ง ผู้จัดทำยืนยันตรวจแก้ครบ 600 ภาพ ส่วน schema ระบุรหัส 0 เป็น unassigned และ `unassigned_negative_domain=not_certified` การเลือกเฉพาะพิกเซล GT ที่ระบุคลาสเป็นกติกาของ benchmark รอบนี้ หลักฐานว่าภาพใดขาด annotation ต้องอ้างการตรวจภาพเพิ่มเติม
-
-Launch snapshot เมื่อ 2026-11-17T10:38:18+07:00 เป็นช่วง controller รอ parent M2FP ที่ 550/600 ภาพ จากนั้นเปลี่ยนเข้าสู่ quality batch ตามย่อหน้าด้านบน ใช้ progress viewer ดูจำนวนปัจจุบัน
+[รายละเอียดและนิยาม](README.md) · [Active protocol](configs/SHARED_REFERENCE_V1.json)

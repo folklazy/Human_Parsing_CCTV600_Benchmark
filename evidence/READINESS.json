@@ -1,43 +1,97 @@
 {
-  "status": "QUALITY_RUNNING_QANET_CORRECTION_READBACK_PASS",
-  "run_id": "parsing600-20261117T030309293781Z-timer-r2",
-  "protocol_sha256": "9162ea7b245280c1d5c1402f7b300746bbe68fb87c3271b87c2592f1c94b08ba",
-  "config_sha256": "d59622b334a9be33c11b81c7f0ef55e2bfc2fa7317432792d5f8c9b4cce03c77",
+  "active_protocol": "CCTV600_SHARED_REFERENCE_PARTS_V1",
+  "run_id": "cctv600-reference-parts-r3-20261117T043023373772Z",
+  "status": "REFERENCE_PRELAUNCH_ACCEPTED",
+  "protocol_sha256": "81c02f21ffdf75250dc330eaa6eeef9d3d93a9da9aa706fef3b211f3e15b2d2c",
+  "config_sha256": "a8c45fa8d8054ed64c1d755050431044e0bfd57ba0d05aca202597a3ea6b1eb5",
   "GT_bindings": {
-    "valid_pixels": 7373840,
-    "conflict_pixels": 7934,
-    "QA_excluded_shapes": 1,
-    "support": [
-      0,
-      828310,
-      276021,
-      4391862,
-      1877647
-    ],
-    "eligible_person_parts": [
-      544,
-      390,
-      740,
-      665
-    ],
-    "eligible_boxes": 769,
-    "identical_GT_box_pairs": 0,
-    "identical_detector_box_pairs": 0
+    "images": 600,
+    "GT_people": 769,
+    "VOID_pixels": 731217,
+    "1": 390,
+    "2": 544,
+    "3": 740,
+    "4": 665,
+    "GT_support": {
+      "1": 276021,
+      "2": 828310,
+      "3": 4391862,
+      "4": 1877647
+    },
+    "target_ID_names": {
+      "1": "Face_local",
+      "2": "Hair",
+      "3": "Upper",
+      "4": "Lower"
+    }
   },
-  "resource_plan": {
-    "free_disk_GiB": 150.03882598876953,
-    "prepared_bytes": 47363116,
-    "frame_prediction_arrays_uncompressed_per_model": 5686886400,
-    "ROI_selected_plus_one_candidate_uncompressed_per_model": 53924442,
-    "total_nine_uncompressed_prediction_reference_GiB": 48.11892060376704,
-    "variable_candidates_and_native_exports": "not bounded by one candidate estimate; runtime model/run/disk guards apply",
-    "maximum_run_GiB": 80,
-    "minimum_free_disk_GiB": 50,
-    "timing_frames": 100,
-    "timing_ROI_calls_per_round": 124,
-    "quality_new_ROI_calls_per_model": 763,
-    "quality_warmup_calls_per_model": 1
+  "reuse_summary": {
+    "QANet_CIHP_HRNetW48_512x384": {
+      "reused_ROIs": 763,
+      "pending_ROIs": 0,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    },
+    "M2FP_R101_CIHP": {
+      "reused_ROIs": 763,
+      "pending_ROIs": 0,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    },
+    "D2FP_R101_CIHP": {
+      "reused_ROIs": 763,
+      "pending_ROIs": 0,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    },
+    "RPR_CIHP": {
+      "reused_ROIs": 228,
+      "pending_ROIs": 535,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    },
+    "CPI_R50_CIHP": {
+      "reused_ROIs": 2,
+      "pending_ROIs": 761,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    },
+    "CPI_ConvNeXtB_CIHP": {
+      "reused_ROIs": 763,
+      "pending_ROIs": 0,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    },
+    "Sapiens2_0.4b": {
+      "reused_ROIs": 0,
+      "pending_ROIs": 763,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    },
+    "Sapiens2_0.8b": {
+      "reused_ROIs": 0,
+      "pending_ROIs": 763,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    },
+    "Sapiens2_1b": {
+      "reused_ROIs": 0,
+      "pending_ROIs": 763,
+      "invalid": 0,
+      "partial": 0,
+      "orphan": 0
+    }
   },
+  "total_reused_ROIs": 3282,
+  "total_pending_ROIs": 3585,
   "models": {
     "QANet_CIHP_HRNetW48_512x384": {
       "model_id": "QANet_CIHP_HRNetW48_512x384",
@@ -160,43 +214,8 @@
       "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
     }
   },
-  "source_bindings_count": 1613,
-  "CPI_parity_evidence": {
-    "path": "Human_Parsing_Benchmark/runs/cpi-common-c4p-20261030/PARITY_REVIEW.json",
-    "sha256": "43f694d73d66e58007e26ff860a72a8553052354b50c055c61c4cb0b47494c2a",
-    "status": "BOUNDED_PARITY_EVIDENCE_ACCEPTED_WITH_LIMITATION",
-    "not_population_bitwise_equivalence": true,
-    "revisions": [
-      "CPI_PERSON_CHUNK_RESTORATION_1",
-      "CPI_FEATURE_BUFFER_REUSE_2",
-      "CPI_FEATURE_BRANCH_SCHEDULE_3"
-    ]
-  },
-  "setup_correction": "QANET_NATIVE_METHOD_TIMER_2",
-  "parent_run_id": "parsing600-20261117T030309293781Z",
-  "first_new_prediction_packet_check": "M2FP native packet readback, map-back, ownership, labels and timer decomposition PASS",
-  "parent_QANet_model_calls": 0,
-  "CPU_acceptance_cases": 17,
-  "launch_check": {
-    "controller_pid": 3579861,
-    "parent_worker_pid": 3563174,
-    "tmux_session": "parsing_cctv600_r2",
-    "observed_M2FP_completed_frames": 550,
-    "model_API_calls": 700,
-    "source_launch_commit": "12d2ff70e14af57f7cd6668ad4f63841754425bb",
-    "status": "QUEUED_WAITING_PARENT_MODEL_COMPLETION"
-  },
-  "M2FP_prediction_completion": {
-    "expected": 600,
-    "completed": 600,
-    "missing": 0,
-    "unexpected": 0,
-    "duplicate": 0,
-    "failed": 0,
-    "invalid": 0,
-    "model_calls": 764,
-    "warmup_calls": 1
-  },
-  "QANet_corrected_first_packet": "PASS_NATIVE20_GEOMETRY_OWNERSHIP_MODULE_TIMER",
-  "QANet_observed_completed_frames": 38
+  "reference_method": "Mean-part IoU, Face-local, mIoU3 part-mean, Macro4-local",
+  "matching": "bbox IoU for CCTV600",
+  "dataset_release": "d77ad2e",
+  "source_bindings_count": 1619
 }

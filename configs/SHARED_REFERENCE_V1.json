@@ -1,0 +1,75 @@
+{
+  "protocol": "CCTV600_SHARED_REFERENCE_PARTS_V1",
+  "status": "FROZEN_BEFORE_REFERENCE_ACCEPTANCE_AND_SCORES",
+  "reference_run": "shared-c3-face-local-20261108T083533Z",
+  "reference_publication_local_commit": "29f7030",
+  "reference_publication_remote_snapshot_checked": "8505cbf4ca7ba1bec338a33b3f678d5e6c8fb194",
+  "population": 600,
+  "target_order": [
+    "Hair",
+    "Face_local",
+    "Upper",
+    "Lower"
+  ],
+  "primary": "Macro4_local",
+  "primary_definition": "unweighted mean of four target mean-part IoUs, Face uses the shared tight GT Face bbox scoring domain",
+  "secondary": [
+    "mIoU3_part_mean",
+    "Face_local_IoU",
+    "mean_part_IoU",
+    "pooled_IoU",
+    "precision",
+    "recall",
+    "F1_Dice",
+    "binary_confusion",
+    "bbox_person_metrics"
+  ],
+  "GT": {
+    "person_minimum_source_bbox_long_side_px": 50,
+    "parts": "union source components with the same image-local owner and class",
+    "valid": "whole original grid except shared explicit ignore, under50 boxes, class/owner conflicts, degenerate-shape raster pixels and the previously reviewed class-error shape",
+    "Hair_Upper_Lower": "compare the matched person's prediction against that person's positive GT part on the full shared valid grid",
+    "Face_local": "compare within the tight pixel bbox of the positive GT Face mask, no margin, intersect shared valid grid",
+    "reference_assumption": "each accepted positive part mask specifies the visible reference extent of that part for its owner",
+    "unassigned": "retained as source unassigned. Within a positive-person-part task, pixels outside that person's reference part are non-target. No full-scene semantic background certification is inferred",
+    "absent_part_annotation": "no task for that owner and class",
+    "missed_GT_person": "empty prediction, positive parts remain in denominator with IoU zero"
+  },
+  "matching": {
+    "type": "frozen CCTV600 GT-first confidence-ordered bbox matching",
+    "thresholds": [
+      0.5,
+      0.75
+    ],
+    "quality_part_threshold": 0.5,
+    "unmatched_ignore_box_IoA": 0.5,
+    "difference_from_reference": "CCTV600 has bbox GT without full-person silhouette masks. Uses bbox IoU, not the earlier GT-person-mask matcher",
+    "tie": "confidence, predicted box geometry, maximum eligible GT IoU then GT box geometry. Identical geometry uses source order and is reported",
+    "GT_used_in_inference": false
+  },
+  "mapping": "reuse CIHP_SAPIENS_COMMON_VIEW_REVISION2 total native20/native29 mapping, Face ID1 Hair ID2 Upper ID3 Lower ID4 in the reference scorer",
+  "GT_source_ids": {
+    "hair": 1,
+    "face": 2,
+    "upper": 3,
+    "lower": 4
+  },
+  "reference_target_ids": {
+    "hair": 2,
+    "face": 1,
+    "upper": 3,
+    "lower": 4
+  },
+  "projection": "per-person native hard planes after the existing YOLO ownership route. All native classes preserved. No global semantic composition is used as a substitute for per-person part scoring",
+  "garments": "CIHP UpperClothes+Coat and Pants+Skirt, Sapiens Upper_Clothing and Lower_Clothing. Dress/Apparel remain OTHER. No geometric split",
+  "Face_claim": "agreement within GT Face bbox under Face/Face_Neck proxy mapping. Does not establish full-frame face-only or neck quality",
+  "STRICT_COMPLETE": "600 exact unique image IDs, all frozen original detector ROI jobs accepted with complete source bindings. Incomplete primary null, historical failures retained",
+  "native_inference": "reuse accepted RGB-crop native predictions. Process only missing ROI jobs in fresh linked collections. FP32/batch1/preprocessing/TTA/thresholds/checkpoints/YOLO ownership remain bound to the accepted collector",
+  "repairs": {
+    "RPR": "accept a native empty BoxList as an empty prediction only when the parsing-field KeyError traceback proves len(pred)==0. Unexpected nonempty missing-field outputs fail",
+    "CPI_unused_cache_guard": "if physical free VRAM is below the existing guard, release this process's unused PyTorch cache once before rechecking the guard. No model retry, allocator environment change, precision or resolution change"
+  },
+  "timing": "record accepted per-ROI adapter intervals, sum actual ROI work per image and population. Preserve source interval scope, failures, warmups and missing timer reasons. Dedicated 100-image x3 rounds keep the previous clean-resource policy",
+  "automatic_model_retry": 0,
+  "scope_end": "stop after the approved nine checkpoints and their scheduled timing rounds"
+}

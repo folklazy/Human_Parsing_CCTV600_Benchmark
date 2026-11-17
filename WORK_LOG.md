@@ -30,3 +30,15 @@
 - เพิ่มการอธิบาย null ตามเหตุผล ผลไม่ครบ รอ scoring ตัวหารศูนย์ และพื้นที่ทั้งภาพที่กติกาปัจจุบันยังไม่ประเมิน
 - เพิ่ม renderer ชื่อ metric และสถานะภาษาไทยเป็นขั้นแสดงผลหลัง batch พร้อมตรวจ numeric table cells, canonical small-record hashes, backup และ idempotence จาก synthetic fixture ใช้ model/scorer calls ศูนย์
 - เปิดขั้นแสดงผลใน tmux window `metric_labels` PID 3625445 ให้รอ BATCH_COMPLETION แล้วปรับรายงานไฟล์เดิม ตรวจ process จริงและ scientific source hashes ของ parent/continuation ตรงเดิม
+
+### เริ่มวิธีประเมินใหม่ตามคำขอผู้ใช้
+
+- อ่าน publication และ working-copy รายงาน CIHP/CCTV พร้อม shared-reference scorer พบชุดชื่อ Mean-part IoU, Face-local, mIoU3 (part-mean), Macro4-local ตาม run shared-c3-face-local-20261108T083533Z และแยกจาก global C4-P ในประวัติ
+- ตรวจ GitHub main snapshot 8505cbf4 และ local publication 29f7030 ซึ่งมีรายงานคนละ revision บันทึกแหล่งที่เลือกและ hashes แยกชัดเจน
+- ผู้ใช้สั่งเริ่มใหม่ จึงปิดเฉพาะคิว controller R2 และให้ CPI ConvNeXt worker เดิมทำต่อจนจบ โดยเก็บผลและ failure records เดิมไว้
+- สร้าง reference-parts R3 ภายใน experiment เดิม ใช้ accepted GT person-parts บน shared valid grid ทั้งภาพสำหรับ Hair/Upper/Lower และ tight GT Face bbox สำหรับ Face-local GT source และ native predictions เก็บตามเดิม
+- ปรับ matching เป็น bbox IoU ตาม GT CCTV600 ที่มี ประกาศต่างจาก GT-mask matching ของ shared CIHP/CCTV90 และไม่สร้าง GT silhouette ขึ้นแทน
+- ใช้ counts/summarize เดิม ตรวจ literal fixtures รวม Mean-part 0.5 เทียบ pooled 0.9, FP บนพื้นที่นอก GT part, Face-local FP ภายในกรอบและการเว้นนอกกรอบ, missed/empty/VOID, union/conflicts, ID renaming, label contract, null/STRICT_COMPLETE และ packet→scorer→reporter
+- ตรวจ empty-output repair ของ RP-R-CNN บน CPU และตรวจ unused-cache-only release ของ CPI โดยคง physical guard เดิม ไม่เปลี่ยน allocator environment หรือ inference settings
+- Actual packet integration ใช้สี่โมเดลที่ครบแบบ read-only บนตัวอย่างที่มีครบสี่ target เพื่อทดสอบ contract ไม่มีการใช้คะแนนเลือก mapping/settings
+- Prelaunch reconciliation ตรวจผ่าน 3,282 ROIs เหลือ 3,585 ROIs โดย invalid/partial/orphan เป็นศูนย์ เก็บค่ารายโมเดลพร้อม packet/config/model/input bindings
