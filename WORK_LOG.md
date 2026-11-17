@@ -43,3 +43,11 @@
 - Actual packet integration ใช้สี่โมเดลที่ครบแบบ read-only บนตัวอย่างที่มีครบสี่ target เพื่อทดสอบ contract ไม่มีการใช้คะแนนเลือก mapping/settings
 - Prelaunch reconciliation ตรวจผ่าน 3,282 ROIs เหลือ 3,585 ROIs โดย invalid/partial/orphan เป็นศูนย์ เก็บค่ารายโมเดลพร้อม packet/config/model/input bindings
 - เปิด R3 detached controller PID 3684804 บน tmux parsing_cctv600_r3 ด้วย commit c409eb2 ตรวจ RP-R-CNN worker PID 3686707 และ packet ใหม่ของ failed ROI เดิมผ่าน Native BoxList มีศูนย์คนจริงจึงเก็บ empty prediction ตาม contract ผลช่วง nonempty ใช้ native API เดิม
+
+## 2026-11-17 — GT revision audit and queue hold
+
+ผู้จัดทำรายงานการแก้ annotation และให้ตรวจ dataset/เอกสารก่อนดำเนิน benchmark ต่อ ตรวจภาพและ JSON ครบ 600 รายการ พบ annotation hash เปลี่ยน 23 ไฟล์ ภาพต้นฉบับและ bbox geometry/owners คงเดิมทุกภาพ Dataset รุ่นตรวจสอบ 1.0.1-rc.1 มี part shapes 2,449 ชิ้น ผ่าน schema และ owner links โดยยังมี overlap QA กำกับ เอกสาร dataset และ private snapshot/manifest เก็บแยก revision
+
+R3 controller หยุดเพื่อรอ GT revision ส่วน native Sapiens2 0.4B ที่ปล่อยให้จบมี collector completion exact 600 IDs และ state 763 ROIs จบ 2026-11-17T13:30:49+07:00 failed/invalid 0 หกโมเดลก่อนหน้ามี assembled completion ครบ600 ภาพ ข้อมูลนี้เป็นสถานะ native outputs การนำ 0.4B เข้ารอบใหม่ต้องผ่าน reconciliation งาน0.8B/1B, scoring และ timing ยังพัก การตรวจ dataset รอบนี้ใช้ CPU และ model calls0
+
+Updated README/STATUS only for benchmark state. Frozen scientific source/config, prior prediction packets and historical run records remain bound to their original revision. The requested post-edit launcher was deferred when the user redirected work to dataset validation and Markdown documentation.
