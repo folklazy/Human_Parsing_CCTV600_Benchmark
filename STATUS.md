@@ -1,49 +1,47 @@
 # สถานะ Human Parsing CCTV600
 
-**FRESH QUALITY RUNNING — ตรวจยืนยัน 2026-11-17T16:42:57+07:00**
+**Controlled continuation ของ Sapiens2 1B — ตรวจ 2026-11-18T10:27:29+07:00**
 
-รอบใหม่ทำ parsing ใหม่ทั้ง9โมเดลบน600ภาพ ใช้ GT ส่งมอบล่าสุดและ frozen YOLO/RGB crop inputs ชุดเดียวกัน Parser prediction reuse0 ผลรอบก่อนเก็บใน archive index และ run records แยกจาก current run
+แปดโมเดล QANet/M2FP/D2FP/RP-R-CNN/CPI R50/CPI ConvNeXt-B/Sapiens2 0.4B/Sapiens2 0.8B มี canonical metricsครบ600ภาพและ native ROI packetsครบ763งานต่อโมเดล พร้อม clean timingครบสามรอบ ผลเหล่านี้เก็บไว้พร้อม source hashes
 
-## ตรวจเปิดงานจริง
+## สาเหตุที่1Bหยุด
 
-| รายการ | ผล |
+Controllerตรวจพื้นที่ด้วยduระหว่าง atomic rename ของ ROI packet จึงได้รับ ENOENT และส่งSIGTERMไปยังworker พบ native1B packetsที่ผ่าน reconciliation737ROIs และ complete frame packets579ภาพ ส่วนที่เหลือ26ROIsอยู่ในcontinuationที่เชื่อมกับ fresh experimentเดิม สาเหตุบันทึกเป็น orchestration resource-inspection failure และรักษา raw failure recordsเดิม
+
+ตัวตรวจพื้นที่ใหม่ต้องอ่านได้สำเร็จ ลองซ้ำเฉพาะ ENOENTได้สูงสุดสามครั้งและคงdisk/memory/time guardsตามconfigเดิม CPU regressionผ่านทั้ง filesystem race, permanent errors, retry bound, exact disk thresholds และเวลาROIที่รวมข้ามsegments
+
+## Process และความคืบหน้าที่ตรวจ
+
+| รายการ | ค่า ณ snapshot |
 | --- | --- |
-| Run | `cctv600-fresh-20261117T093921424617Z` |
-| tmux | `cctv600_fresh_20261117T093921424617Z` |
-| Controller PID | 3968077 |
-| Worker PID ณ snapshot | 3968392 |
-| โมเดลแรก | QANet |
-| Completed images ณ snapshot | 43/600 |
-| Completed ROI calls ณ snapshot | 68/763 |
-| Failed / invalid ณ snapshot | 0 / 0 |
-| CPU acceptance / model readiness | PASS |
-| Native packet / geometry / YOLO ownership / config binding | PASS |
-| GPU ที่ใช้ | NVIDIA Tesla T4 |
+| Run | `cctv600-1b-continuation-20261118T032146603433Z` |
+| tmux | `cctv600_fresh_20261118T032146603433Z` |
+| Controller PID | 301591 |
+| Worker PID | 301752 |
+| โมเดลที่เปิด | Sapiens2 1B ตัวเดียว |
+| Worker state | QUALITY_RUNNING |
+| Accepted parent ROIs | 737 |
+| New ROIs completed | 26 / 26 |
+| Current model calls | 1 / 27 รวมTRAIN warmupหนึ่งcall |
 
-ค่าความคืบหน้าในตารางเป็น launch snapshot ดูสถานะปัจจุบันด้วยคำสั่งจาก workspace
+## วิธีดูสถานะ
+
+รันจาก workspace Human-Body-Extraction
 
 ```bash
 .venv/bin/python Human_Parsing_CCTV600_Benchmark/src/scoped_run.py --status --watch
 ```
 
-## การทำงานต่ออัตโนมัติ
+Tmuxเปิดหน้า statusเป็นค่าเริ่มต้น Ctrl+Cที่หน้านี้หยุดเฉพาะviewer ออกจากtmuxให้งานต่อใช้Ctrl+B แล้วD `outputs/CURRENT.json` ชี้rootปัจจุบัน มีcontroller.log, CURRENT_WORKER.json, BATCH_STATE.json และlogs/Sapiens2_1b.log
 
-Controller ไล่โมเดลตาม frozen roster ทีละตัว เก็บ native predictions ใหม่ atomic packets และ failure records คุณภาพคำนวณหลัง collection batch หยุด แล้วดำเนิน dedicated timing ตาม100ภาพ ×3รอบที่อนุญาตไว้ Clean resource checks ยังใช้เกณฑ์เดิม ไม่มี automatic model/OOM retry เมื่อจบหยุดหลังเก้า checkpoints
+## การปิดรอบอัตโนมัติ
 
-## GT และขอบเขตคะแนน
+เมื่อquality observationsของ1Bรวมได้exact600IDsและ763ROIs จึงคำนวณsaved-mask scoresและเปิดdedicated timingเฉพาะ1Bสามรอบ ผลแปดโมเดลที่ตรวจรับแล้วใช้อ้างอิงตามhashes เมื่อหยุดรอบทั้งหมดจะสร้างBATCH_COMPLETION.json, BATCH_REPORT_TH.md, TARGET_RESULTS.csv, TIMING_SUMMARY.json และgalleryชุด16ภาพเดิม
 
-GT มี769คนผ่านเกณฑ์และ Hair/Face/Upper/Lower parts544/384/745/668หลัง shared domain Membership SHA256 `256a191352a2f32150fdf2d6a8ddc24845780f5885a8d7b2f785008a505a3706` มีคนบางส่วนไม่มี annotation Source ID0คง Unassigned Person diagnostics ใช้ annotated-person recall และ unmatched predictions ส่วน full-scene person AP/Precision/F1 เป็น null ตาม coverage คะแนนสี่ส่วนใช้ Macro4-local พร้อม IoU/Precision/Recall/F1-Dice และ confusion matrices ที่ประกาศ
+รายงานส่งมอบจะเผยแพร่ที่ `reports/CCTV600_RESULTS_TH.md` บนGitHub โดยpublication statusอยู่ในPUBLICATION.json หากpublishติดขัดรายงานในrunยังเป็นหลักฐานตรวจต่อได้
 
-## ตำแหน่งหลักฐานและจุดจบ
-
-Current run อ้างจาก `outputs/CURRENT.json` ภายใน run มี `controller.log`, `logs/<model>.log`, `BATCH_STATE.json`, `CURRENT_WORKER.json`, `LAUNCH.json` และ `LAUNCH_VERIFICATION.json` การเปิดโปรแกรม/ปิดบทสนทนาแยกจาก tmux session ที่ยืนยัน PID จริงแล้ว
-
-จบรอบเมื่อมี `BATCH_COMPLETION.json` และ `BATCH_REPORT_TH.md` พร้อม metrics/CSV/TIMING_SUMMARY/gallery หากหยุดผิดปกติอ่าน `CONTROLLER_FAILURE.json` หรือ model failure records คะแนนหลักของระบบที่ไม่ครบเป็น null
+เวลาqualityของ1Bบวกadapter intervalsจากaccepted ROI observationsสองprocess Application/I-O totalsของเฟรมที่ขัดจังหวะเป็นnull Timingเป็นscoped diagnosticsพร้อมresource observations ขอบเขตคะแนนอ้างannotated person-parts และsource ID0ยังเป็นUnassigned Person AP/Precision/F1ทั้งภาพเป็นnullตามpartial-person coverage
 
 [แผนและนิยาม](README.md) · [Dataset](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
 
-## การเปิดใหม่หลัง Ctrl+C
-
-ผู้ใช้เผลอกด Ctrl+C ในหน้า controller รอบก่อนหยุดด้วย KeyboardInterrupt และ worker รับ SIGTERM ผลที่เขียนไว้228ภาพ/283ROIsเก็บเป็นประวัติพร้อม interruption record ผู้ใช้อนุญาตเริ่มใหม่ทั้งหมด รอบปัจจุบันจึง parser prediction reuse0 และทำ parsing ใหม่ทั้งเก้าโมเดล
-
-Tmux ของรอบปัจจุบันมีหน้าชื่อ status เป็นหน้าที่เข้าดูเริ่มต้น Ctrl+C ที่หน้านี้หยุดเฉพาะ viewer ส่วนหน้าชื่อ controller ใช้ควบคุมคิว ออกจาก tmux โดยให้งานทำต่อกด Ctrl+B แล้ว D
+ตรวจยืนยัน packet ใหม่เวลา 2026-11-18T10:30:22+07:00 ผ่าน native29 integer-mask geometry และ current config binding โดยยังเก็บ failure historyของparentไว้ในCONTINUATION_MANIFEST.json

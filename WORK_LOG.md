@@ -83,3 +83,7 @@ Run cctv600-fresh-20261117T092941639648Z ใน tmux cctv600_fresh_20261117T0929
 ตรวจพบแปดโมเดลครบ600ภาพและ763ROIs พร้อม canonical scoring และ clean timing3รอบ Sapiens2 1Bหยุดที่579ภาพ/737ROIs Controllerใช้check_output(du)ระหว่างatomic renameของ .partial-cctv600_000580-person-1 จึงได้รับexit1และส่งSIGTERMไปยังworker เก็บerrorเดิมไว้ สาเหตุที่ยืนยันได้เป็น orchestration resource-inspection failure
 
 เพิ่ม finish_sapiens1b.py แยกจาก frozen source โดยใช้duที่ต้องจบสำเร็จ ลองซ้ำเฉพาะENOENTสูงสุด3ครั้งและคงstorage guard thresholdsเดิม CPU regressionผ่านทั้ง transient/permanent scan errors, bound on attempts, exact disk thresholds และcombined quality timersที่คงmissing I/Oเป็นnull เตรียมcontrolled continuationเฉพาะ1B พร้อมตรวจnative packet bindings นำmetrics/timingของแปดโมเดลที่ตรวจรับแล้วกลับมาใช้ และเก็บraw historical failureแยกในparent
+
+## 2026-11-18T10:30:22+07:00 — 1B continuation launched and new packet verified
+
+Run cctv600-1b-continuation-20261118T032146603433Z Controller301591 worker301752 ใน tmux cctv600_fresh_20261118T032146603433Z ทำงานจริง Reconciliationยืนยัน737accepted parent ROIsและ26pending ไม่มีinvalid/orphan/partial parent packets First new packet cctv600_000580-person-2 ผ่าน native29 uint8 original-crop geometry และconfig binding ขณะตรวจล่าสุด workerบันทึกใหม่26/26 ROIs failed/invalid0 ยืนยันแปดcanonical metricsและtiming3รอบด้วยsource hashesโดยไม่มีการ inference/rescoreแปดโมเดลซ้ำ Status windowเป็นหน้าเริ่มต้นของtmux การปิดรอบ1Bและรายงานรวมทำโดยcontrollerอัตโนมัติ
