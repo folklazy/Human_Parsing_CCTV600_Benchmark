@@ -77,3 +77,9 @@ Run cctv600-fresh-20261117T092941639648Z ใน tmux cctv600_fresh_20261117T0929
 ## 2026-11-17T16:42:57+07:00 — Fresh restart after accidental terminal interrupt
 
 หลักฐานรอบก่อนยืนยัน controller KeyboardInterrupt และ worker InterruptedError signal15 มี atomic commits228ภาพ/283ROIs และไม่มี partial packet paths เก็บ raw failure counters และ interruption reconciliation แยก ผู้ใช้อนุญาต fresh restartทั้งหมด เปิด run cctv600-fresh-20261117T093921424617Z ใน tmux cctv600_fresh_20261117T093921424617Z Controller 3968077 worker 3968392 ตรวจผลใหม่ 43/600ภาพ 68/763ROIs failed/invalid0 First packet original-grid geometry, ownership และ config bindings ผ่าน ตั้ง tmux status windowเป็นหน้าที่เข้าดูเริ่มต้นเพื่อให้ Ctrl+C ใน viewerหยุดเฉพาะ viewer Scientific source/config ไม่เปลี่ยนจาก fresh run ที่ตรวจรับ
+
+## 2026-11-18 — Storage inspection failure found in 1B quality collection
+
+ตรวจพบแปดโมเดลครบ600ภาพและ763ROIs พร้อม canonical scoring และ clean timing3รอบ Sapiens2 1Bหยุดที่579ภาพ/737ROIs Controllerใช้check_output(du)ระหว่างatomic renameของ .partial-cctv600_000580-person-1 จึงได้รับexit1และส่งSIGTERMไปยังworker เก็บerrorเดิมไว้ สาเหตุที่ยืนยันได้เป็น orchestration resource-inspection failure
+
+เพิ่ม finish_sapiens1b.py แยกจาก frozen source โดยใช้duที่ต้องจบสำเร็จ ลองซ้ำเฉพาะENOENTสูงสุด3ครั้งและคงstorage guard thresholdsเดิม CPU regressionผ่านทั้ง transient/permanent scan errors, bound on attempts, exact disk thresholds และcombined quality timersที่คงmissing I/Oเป็นnull เตรียมcontrolled continuationเฉพาะ1B พร้อมตรวจnative packet bindings นำmetrics/timingของแปดโมเดลที่ตรวจรับแล้วกลับมาใช้ และเก็บraw historical failureแยกในparent

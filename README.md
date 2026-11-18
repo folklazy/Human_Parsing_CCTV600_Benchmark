@@ -189,3 +189,11 @@ STRICT_COMPLETE ต้องมี exact 600 unique image IDs และ native R
 Protocol AD4 และ configs/outputs ก่อน restart เก็บเป็นประวัติใน Git และ parent run records ทางเข้าปัจจุบันใช้ shared-reference protocol ข้างต้น การเลือกวิธีครั้งนี้ทำตามคำขอผู้ใช้หลังมีผล CIHP/CCTV เดิมแล้ว จึงมีเหตุผลจากวิธีอ้างอิงและข้อกำหนด GT กำกับ
 
 Sapiens2 มีข้อกำหนดการใช้ code/weights รวมข้อจำกัด surveillance ใน license การนำผลหรือโมเดลไปใช้งานปลายทางต้องพิจารณาสิทธิ์ของเจ้าของโมเดลตามเงื่อนไขเดิม
+
+## การปิดรอบ Sapiens2 1B
+
+แปดโมเดลมี canonical metricsครบ600ภาพและ clean timingครบสามรอบแล้ว 1Bถูกหยุดจาก storage inspection ที่พบ directory ชั่วคราวเปลี่ยนชื่อระหว่างการอ่านด้วย du การแก้เฉพาะ orchestration อยู่ใน src/finish_sapiens1b.py โดยต้องได้ผล scanที่สำเร็จ และลองอ่านซ้ำสูงสุดสามครั้งเฉพาะ ENOENT เกณฑ์พื้นที่และหน่วยความจำใช้ค่าเดิม
+
+Continuation ตรวจ integer native29 packets และ crop/checkpoint/config bindings ของ accepted ROIจาก fresh experiment เดิม แล้วประมวลผลเฉพาะ pending jobs ผลแปดโมเดลและ timingเดิมคงเป็น source of truth พร้อม hashes ส่วน1Bคำนวณ saved-mask scoresเมื่อ assembled viewครบ600 IDs และเปิด dedicated timingสามรอบตามแผน จากนั้นสร้าง BATCH_REPORT_TH.md และเผยแพร่ reports/CCTV600_RESULTS_TH.md เป็นผลส่งมอบ
+
+เวลา quality ของ1Bเป็นผลรวม accepted adapter intervals ข้ามสองprocess โดยมีwarmupของแต่ละprocessบันทึกแยก Application/I-O totals ของเฟรมที่ถูกขัดจังหวะให้ null และเก็บต้นทุน/ข้อผิดพลาดของ parent attemptไว้ใน provenance
