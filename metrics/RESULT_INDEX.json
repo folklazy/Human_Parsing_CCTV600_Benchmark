@@ -3731,7 +3731,7 @@
   },
   "publication": {
     "source": "src/publication.py",
-    "source_sha256": "b786ba8706d3d9bae23c0932e36437b620085b6d838d887f62b5739a8044234c",
+    "source_sha256": "f12de8b2153450e1ced56300f4b5d7f6ffbbb29e404f61c764f52d1a31c043fb",
     "new_model_calls": 0,
     "new_saved_mask_rescores": 0,
     "statistics_source": "accepted canonical aggregates",

@@ -104,3 +104,8 @@ Controller จบเวลา 11:12:31 น. Asia/Bangkok; canonical RESULT_INDEX
 ตรวจรายงาน CCTV90 ฉบับล่าสุดใน publication checkout commit29f7030 แล้วจัดหน้าแรก CCTV600 ให้มีผลปัจจุบันเพียงชุดเดียว แก้ตัวหารเก่าค้างในREADMEเป็น Hair544/Face384/Upper745/Lower668 สร้าง aggregate index/CSV และภาพสถิติจาก canonical values พร้อม model/config/environment/implementation hashes แยก metric มาตรฐานจาก Face-local/Mean-part/Macro4 ที่ออกแบบเอง และแยก quality/dedicated timing กับ null ของ1B I/O
 
 เพิ่ม publication.py แยกจาก frozen scorer/controller ไม่โหลดtorch/models ตรวจ gallery16 PNG hashesและmodel membership9ทุกภาพ เปิดดูตัวอย่างหนึ่งภาพเพื่อตรวจคำอธิบายpalette; ไม่รับรองsemantic correctnessทั้ง16ภาพเพิ่ม รายงานรูปจริงยังprivate สร้างเพียงกราฟสถิติและlegendบนGit CPU tests6กรณีผ่าน รวมliteralcounts/null/membership/crossmatrix/unknownmapping/privacy/unit/doublecount/duplicateJSON ตรวจCSVทุกค่ากับindexและanchorsภายใน; external14URLsตอบHTTP200 ไม่แก้predictions/GT/scientificconfig/frozeninferencesources
+
+
+## 2026-11-18T13:12:02+07:00 — ทบทวน confusion และ insight
+
+ตรวจ aggregate arithmetic และ CPU publication tests เดิมผ่าน เพิ่ม GT-positive cross-class heatmap4×5ครบเก้าโมเดลเพื่ออ่านการทายผิดคลาสโดยไม่ถูก TN ครอบภาพ แยกชัดจาก full-scene matrix และคงbinary2×2/PrecisionสำหรับFP สรุป OTHER/FN decomposition, QANet–Sapiens P/R trade-off และTP=0หลังหักunmatched GT parts จาก countsเดิม บันทึกข้อจำกัดannotation/Face-local/held-out/uncertainty ไม่เพิ่ม metricหลักหรือแก้mapping เพิ่มindependent literal fixtureเรื่องFN decomposition; CPUtests7กรณีผ่าน ไม่มีmodel callsหรือsaved-mask rescoreใหม่

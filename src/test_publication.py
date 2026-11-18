@@ -47,6 +47,18 @@ class PublicationAcceptance(unittest.TestCase):
     def test_literal_counts_and_units(self):
         pub.validate(fixture())
 
+    def test_FN_decomposition_from_independent_GT_positive_fixture(self):
+        m = fixture()['models'][0]
+        # Hair row: 2 correct, 1 Face error, 1 OTHER error; FN=2.
+        m['result']['cross_class_confusion']['counts'][0] = [2,1,0,0,1]
+        t = m['result']['targets']['Hair']
+        t.update(GT_parts=2, entirely_missed_GT_parts=1, unmatched_GT_parts=1)
+        for other in pub.TARGETS[1:]:
+            m['result']['targets'][other].update(unmatched_GT_parts=0)
+        d = pub.error_split(m)['Hair']
+        self.assertEqual(d, dict(wrong_target_pixels=1, OTHER_pixels=1,
+            OTHER_fraction_of_FN=.5, matched_person_zero_overlap_parts=0))
+
     def test_null_precision_is_not_zero_or_missing_result(self):
         index = fixture()
         r = index['models'][0]['result']

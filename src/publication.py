@@ -223,6 +223,23 @@ def export_csv(index, destination):
             writer.writerows(values)
 
 
+def error_split(model):
+    """Decompose GT-positive FN from saved aggregate counts, not new predictions."""
+    result = {}
+    for i, target in enumerate(TARGETS):
+        row = model['result']['cross_class_confusion']['counts'][i]
+        t = model['result']['targets'][target]
+        wrong_target = sum(row[:4]) - row[i]
+        other = row[4]
+        assert other + wrong_target == t['FN']
+        matched_zero = t['entirely_missed_GT_parts'] - t['unmatched_GT_parts']
+        assert 0 <= matched_zero <= t['GT_parts'] - t['unmatched_GT_parts']
+        result[target] = dict(wrong_target_pixels=wrong_target, OTHER_pixels=other,
+            OTHER_fraction_of_FN=other/t['FN'] if t['FN'] else None,
+            matched_person_zero_overlap_parts=matched_zero)
+    return result
+
+
 def plots(index, directory):
     import matplotlib
     matplotlib.use('Agg')
@@ -265,6 +282,23 @@ def plots(index, directory):
     fig.suptitle('CCTV600 | Binary confusion per annotated person-part task\nRows: GT; columns: prediction; percentages normalized within each GT row', fontsize=14)
     fig.savefig(directory/'TARGET_CONFUSION.png', dpi=170)
     plt.close(fig)
+    fig, axes = plt.subplots(3, 3, figsize=(16, 13), layout='constrained')
+    for ax, model in zip(axes.flat, index['models']):
+        counts = np.asarray(model['result']['cross_class_confusion']['counts'])
+        percentages = 100 * counts/counts.sum(axis=1, keepdims=True)
+        image = ax.imshow(percentages, cmap='Blues', vmin=0, vmax=100, aspect='auto')
+        ax.set(xticks=range(5), xticklabels=['Hair','Face-local','Upper','Lower','OTHER'],
+               yticks=range(4), yticklabels=['Hair','Face-local','Upper','Lower'], title=model['name'],
+               xlabel='Prediction', ylabel='GT target')
+        ax.tick_params(axis='x', labelrotation=25, labelsize=9)
+        for y in range(4):
+            for x in range(5):
+                ax.text(x, y, f'{percentages[y,x]:.2f}', ha='center', va='center', fontsize=9,
+                        color='white' if percentages[y,x]>55 else '#142b3f')
+    fig.colorbar(image, ax=axes.ravel().tolist(), label='% of each GT target row', shrink=.8)
+    fig.suptitle('CCTV600 | GT-positive cross-class confusion (%)\nOTHER includes prediction background and recognized non-target classes', fontsize=15)
+    fig.savefig(directory/'CROSS_CLASS_CONFUSION.png', dpi=170)
+    plt.close(fig)
     # These are annotation display colours, not extracted clothing colours.
     swatches = [('Hair','#8040c0'),('Face proxy','#ffa64d'),('Upper','#009e73'),('Lower','#0072b2')]
     svg = ['<svg xmlns="http://www.w3.org/2000/svg" width="760" height="62" viewBox="0 0 760 62">',
@@ -288,6 +322,63 @@ def primary_summary(index):
     a, b = first['result']['Macro4_local'], second['result']['Macro4_local']
     return (f"**{first['name']} ได้ Macro4-local สูงสุด {pct(a)}%** ตามด้วย "
             f"**{second['name']} {pct(b)}%** ต่างกัน **{100*(a-b):.3f} จุดเปอร์เซ็นต์**")
+
+
+def insights(index):
+    q, s = index['models'][0], index['models'][-1]
+    splits = [error_split(m) for m in index['models']]
+    fractions = [r['OTHER_fraction_of_FN'] for split in splits for r in split.values() if r['OTHER_fraction_of_FN'] is not None]
+    assert all(r['OTHER_pixels'] >= r['wrong_target_pixels'] for split in splits for r in split.values())
+    text = '''## Insight จาก confusion และตัวชี้วัดร่วมกัน
+
+### ความผิดพลาดส่วนใหญ่ลง OTHER แต่ยังระบุสาเหตุจากคลาสอย่างเดียวไม่ได้
+
+'''
+    text += f"ใน 36 แถว target-model กลุ่ม OTHER มีจำนวนมากกว่าการทายเป็นอีกสาม target รวมกันทุกแถว คิดเป็น {100*min(fractions):.2f}–{100*max(fractions):.2f}% ของ FN ในแต่ละแถว นี่เป็นสัดส่วนของพิกเซล GT ที่พลาด ไม่ใช่สัดส่วนของทุกพิกเซลในภาพ\n\n"
+    text += '''OTHER รวมทั้ง native background และคลาสนอกสี่เป้าหมาย อีกทั้ง prediction ว่างของคนที่จับคู่ไม่ได้ก็ลง OTHER ทั้งส่วนได้ จึงยังสรุปไม่ได้ว่า parser ทายเป็นฉากหลังเองทั้งหมด อาจเกี่ยวกับ YOLO coverage, mask ownership clipping, native instance association หรือ semantic prediction ต้องตรวจ saved masks รายกรณีเพื่อแยกสาเหตุ
+
+### QANet กับ Sapiens2 1B มี trade-off ระหว่างทายเกินกับเก็บ GT
+
+'''
+    text += table(['Target','QANet Precision %','QANet Recall %','Sapiens2 1B Precision %','Sapiens2 1B Recall %'],
+                  [[t,pct(q['result']['targets'][t]['precision']),pct(q['result']['targets'][t]['recall']),
+                    pct(s['result']['targets'][t]['precision']),pct(s['result']['targets'][t]['recall'])] for t in TARGETS])
+    text += '''
+
+QANet มี Precision สูงกว่า ส่วน Sapiens2 1B มี Recall สูงกว่าในทั้งสี่คลาสของการเปรียบเทียบคู่นี้ Sapiens2 1B จึงเก็บ GT pixels ได้มากกว่าโดยมีสัดส่วนทายเกินสูงกว่า QANet ไม่ใช่ข้อพิสูจน์ว่าความต่างเกิดจาก architecture หรือ threshold เพียงอย่างเดียว ทั้งคู่ใช้ thresholds ที่ตรึงไว้
+
+Sapiens2 1B มี pooled F1/Dice และ pooled IoU สูงกว่า QANet ทั้งสี่คลาส แต่ QANet ได้ Mean-part IoU ของ Upper/Lower สูงกว่า การเฉลี่ยรายส่วนกับการรวมพิกเซลให้ความสำคัญต่อขนาดส่วนต่างกัน จึงเป็นผลที่อยู่ร่วมกันได้ และยังไม่ยืนยันว่าโมเดลใดชนะทุกคนหรือทุกขนาด
+
+### ค่าเฉลี่ยสูงกว่าไม่ได้แปลว่าไม่มีส่วนที่พลาดทั้งชิ้น
+
+'''
+    text += table(['Target','GT parts','จับคู่คนไม่ได้ (ทั้งคู่)','QANet TP=0 หลังจับคู่คนได้','Sapiens2 1B TP=0 หลังจับคู่คนได้'],
+                  [[t,q['result']['targets'][t]['GT_parts'],q['result']['targets'][t]['unmatched_GT_parts'],
+                    splits[0][t]['matched_person_zero_overlap_parts'],splits[-1][t]['matched_person_zero_overlap_parts']] for t in TARGETS])
+    text += '''
+
+ตัวอย่าง Face-local: Sapiens2 1B มีค่าเฉลี่ย IoU สูงกว่า แต่มี Face parts ที่ TP=0 รวม 53 ส่วน เทียบ QANet 48 ส่วน (หลังหักคนที่จับคู่ไม่ได้ เหลือ 19 กับ 14 ส่วน) จึงควรอ่านค่าเฉลี่ยควบคู่จำนวนส่วนที่พลาด ไม่ตีความว่าคะแนนสูงกว่าหมายถึงพบใบหน้าของทุกคนได้ดีกว่า ยังไม่ได้ตรวจว่ากลุ่มที่พลาดเป็นภาพเล็ก/เบลอ/แสงแบบใด
+
+### การจับคู่คนเป็นต้นทุนร่วมของทั้งเก้าโมเดล
+
+'''
+    loc = q['result']['localization']['0.5']
+    text += f"ที่ bbox IoU 0.50 พบคู่ {loc['TP']}/{loc['GT']} คน และพลาด {loc['FN']} คน GT parts ของคนที่พลาดยังอยู่ในตัวหารด้วยศูนย์ ดังนั้น confusion นี้เป็นผลของ application pipeline ร่วมกับ parser ไม่ใช่คุณภาพ parser ภายใต้ perfect person crops ทั้งหมด ตัวเลขนี้อ้างเฉพาะคนที่ annotate; unmatched predictions ยังจัดเป็น FP ทั้งฉากไม่ได้\n\n"
+    text += '''### ความพร้อมของข้อมูลและสิ่งที่ยังไม่รองรับ
+
+| ประเด็น | สถานะหลักฐาน |
+| --- | --- |
+| Counts/สูตร/ตัวหาร/labels | ตรวจเลขจำนวนเต็มและ ratios กับ canonical statistics แล้ว; binary diagonal ตรงกับ cross-class diagonal |
+| ความครบของผล | Exact 600 ภาพ/763 ROI ครบเก้าโมเดล ใช้ scoring domain เดียวกันภายในงานนี้ |
+| คุณภาพ annotation | ผู้จัดทำตรวจรับและมี QA/owner/conflict checks แต่ไม่มี inter-annotator agreement หรือ independent expert gold |
+| Coverage ทั้งฉาก | ยังมีคนหรือส่วนที่ไม่ annotate; ไม่รับรอง global-scene negatives และ full-scene semantic mIoU |
+| Face และเสื้อผ้า | Face-local เป็น proxy ในกรอบ GT; เสื้อผ้าเป็น non-Dress mapping และยังมี taxonomy limitations |
+| ข้อสรุปทั่วไป | ไม่มี independent held-out certification/uncertainty study จึงไม่อ้าง statistical significance หรือ superiority บน CCTV ทุกสภาพ |
+
+ชุดผลพร้อมใช้รายงานการเปรียบเทียบแบบ annotated-person-part ตาม protocol นี้ ส่วนคุณภาพข้อมูลสำหรับ benchmark เต็มฉากยังรับรองไม่ได้จากการตรวจ arithmetic หรือ confusion matrix อย่างเดียว ข้อมูลสถิติที่ครบไม่ได้แทนความครบของ annotation
+
+'''
+    return text
 
 
 def report(index):
@@ -406,6 +497,10 @@ TP คือพิกเซลทายถูก FP คือพิกเซล�
 
 ตาราง cross-class ด้านล่างใช้เฉพาะ GT positive pixels: อ่านว่า Hair ถูกทายเป็น Face/Upper/Lower/OTHER เท่าไร ไม่ครอบคลุม FP ที่ทายบนพื้นที่นอก positive GT ต้องอ่านคู่กับ binary matrix และ Precision การไม่มีแถว GT OTHER ไม่ได้แปลว่าไม่มีการทายเกิน
 
+![Cross-class confusion บน GT positive pixels](figures/CROSS_CLASS_CONFUSION.png)
+
+ภาพ 4×5 นี้เป็นการแจกแจงผลทำนายแบบมีเงื่อนไขบนสี่ GT targets ที่มีคำตอบ ไม่ใช่ full-scene multiclass confusion พร้อม GT background แถวละ 100% ใช้มาตราสี 0–100 เหมือนกันทั้งเก้าโมเดล ช่องทแยงคือ pooled pixel Recall ของ target ไม่ใช่ Mean-part IoU ส่วนช่องนอกทแยงแยกการทายเป็น target อื่นกับ OTHER ตาราง counts เดิมอยู่ด้านล่างเพื่อย้อนตรวจเปอร์เซ็นต์
+
 '''
     for m in index['models']:
         r = m['result']
@@ -416,6 +511,7 @@ TP คือพิกเซลทายถูก FP คือพิกเซล�
                     [[t,*[f"{r['targets'][t][k]:,}" for k in ('TP','FP','FN','TN','GT_pixels','union')],
                       r['targets'][t]['unmatched_GT_parts'],pct(r['targets'][t]['entirely_missed_fraction'])] for t in TARGETS])
         text += '\n\n</details>\n\n'
+    text += insights(index)
     text += '''## การพบคนและความครบถ้วนของผล
 
 ทุก parser ใช้ frozen YOLO extents/boxes ชุดเดียวกัน ตัวเลขการจับคู่จึงเท่ากัน ไม่ใช่หลักฐานว่าแต่ละ parser มี native instance capability เท่ากัน ข้อมูลมีคนบางส่วนไม่ annotate จึงรายงาน annotated-person recall และ unmatched diagnostics; **full-scene person AP/Precision/F1 เป็น null** ไม่เรียก unmatched ทั้งหมดว่า false positives
@@ -532,6 +628,7 @@ Reconciliation ตรวจรับ 737 parent ROI ของ 1B แล้วท
 | --- | --- | --- |
 | [CIHP/PGN — Gong et al., ECCV 2018](https://arxiv.org/abs/1808.00157v1) | แยก semantic parts กับ instance ownership และบริบท parsing-by-detection | ไม่รับรองว่า YOLO-crop evaluation ของเราเป็น official CIHP reproduction |
 | [MMSegmentation IoUMetric v1.2.2](https://github.com/open-mmlab/mmsegmentation/blob/v1.2.2/mmseg/evaluation/metrics/iou_metric.py) | สูตร intersection/union, Dice, Precision/Recall/F-score และการกรอง ignore ก่อนรวม counts | เป็น official implementation reference ไม่ใช่ paper ที่กำหนด Mean-part/Face-local/Macro4-local ของเรา |
+| [scikit-learn confusion_matrix](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html) | นิยามแถวเป็น GT/คอลัมน์เป็น prediction, label order และการ normalize ตามแถว | ไม่รับรองว่า task-domain/coverage ของ CCTV600 เทียบเท่า full-scene benchmark |
 | [NightOwls annotation definitions](https://www.nightowls-dataset.org/examples/) | ตัวอย่างการประกาศเกณฑ์คนขนาดเล็กและ ignore | NightOwls ใช้ความสูง >50 px; ของเราใช้ด้านยาว ≥50 px จึงไม่ใช่เกณฑ์เดียวกัน |
 | [Datasheets for Datasets — Gebru et al., 2021](https://arxiv.org/abs/1803.09010v8) | เปิดเผยที่มา องค์ประกอบ กระบวนการสร้าง การใช้และข้อจำกัด | ไม่ใช่การรับรองคุณภาพ annotation หรือ scorer ของชุดนี้ |
 | [CCTV90 shared-reference ที่ใช้เป็นแบบ](https://github.com/folklazy/Human_Parsing_Study/blob/29f7030/CCTV_Human_Parsing_Benchmark/reports/CONTROLLED_ROI_FOUR_TARGET_RESULTS_TH.md) | สูตร counts/Mean-part/Face-local และรูปแบบรายงานเดิม | GT/matcher/YOLO cache/timer ข้ามสองงานไม่เหมือนกันทุกประการ |
@@ -600,6 +697,7 @@ GT ที่ใช้จริง: **769 คน; Hair 544 / Face 384 / Upper 745
 
 - [Precision/Recall/F1 และจำนวนส่วนที่พลาด](reports/CCTV600_RESULTS_TH.md#precision-recall-f1-และความครบของแต่ละส่วน) พร้อม counts/support/union และสูตร
 - [Confusion matrix](reports/CCTV600_RESULTS_TH.md#confusion-matrix-และการอ่านความผิดพลาด): binary 2×2 ครบ 36 ชุด และ cross-class 4×5 ครบเก้าโมเดล
+- [Insight จาก confusion](reports/CCTV600_RESULTS_TH.md#insight-จาก-confusion-และตัวชี้วัดร่วมกัน): OTHER/ทายผิดคลาส, Precision–Recall trade-off และการแยกคนที่จับคู่ไม่ได้จากส่วนที่ parser พลาด
 - [เวลาแต่ละขั้นและ Peak VRAM](reports/CCTV600_RESULTS_TH.md#เวลาและทรัพยากร): แยก quality run กับ dedicated timing รวมถึงหน่วยต่อ ROI/ภาพ/ทั้งชุด
 - [Model/checkpoint/config/environment bindings](reports/CCTV600_RESULTS_TH.md#รุ่นโมเดลและ-provenance) รวม implementation revisions ของ CPI และ hashes
 - [หลักฐานมาตรฐานและข้อจำกัด](reports/CCTV600_RESULTS_TH.md#มาตรฐาน-แหล่งอ้างอิง-และขอบเขตคำอ้าง): paper/official implementation แต่ละแหล่งรองรับเรื่องใด และกติกาใดออกแบบเอง
@@ -658,7 +756,7 @@ def check_files(destination, index):
             rows = list(csv.DictReader(stream))
         assert len(rows) == count
         assert rows == [{k: '' if v is None else str(v) for k, v in r.items()} for r in generated[name]], name
-    for name in ('QUALITY_OVERVIEW.png', 'TARGET_CONFUSION.png'):
+    for name in ('QUALITY_OVERVIEW.png', 'TARGET_CONFUSION.png', 'CROSS_CLASS_CONFUSION.png'):
         assert (destination/'reports/figures'/name).read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
 
 

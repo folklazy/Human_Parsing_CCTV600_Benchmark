@@ -153,6 +153,10 @@ TP คือพิกเซลทายถูก FP คือพิกเซล�
 
 ตาราง cross-class ด้านล่างใช้เฉพาะ GT positive pixels: อ่านว่า Hair ถูกทายเป็น Face/Upper/Lower/OTHER เท่าไร ไม่ครอบคลุม FP ที่ทายบนพื้นที่นอก positive GT ต้องอ่านคู่กับ binary matrix และ Precision การไม่มีแถว GT OTHER ไม่ได้แปลว่าไม่มีการทายเกิน
 
+![Cross-class confusion บน GT positive pixels](figures/CROSS_CLASS_CONFUSION.png)
+
+ภาพ 4×5 นี้เป็นการแจกแจงผลทำนายแบบมีเงื่อนไขบนสี่ GT targets ที่มีคำตอบ ไม่ใช่ full-scene multiclass confusion พร้อม GT background แถวละ 100% ใช้มาตราสี 0–100 เหมือนกันทั้งเก้าโมเดล ช่องทแยงคือ pooled pixel Recall ของ target ไม่ใช่ Mean-part IoU ส่วนช่องนอกทแยงแยกการทายเป็น target อื่นกับ OTHER ตาราง counts เดิมอยู่ด้านล่างเพื่อย้อนตรวจเปอร์เซ็นต์
+
 <details>
 <summary>QANet — counts และ cross-class confusion</summary>
 
@@ -323,6 +327,55 @@ TP คือพิกเซลทายถูก FP คือพิกเซล�
 | Lower | 1,579,864 | 416,421 | 313,100 | 1,389,768,925 | 1,892,964 | 2,309,385 | 111 | 20.210 |
 
 </details>
+
+## Insight จาก confusion และตัวชี้วัดร่วมกัน
+
+### ความผิดพลาดส่วนใหญ่ลง OTHER แต่ยังระบุสาเหตุจากคลาสอย่างเดียวไม่ได้
+
+ใน 36 แถว target-model กลุ่ม OTHER มีจำนวนมากกว่าการทายเป็นอีกสาม target รวมกันทุกแถว คิดเป็น 63.18–96.34% ของ FN ในแต่ละแถว นี่เป็นสัดส่วนของพิกเซล GT ที่พลาด ไม่ใช่สัดส่วนของทุกพิกเซลในภาพ
+
+OTHER รวมทั้ง native background และคลาสนอกสี่เป้าหมาย อีกทั้ง prediction ว่างของคนที่จับคู่ไม่ได้ก็ลง OTHER ทั้งส่วนได้ จึงยังสรุปไม่ได้ว่า parser ทายเป็นฉากหลังเองทั้งหมด อาจเกี่ยวกับ YOLO coverage, mask ownership clipping, native instance association หรือ semantic prediction ต้องตรวจ saved masks รายกรณีเพื่อแยกสาเหตุ
+
+### QANet กับ Sapiens2 1B มี trade-off ระหว่างทายเกินกับเก็บ GT
+
+| Target | QANet Precision % | QANet Recall % | Sapiens2 1B Precision % | Sapiens2 1B Recall % |
+| --- | --- | --- | --- | --- |
+| Hair | 85.684 | 76.559 | 83.259 | 82.133 |
+| Face_local | 92.899 | 77.415 | 89.268 | 85.324 |
+| Upper | 88.071 | 77.472 | 86.399 | 83.571 |
+| Lower | 84.739 | 73.255 | 79.140 | 83.460 |
+
+QANet มี Precision สูงกว่า ส่วน Sapiens2 1B มี Recall สูงกว่าในทั้งสี่คลาสของการเปรียบเทียบคู่นี้ Sapiens2 1B จึงเก็บ GT pixels ได้มากกว่าโดยมีสัดส่วนทายเกินสูงกว่า QANet ไม่ใช่ข้อพิสูจน์ว่าความต่างเกิดจาก architecture หรือ threshold เพียงอย่างเดียว ทั้งคู่ใช้ thresholds ที่ตรึงไว้
+
+Sapiens2 1B มี pooled F1/Dice และ pooled IoU สูงกว่า QANet ทั้งสี่คลาส แต่ QANet ได้ Mean-part IoU ของ Upper/Lower สูงกว่า การเฉลี่ยรายส่วนกับการรวมพิกเซลให้ความสำคัญต่อขนาดส่วนต่างกัน จึงเป็นผลที่อยู่ร่วมกันได้ และยังไม่ยืนยันว่าโมเดลใดชนะทุกคนหรือทุกขนาด
+
+### ค่าเฉลี่ยสูงกว่าไม่ได้แปลว่าไม่มีส่วนที่พลาดทั้งชิ้น
+
+| Target | GT parts | จับคู่คนไม่ได้ (ทั้งคู่) | QANet TP=0 หลังจับคู่คนได้ | Sapiens2 1B TP=0 หลังจับคู่คนได้ |
+| --- | --- | --- | --- | --- |
+| Hair | 544 | 62 | 44 | 27 |
+| Face_local | 384 | 34 | 14 | 19 |
+| Upper | 745 | 131 | 15 | 4 |
+| Lower | 668 | 111 | 24 | 24 |
+
+ตัวอย่าง Face-local: Sapiens2 1B มีค่าเฉลี่ย IoU สูงกว่า แต่มี Face parts ที่ TP=0 รวม 53 ส่วน เทียบ QANet 48 ส่วน (หลังหักคนที่จับคู่ไม่ได้ เหลือ 19 กับ 14 ส่วน) จึงควรอ่านค่าเฉลี่ยควบคู่จำนวนส่วนที่พลาด ไม่ตีความว่าคะแนนสูงกว่าหมายถึงพบใบหน้าของทุกคนได้ดีกว่า ยังไม่ได้ตรวจว่ากลุ่มที่พลาดเป็นภาพเล็ก/เบลอ/แสงแบบใด
+
+### การจับคู่คนเป็นต้นทุนร่วมของทั้งเก้าโมเดล
+
+ที่ bbox IoU 0.50 พบคู่ 624/769 คน และพลาด 145 คน GT parts ของคนที่พลาดยังอยู่ในตัวหารด้วยศูนย์ ดังนั้น confusion นี้เป็นผลของ application pipeline ร่วมกับ parser ไม่ใช่คุณภาพ parser ภายใต้ perfect person crops ทั้งหมด ตัวเลขนี้อ้างเฉพาะคนที่ annotate; unmatched predictions ยังจัดเป็น FP ทั้งฉากไม่ได้
+
+### ความพร้อมของข้อมูลและสิ่งที่ยังไม่รองรับ
+
+| ประเด็น | สถานะหลักฐาน |
+| --- | --- |
+| Counts/สูตร/ตัวหาร/labels | ตรวจเลขจำนวนเต็มและ ratios กับ canonical statistics แล้ว; binary diagonal ตรงกับ cross-class diagonal |
+| ความครบของผล | Exact 600 ภาพ/763 ROI ครบเก้าโมเดล ใช้ scoring domain เดียวกันภายในงานนี้ |
+| คุณภาพ annotation | ผู้จัดทำตรวจรับและมี QA/owner/conflict checks แต่ไม่มี inter-annotator agreement หรือ independent expert gold |
+| Coverage ทั้งฉาก | ยังมีคนหรือส่วนที่ไม่ annotate; ไม่รับรอง global-scene negatives และ full-scene semantic mIoU |
+| Face และเสื้อผ้า | Face-local เป็น proxy ในกรอบ GT; เสื้อผ้าเป็น non-Dress mapping และยังมี taxonomy limitations |
+| ข้อสรุปทั่วไป | ไม่มี independent held-out certification/uncertainty study จึงไม่อ้าง statistical significance หรือ superiority บน CCTV ทุกสภาพ |
+
+ชุดผลพร้อมใช้รายงานการเปรียบเทียบแบบ annotated-person-part ตาม protocol นี้ ส่วนคุณภาพข้อมูลสำหรับ benchmark เต็มฉากยังรับรองไม่ได้จากการตรวจ arithmetic หรือ confusion matrix อย่างเดียว ข้อมูลสถิติที่ครบไม่ได้แทนความครบของ annotation
 
 ## การพบคนและความครบถ้วนของผล
 
@@ -534,6 +587,7 @@ Reconciliation ตรวจรับ 737 parent ROI ของ 1B แล้วท
 | --- | --- | --- |
 | [CIHP/PGN — Gong et al., ECCV 2018](https://arxiv.org/abs/1808.00157v1) | แยก semantic parts กับ instance ownership และบริบท parsing-by-detection | ไม่รับรองว่า YOLO-crop evaluation ของเราเป็น official CIHP reproduction |
 | [MMSegmentation IoUMetric v1.2.2](https://github.com/open-mmlab/mmsegmentation/blob/v1.2.2/mmseg/evaluation/metrics/iou_metric.py) | สูตร intersection/union, Dice, Precision/Recall/F-score และการกรอง ignore ก่อนรวม counts | เป็น official implementation reference ไม่ใช่ paper ที่กำหนด Mean-part/Face-local/Macro4-local ของเรา |
+| [scikit-learn confusion_matrix](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html) | นิยามแถวเป็น GT/คอลัมน์เป็น prediction, label order และการ normalize ตามแถว | ไม่รับรองว่า task-domain/coverage ของ CCTV600 เทียบเท่า full-scene benchmark |
 | [NightOwls annotation definitions](https://www.nightowls-dataset.org/examples/) | ตัวอย่างการประกาศเกณฑ์คนขนาดเล็กและ ignore | NightOwls ใช้ความสูง >50 px; ของเราใช้ด้านยาว ≥50 px จึงไม่ใช่เกณฑ์เดียวกัน |
 | [Datasheets for Datasets — Gebru et al., 2021](https://arxiv.org/abs/1803.09010v8) | เปิดเผยที่มา องค์ประกอบ กระบวนการสร้าง การใช้และข้อจำกัด | ไม่ใช่การรับรองคุณภาพ annotation หรือ scorer ของชุดนี้ |
 | [CCTV90 shared-reference ที่ใช้เป็นแบบ](https://github.com/folklazy/Human_Parsing_Study/blob/29f7030/CCTV_Human_Parsing_Benchmark/reports/CONTROLLED_ROI_FOUR_TARGET_RESULTS_TH.md) | สูตร counts/Mean-part/Face-local และรูปแบบรายงานเดิม | GT/matcher/YOLO cache/timer ข้ามสองงานไม่เหมือนกันทุกประการ |
