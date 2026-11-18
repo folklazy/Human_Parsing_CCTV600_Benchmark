@@ -2,7 +2,7 @@
 
 **รอบปัจจุบันใช้วิธี shared reference ของงาน CIHP/CCTV เดิม** ตามคำขอเริ่มรอบใหม่วันที่ 17 พฤศจิกายน 2026 คะแนนหลักเป็น **Macro4-local** พร้อม **mIoU3 (part-mean), Face-local, Precision, Recall และ F1/Dice**
 
-[สถานะ](STATUS.md) · [Protocol ที่ใช้จริง](configs/SHARED_REFERENCE_V1.json) · [Scorer](src/reference_parts600.py) · [Controller/continuation](src/reference_collection.py) · [บันทึกงาน](WORK_LOG.md) · [Dataset CCTV600](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
+[ผลสรุปครบ 9 โมเดล](reports/CCTV600_RESULTS_TH.md) · [สถานะ](STATUS.md) · [Protocol ที่ใช้จริง](configs/SHARED_REFERENCE_V1.json) · [Scorer](src/reference_parts600.py) · [Controller/continuation](src/reference_collection.py) · [บันทึกงาน](WORK_LOG.md) · [Dataset CCTV600](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
 
 ## ข้อมูลและขอบเขตการประเมิน
 
@@ -10,7 +10,7 @@
 
 Dataset ส่งมอบมี 600 ภาพและ annotation ของบุคคลที่เลือก ผู้จัดทำยืนยันว่ามีคนบางส่วนไม่ได้ annotate Source ID0 ใช้ Unassigned คะแนน parsing จะอ้าง GT person-parts ที่มีคำตอบ ส่วน unmatched detections เก็บเป็น diagnostics และ person recall มี denominator เป็นคนที่มี GT การรายงาน full-scene AP/precision/F1 ต้องมี negative domain ที่รับรองครบ
 
-ผลตรวจ GT domain ด้วย CPU ครบ600 ภาพให้ตัวหาร Hair544/Face384/Upper745/Lower668 และคนผ่านเกณฑ์769 รายการ คิว inference ยังพักระหว่างเตรียม GT bindings และ reporter ของรอบใหม่ รายละเอียดที่ต้องแก้อยู่ใน [STATUS](STATUS.md) การตรวจ dataset ครั้งนี้มี model calls0
+ผลตรวจ GT domain ด้วย CPU ครบ600 ภาพให้ตัวหาร Hair544/Face384/Upper745/Lower668 และคนผ่านเกณฑ์769 รายการ ผลรอบใหม่ปิดครบทั้งเก้าโมเดลแล้ว รวมการจับเวลาโมเดลละสามรอบ ดู [รายงานผล](reports/CCTV600_RESULTS_TH.md) และ [สถานะ](STATUS.md)
 
 จำนวน GT และรายละเอียดการเปิด R3 ในหัวข้อถัดไปเก็บเป็นประวัติการทดลอง ส่วนแหล่งข้อมูลและคำตอบปัจจุบันให้ยึด dataset CURRENT.json และ membership hash ที่ประกาศใน STATUS
 
@@ -191,6 +191,8 @@ Protocol AD4 และ configs/outputs ก่อน restart เก็บเป�
 Sapiens2 มีข้อกำหนดการใช้ code/weights รวมข้อจำกัด surveillance ใน license การนำผลหรือโมเดลไปใช้งานปลายทางต้องพิจารณาสิทธิ์ของเจ้าของโมเดลตามเงื่อนไขเดิม
 
 ## การปิดรอบ Sapiens2 1B
+
+ปิดครบแล้ว 18 พฤศจิกายน 2026 เวลา 11:12:31 น. (Asia/Bangkok) รายละเอียดด้านล่างอธิบายวิธี continuation ที่ใช้จริง ผลสุดท้ายอยู่ใน [รายงานรวม](reports/CCTV600_RESULTS_TH.md)
 
 แปดโมเดลมี canonical metricsครบ600ภาพและ clean timingครบสามรอบแล้ว 1Bถูกหยุดจาก storage inspection ที่พบ directory ชั่วคราวเปลี่ยนชื่อระหว่างการอ่านด้วย du การแก้เฉพาะ orchestration อยู่ใน src/finish_sapiens1b.py โดยต้องได้ผล scanที่สำเร็จ และลองอ่านซ้ำสูงสุดสามครั้งเฉพาะ ENOENT เกณฑ์พื้นที่และหน่วยความจำใช้ค่าเดิม
 

@@ -87,3 +87,8 @@ Run cctv600-fresh-20261117T092941639648Z ใน tmux cctv600_fresh_20261117T0929
 ## 2026-11-18T10:30:22+07:00 — 1B continuation launched and new packet verified
 
 Run cctv600-1b-continuation-20261118T032146603433Z Controller301591 worker301752 ใน tmux cctv600_fresh_20261118T032146603433Z ทำงานจริง Reconciliationยืนยัน737accepted parent ROIsและ26pending ไม่มีinvalid/orphan/partial parent packets First new packet cctv600_000580-person-2 ผ่าน native29 uint8 original-crop geometry และconfig binding ขณะตรวจล่าสุด workerบันทึกใหม่26/26 ROIs failed/invalid0 ยืนยันแปดcanonical metricsและtiming3รอบด้วยsource hashesโดยไม่มีการ inference/rescoreแปดโมเดลซ้ำ Status windowเป็นหน้าเริ่มต้นของtmux การปิดรอบ1Bและรายงานรวมทำโดยcontrollerอัตโนมัติ
+
+
+## 2026-11-18 — ปิดรอบครบเก้าโมเดล
+
+Controller จบเวลา 11:12:31 น. Asia/Bangkok; canonical RESULT_INDEX ยืนยัน strict complete 600 ภาพและ 763 ROI ต่อระบบ รวมเก้าระบบ Dedicated timing clean complete ทั้ง 27 รอบ Automatic publication สำเร็จ commit abf0574 และตรวจ remote main ตรงกัน ตรวจ arithmetic จากสถิติที่บันทึกโดยไม่ full rescore หรือ inference ซ้ำ อัปเดตสถานะและสรุป Mean-part เทียบ pooled ให้ชัด รักษา native artifacts และ historical failure records

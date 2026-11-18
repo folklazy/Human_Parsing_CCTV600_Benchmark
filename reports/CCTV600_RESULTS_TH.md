@@ -1,6 +1,8 @@
 # ผล Human Parsing บน CCTV600
 
-ตรวจปิดรอบ 2026-11-18T04:12:14.759536+00:00 UTC
+ปิดรอบ 18 พฤศจิกายน 2026 เวลา 11:12:31 น. (Asia/Bangkok, UTC+07:00)
+
+ตรวจรับผลคุณภาพครบ 9 โมเดล โมเดลละ 600 ภาพและ 763 ROI ไม่ขาดหรือซ้ำ จับเวลาแยกครบโมเดลละ 3 รอบ รวม 27 รอบ บน Tesla T4
 
 ประชากร600ภาพเป็น annotation ของบุคคลที่เลือก Source ID0 เป็น Unassigned คะแนนอ้าง GT person-parts ที่มีคำตอบพร้อมขอบเขตอ้างอิง ใช้ predicted YOLO ownership และ bbox matchingที่0.50 Face-local ใช้กรอบ GT Face พอดีใน scoring ผลนี้เปรียบเทียบ checkpoint พร้อม application configuration
 
@@ -17,6 +19,21 @@ GT peopleผ่านเกณฑ์ 769 รายการ Hair/Face/Upper/Lowe
 | Sapiens2_0.4b | 46.412 | 60.227 | 55.404 | 46.890 | 49.569 | 52.233 | COMPLETE |
 | Sapiens2_0.8b | 46.787 | 61.729 | 55.848 | 48.806 | 50.480 | 53.293 | COMPLETE |
 | Sapiens2_1b | 54.501 | 66.266 | 61.586 | 54.384 | 56.823 | 59.184 | COMPLETE |
+
+## ข้อสรุปจากคะแนนเฉลี่ยรายส่วน
+
+ตารางหลักใช้ Mean-part IoU: คำนวณ IoU ของ GT แต่ละส่วนก่อน แล้วเฉลี่ยภายในคลาส แต่ละส่วนจึงมีน้ำหนักเท่ากัน ส่วนตาราง pooled รวมพิกเซลก่อนคำนวณและตอบคนละคำถาม
+
+| เป้าหมาย | คะแนนสูงสุด | Mean-part IoU % | สูงกว่าอันดับถัดไป (จุดเปอร์เซ็นต์) |
+| --- | --- | --- | --- |
+| ผม | Sapiens2_1b | 54.501 | 3.368 |
+| ใบหน้าภายในกรอบ GT Face | Sapiens2_1b | 66.266 | 4.537 |
+| เสื้อผ้าส่วนบน non-Dress | QANet_CIHP_HRNetW48_512x384 | 62.933 | 1.347 |
+| เสื้อผ้าส่วนล่าง non-Dress | QANet_CIHP_HRNetW48_512x384 | 55.977 | 1.594 |
+
+Sapiens2 1B ได้ Macro4-local สูงสุด 59.184% ตามด้วย QANet 57.517% ต่างกัน 1.667 จุดเปอร์เซ็นต์ จึงเป็นตัวเลือกแรกหากให้ทั้งสี่ส่วนมีน้ำหนักเท่ากัน ส่วน QANet เป็นตัวเลือกเมื่อเน้นคะแนนเฉลี่ยรายส่วนของเสื้อผ้าบนและล่าง ข้อสรุปนี้ผูกกับเกณฑ์ Mean-part: เมื่อรวมพิกเซลก่อนหาร Sapiens2 1B มี pooled IoU สูงสุดทั้งสี่คลาส ห้ามสลับสองวิธีรวมคะแนนโดยไม่ระบุ
+
+ผลนี้เป็นการเปรียบเทียบ checkpoint พร้อม application configuration บนส่วนที่มี annotation ในชุดนี้ Face-local ของ Sapiens ใช้ Face_Neck และรายละเอียดใบหน้าเป็นตัวแทน ไม่รับรอง face-only equivalence หรือผลทั้งฉาก และยังไม่ได้ทดสอบนัยสำคัญทางสถิติ
 
 ## ความครบถ้วนของผล
 
@@ -307,3 +324,11 @@ Face candidate ของ Sapiens รวม Face_Neck และ facial subparts �
 Timing เป็น scoped adapter/application diagnostics ตาม API และสภาพ GPU ที่บันทึก รายงานนี้มี provenance ของ config, source, dataset, checkpoints และ run records กำกับ ประวัติ failures ของรอบนี้คงอยู่ใน immutable attempts และ completion records
 
 Sapiens2 1B quality timing รวม adapter intervals ของ accepted ROI observations จากสอง segments เวลาของเฟรมที่ถูกขัดจังหวะด้าน application/I-O ให้ null ส่วน dedicated timing ใช้ process ใหม่สามรอบ raw interruption และ storage-scanner failure เก็บใน parent records
+
+## แหล่งผลและประวัติการปิดรอบ
+
+Canonical scores ใช้ `METRICS.json` ที่เชื่อมผ่าน `RESULT_INDEX.json` ของ run `cctv600-1b-continuation-20261118T032146603433Z` ภายใต้ protocol SHA256 `b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b` ผลแปดโมเดลอ้าง run `cctv600-fresh-20261117T093921424617Z` ที่ตรวจรับแล้ว ส่วน 1B รวม accepted parent 737 ROI กับ continuation 26 ROI ครบ 763 งาน ไม่มีการรันแปดโมเดลซ้ำเพื่อสรุปตาราง
+
+ผล final failed/invalid เป็นศูนย์หมายถึงผลที่ตรวจรับครบ ไม่ได้หมายความว่าไม่มีประวัติขัดจังหวะ: เก็บทั้ง Ctrl+C ของ attempt แรก และ storage-inspection failure ของ 1B ไว้ การหยุด 1B ครั้งหลังเกิดจาก controller ตรวจพื้นที่ระหว่าง atomic rename ไม่ใช่หลักฐาน OOM คะแนนอ่านจาก canonical metrics; ช่อง primary ที่เป็น null ใน historical collector completion ไม่ใช่แหล่งคะแนนหลัง scoring
+
+ตรวจปิดด้วย membership/ROI completion และ audit ที่มีอยู่ ตรวจ TP+FN=GT support, union=TP+FP+FN และสถานะ clean timing ทั้ง 27 รอบโดยไม่ inference หรือ full rescore ซ้ำ ผลภาพส่วนตัวอยู่ที่ `outputs/cctv600-1b-continuation-20261118T032146603433Z/gallery/index.html` บน server และไม่เผยแพร่ภาพ dataset ใน Git

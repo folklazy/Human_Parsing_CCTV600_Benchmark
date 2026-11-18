@@ -1,5 +1,21 @@
 # สถานะ Human Parsing CCTV600
 
+**ปิดรอบครบแล้ว — 18 พฤศจิกายน 2026 เวลา 11:12:31 น. (Asia/Bangkok)**
+
+- คะแนนคุณภาพครบ 9/9 โมเดล โมเดลละ 600 ภาพและ 763 ROI, missing/duplicate/invalid เป็นศูนย์ในผลที่ตรวจรับ
+- Dedicated timing ผ่าน 3/3 รอบทุกโมเดล รวม 27 รอบ
+- Canonical results: `outputs/cctv600-1b-continuation-20261118T032146603433Z/RESULT_INDEX.json` และ `TIMING_SUMMARY.json`
+- รายงาน [CCTV600_RESULTS_TH.md](reports/CCTV600_RESULTS_TH.md) เผยแพร่แล้ว; automatic publication commit `abf0574` ตาม `PUBLICATION.json`
+- งาน controller/worker จบแล้ว ตอนตรวจ GPU ไม่มี compute worker ของ benchmark
+- Macro4-local สูงสุด Sapiens2 1B 59.184%; QANet 57.517% คะแนนรายส่วนและข้อจำกัดอยู่ในรายงาน
+
+ผลปัจจุบันยังจำกัดเฉพาะ annotated person-parts ตาม dataset contract ไม่รับรอง full-scene person AP/Precision/F1 เก็บประวัติ interruption และ failure ของ parent ไว้ครบ
+
+## บันทึกสถานะก่อนปิดรอบ
+
+ข้อความด้านล่างเป็น snapshot ขณะ continuation กำลังทำงาน ไม่ใช่สถานะปัจจุบัน
+
+
 **Controlled continuation ของ Sapiens2 1B — ตรวจ 2026-11-18T10:27:29+07:00**
 
 แปดโมเดล QANet/M2FP/D2FP/RP-R-CNN/CPI R50/CPI ConvNeXt-B/Sapiens2 0.4B/Sapiens2 0.8B มี canonical metricsครบ600ภาพและ native ROI packetsครบ763งานต่อโมเดล พร้อม clean timingครบสามรอบ ผลเหล่านี้เก็บไว้พร้อม source hashes
