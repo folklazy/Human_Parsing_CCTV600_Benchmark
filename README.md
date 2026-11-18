@@ -2,7 +2,7 @@
 
 **รอบปัจจุบันใช้วิธี shared reference ของงาน CIHP/CCTV เดิม** ตามคำขอเริ่มรอบใหม่วันที่ 17 พฤศจิกายน 2026 คะแนนหลักเป็น **Macro4-local** พร้อม **mIoU3 (part-mean), Face-local, Precision, Recall และ F1/Dice**
 
-[ผลสรุปครบ 9 โมเดล](reports/CCTV600_RESULTS_TH.md) · [สถานะ](STATUS.md) · [Protocol ที่ใช้จริง](configs/SHARED_REFERENCE_V1.json) · [Scorer](src/reference_parts600.py) · [Controller/continuation](src/reference_collection.py) · [บันทึกงาน](WORK_LOG.md) · [Dataset CCTV600](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
+[ผลสรุปครบ 9 โมเดล](reports/CCTV600_RESULTS_TH.md) · [สถานะ](STATUS.md) · [แม่แบบ shared-reference protocol](configs/SHARED_REFERENCE_V1.json) · [Scorer](src/reference_parts600.py) · [Controller/continuation](src/reference_collection.py) · [บันทึกงาน](WORK_LOG.md) · [Dataset CCTV600](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
 
 ## ข้อมูลและขอบเขตการประเมิน
 
@@ -84,7 +84,7 @@ GT มี person bbox 774 กรอบ โดย 769 กรอบมีด้า
 | **Macro4-local** | เฉลี่ย Hair/Face-local/Upper/Lower คลาสละ 25% | คะแนนรวมสี่คลาสหลัก |
 | **Pooled IoU** | รวม TP/FP/FN ของทุก GT part ภายในคลาสก่อนเข้าสูตร | คุณภาพจากจำนวนพิกเซลรวม ส่วนใหญ่มีน้ำหนักมากกว่า |
 | **Precision / Recall / F1-Dice** | รวม counts ภายในคลาสแล้วหารตามสูตรด้านล่าง | การทายเกิน การเก็บ GT ได้ครบ และสมดุลทั้งสอง |
-| **Person Precision / Recall / F1** | นับ TP/FP/FN จาก bbox matching ที่ 0.50/0.75 | Coverage ของ person pipeline ภายใต้ GT bbox และ ignore ที่กำหนด |
+| **Annotated-person recall / unmatched predictions** | จับคู่ bbox ที่ 0.50/0.75; รายงานคน GT ที่พบ/พลาดและ unmatched diagnostics | Full-scene person Precision/F1/AP เป็น null เพราะ inventory ไม่ครบ |
 
 ทุกค่าแสดงเป็น % จาก full-precision canonical statistics แล้วจึงปัดเศษ สูตรพื้นฐานคือ
 
@@ -124,7 +124,7 @@ CCTV600 ส่งมอบ bbox และ masks สี่ส่วน รอบ�
 
 ## GT และ mapping
 
-รวม source components ที่เป็นคลาส/owner เดียวกัน เก็บช่องว่างจากการบดบัง ใช้ common VOID สำหรับ explicit ignore, คนต่ำกว่า 50 px, class/owner conflicts, degenerate shapes และ shape ที่มี visual QA ยืนยัน class error เดิม ข้อกำหนดทั้งหมดใช้ร่วมกันทุกโมเดล
+รวม source components ที่เป็นคลาส/owner เดียวกัน เก็บช่องว่างจากการบดบัง ใช้ common VOID สำหรับ explicit ignore, คนต่ำกว่า 50 px, class/owner conflicts และ degenerate shapes ตาม current fresh CONFIG โดยไม่ใช้ historical shape-index exclusions ข้อกำหนดทั้งหมดใช้ร่วมกันทุกโมเดล
 
 | Target | CIHP native IDs | Sapiens native IDs |
 | --- | --- | --- |
@@ -199,3 +199,8 @@ Sapiens2 มีข้อกำหนดการใช้ code/weights รวม
 Continuation ตรวจ integer native29 packets และ crop/checkpoint/config bindings ของ accepted ROIจาก fresh experiment เดิม แล้วประมวลผลเฉพาะ pending jobs ผลแปดโมเดลและ timingเดิมคงเป็น source of truth พร้อม hashes ส่วน1Bคำนวณ saved-mask scoresเมื่อ assembled viewครบ600 IDs และเปิด dedicated timingสามรอบตามแผน จากนั้นสร้าง BATCH_REPORT_TH.md และเผยแพร่ reports/CCTV600_RESULTS_TH.md เป็นผลส่งมอบ
 
 เวลา quality ของ1Bเป็นผลรวม accepted adapter intervals ข้ามสองprocess โดยมีwarmupของแต่ละprocessบันทึกแยก Application/I-O totals ของเฟรมที่ถูกขัดจังหวะให้ null และเก็บต้นทุน/ข้อผิดพลาดของ parent attemptไว้ใน provenance
+
+
+## การอ่านผลเทียบกับ CCTV90
+
+[ผลตรวจ CCTV90 กับ CCTV600](reports/CCTV600_RESULTS_TH.md#cctv90-comparison) มีคะแนนทั้งเก้าโมเดล, ความต่าง GT/matching/input, timer scope และ dedicated timing จริง Protocol ของรอบนี้ freeze ใน `outputs/CURRENT.json` → `CONFIG.json` ค่า `protocol`; ไฟล์ `configs/SHARED_REFERENCE_V1.json` เป็นแม่แบบอ้างอิงก่อน fresh orchestration และไม่แทน current run bindings

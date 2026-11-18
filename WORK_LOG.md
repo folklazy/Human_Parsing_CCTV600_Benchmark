@@ -92,3 +92,8 @@ Run cctv600-1b-continuation-20261118T032146603433Z Controller301591 worker301752
 ## 2026-11-18 — ปิดรอบครบเก้าโมเดล
 
 Controller จบเวลา 11:12:31 น. Asia/Bangkok; canonical RESULT_INDEX ยืนยัน strict complete 600 ภาพและ 763 ROI ต่อระบบ รวมเก้าระบบ Dedicated timing clean complete ทั้ง 27 รอบ Automatic publication สำเร็จ commit abf0574 และตรวจ remote main ตรงกัน ตรวจ arithmetic จากสถิติที่บันทึกโดยไม่ full rescore หรือ inference ซ้ำ อัปเดตสถานะและสรุป Mean-part เทียบ pooled ให้ชัด รักษา native artifacts และ historical failure records
+
+
+## 2026-11-18 — ตรวจสาเหตุผลต่าง CCTV90/CCTV600
+
+เทียบ canonical CCTV90 shared-reference กับ CCTV600 โดยไม่ inference/full rescore ใหม่ Model/config/source/environment path bindings ตรงทั้งเก้า; shared helper hashesตรง11ไฟล์ สูตร counts/aggregation ร่วมกัน แต่ matcher เปลี่ยน mask-optimal เป็น bbox-greedy, GT support/VOID ต่างกัน ตรวจภาพ SHAซ้ำ24ภาพ (22มีROI/2ว่าง): detection countsเท่ากัน, crop setพร้อมPNGhashตรง7/22ภาพที่มีROI ความต่าง bbox/maskส่วนมากเล็กน้อย วัด overlap33ROIเพื่อไม่ตีความ hash mismatchเกินจริง เพิ่มตารางMacro4/เวลา/dedicated3-round meansในรายงานเดิม แก้ README person precisionและ protocol template scope ไม่แก้ frozen sources/metrics/GT

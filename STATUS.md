@@ -4,6 +4,7 @@
 
 - คะแนนคุณภาพครบ 9/9 โมเดล โมเดลละ 600 ภาพและ 763 ROI, missing/duplicate/invalid เป็นศูนย์ในผลที่ตรวจรับ
 - Dedicated timing ผ่าน 3/3 รอบทุกโมเดล รวม 27 รอบ
+- [ผลตรวจเทียบ CCTV90/CCTV600](reports/CCTV600_RESULTS_TH.md#cctv90-comparison): สูตรรายส่วนร่วมกัน แต่ population/GT/matcher/detector cache และ timer instrumentation ต่างกัน ห้ามอ่านเป็นการรันซ้ำภายใต้ทุกเงื่อนไขเดิม
 - Canonical results: `outputs/cctv600-1b-continuation-20261118T032146603433Z/RESULT_INDEX.json` และ `TIMING_SUMMARY.json`
 - รายงาน [CCTV600_RESULTS_TH.md](reports/CCTV600_RESULTS_TH.md) เผยแพร่แล้ว; automatic publication commit `abf0574` ตาม `PUBLICATION.json`
 - งาน controller/worker จบแล้ว ตอนตรวจ GPU ไม่มี compute worker ของ benchmark
