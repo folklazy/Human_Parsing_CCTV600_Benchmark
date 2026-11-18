@@ -1,0 +1,3751 @@
+{
+  "schema": "CCTV600_PUBLIC_RESULTS_V1",
+  "status": "COMPLETE",
+  "run_id": "cctv600-1b-continuation-20261118T032146603433Z",
+  "parent_run_id": "cctv600-fresh-20261117T093921424617Z",
+  "ended_utc": "2026-11-18T04:12:31.173420+00:00",
+  "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+  "dataset_membership_sha256": "256a191352a2f32150fdf2d6a8ddc24845780f5885a8d7b2f785008a505a3706",
+  "mapping_sha256": "7fb101672407d465885efcc00202af927e93cd422daeae42bf215cbe504cd33d",
+  "protocol": {
+    "protocol": "CCTV600_ANNOTATED_PERSON_PARTS_FRESH",
+    "status": "FROZEN_BEFORE_NEW_INFERENCE",
+    "reference_run": "shared-c3-face-local-20261108T083533Z",
+    "reference_publication_local_commit": "29f7030",
+    "reference_publication_remote_snapshot_checked": "8505cbf4ca7ba1bec338a33b3f678d5e6c8fb194",
+    "population": 600,
+    "target_order": [
+      "Hair",
+      "Face_local",
+      "Upper",
+      "Lower"
+    ],
+    "primary": "Macro4_local",
+    "primary_definition": "unweighted mean of four target mean-part IoUs, Face uses the shared tight GT Face bbox scoring domain",
+    "secondary": [
+      "mIoU3_part_mean",
+      "Face_local_IoU",
+      "mean_part_IoU",
+      "pooled_IoU",
+      "precision",
+      "recall",
+      "F1_Dice",
+      "binary_confusion",
+      "bbox_person_metrics"
+    ],
+    "GT": {
+      "person_minimum_source_bbox_long_side_px": 50,
+      "parts": "union source components with the same image-local owner and class",
+      "valid": "original grid except shared explicit ignore, under50 GT boxes, class/owner conflicts and degenerate geometry; fresh GT export, no historical shape-index exclusions",
+      "Hair_Upper_Lower": "compare the matched person's prediction against that person's positive GT part on the full shared valid grid",
+      "Face_local": "compare within the tight pixel bbox of the positive GT Face mask, no margin, intersect shared valid grid",
+      "reference_assumption": "each accepted positive part mask specifies the visible reference extent of that part for its owner",
+      "unassigned": "retained as source unassigned. Within a positive-person-part task, pixels outside that person's reference part are non-target. No full-scene semantic background certification is inferred",
+      "absent_part_annotation": "no task for that owner and class",
+      "missed_GT_person": "empty prediction, positive parts remain in denominator with IoU zero"
+    },
+    "matching": {
+      "type": "frozen CCTV600 GT-first confidence-ordered bbox matching",
+      "thresholds": [
+        0.5,
+        0.75
+      ],
+      "quality_part_threshold": 0.5,
+      "unmatched_ignore_box_IoA": 0.5,
+      "difference_from_reference": "CCTV600 has bbox GT without full-person silhouette masks. Uses bbox IoU, not the earlier GT-person-mask matcher",
+      "tie": "confidence, predicted box geometry, maximum eligible GT IoU then GT box geometry. Identical geometry uses source order and is reported",
+      "GT_used_in_inference": false
+    },
+    "mapping": "reuse CIHP_SAPIENS_COMMON_VIEW_REVISION2 total native20/native29 mapping, Face ID1 Hair ID2 Upper ID3 Lower ID4 in the reference scorer",
+    "GT_source_ids": {
+      "hair": 1,
+      "face": 2,
+      "upper": 3,
+      "lower": 4
+    },
+    "reference_target_ids": {
+      "hair": 2,
+      "face": 1,
+      "upper": 3,
+      "lower": 4
+    },
+    "projection": "per-person native hard planes after the existing YOLO ownership route. All native classes preserved. No global semantic composition is used as a substitute for per-person part scoring",
+    "garments": "CIHP UpperClothes+Coat and Pants+Skirt, Sapiens Upper_Clothing and Lower_Clothing. Dress/Apparel remain OTHER. No geometric split",
+    "Face_claim": "agreement within GT Face bbox under Face/Face_Neck proxy mapping. Does not establish full-frame face-only or neck quality",
+    "STRICT_COMPLETE": "600 exact unique image IDs, all frozen original detector ROI jobs accepted with complete source bindings. Incomplete primary null, historical failures retained",
+    "native_inference": "reuse accepted RGB-crop native predictions. Process only missing ROI jobs in fresh linked collections. FP32/batch1/preprocessing/TTA/thresholds/checkpoints/YOLO ownership remain bound to the accepted collector",
+    "repairs": {
+      "RPR": "accept a native empty BoxList as an empty prediction only when the parsing-field KeyError traceback proves len(pred)==0. Unexpected nonempty missing-field outputs fail",
+      "CPI_unused_cache_guard": "if physical free VRAM is below the existing guard, release this process's unused PyTorch cache once before rechecking the guard. No model retry, allocator environment change, precision or resolution change"
+    },
+    "timing": "record accepted per-ROI adapter intervals, sum actual ROI work per image and population. Preserve source interval scope, failures, warmups and missing timer reasons. Dedicated 100-image x3 rounds keep the previous clean-resource policy",
+    "automatic_model_retry": 0,
+    "scope_end": "stop after the approved nine checkpoints and their scheduled timing rounds",
+    "parser_prediction_reuse": 0,
+    "dataset_membership_sha256": "256a191352a2f32150fdf2d6a8ddc24845780f5885a8d7b2f785008a505a3706",
+    "cross_confusion": "positive GT person-part pixels; rows Hair/Face_local/Upper/Lower, columns targets plus prediction OTHER",
+    "missed_parts": "eligible positive GT person-parts with TP=0, including missed GT people",
+    "full_scene_person_AP_precision_F1": null,
+    "unmatched_predictions": "diagnostics; partial-person inventory prevents confirmed global FP status"
+  },
+  "native_mapping": {
+    "CIHP_GT_AND_NATIVE_PRED": {
+      "0": 0,
+      "1": 5,
+      "2": 2,
+      "3": 5,
+      "4": 5,
+      "5": 3,
+      "6": 5,
+      "7": 3,
+      "8": 5,
+      "9": 4,
+      "10": 5,
+      "11": 5,
+      "12": 4,
+      "13": 1,
+      "14": 5,
+      "15": 5,
+      "16": 5,
+      "17": 5,
+      "18": 5,
+      "19": 5
+    },
+    "SAPIENS2_DOME29_PRED": {
+      "0": 0,
+      "1": 5,
+      "2": 5,
+      "3": 1,
+      "4": 2,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5,
+      "9": 5,
+      "10": 5,
+      "11": 5,
+      "12": 5,
+      "13": 4,
+      "14": 5,
+      "15": 5,
+      "16": 5,
+      "17": 5,
+      "18": 5,
+      "19": 5,
+      "20": 5,
+      "21": 5,
+      "22": 5,
+      "23": 3,
+      "24": 1,
+      "25": 1,
+      "26": 1,
+      "27": 1,
+      "28": 1
+    }
+  },
+  "GT": {
+    "images": 600,
+    "people": 769,
+    "parts": {
+      "Hair": 544,
+      "Face_local": 384,
+      "Upper": 745,
+      "Lower": 668
+    },
+    "support": {
+      "Hair": 825356,
+      "Face_local": 265216,
+      "Upper": 4394789,
+      "Lower": 1892964
+    },
+    "VOID_pixels": 725799,
+    "zero_ROI_images": 112
+  },
+  "resources": {
+    "quality_policy": "GPU_ADMISSION_WITH_SHARED_QUALITY_ONLY_DIAGNOSTICS",
+    "minimum_free_disk_GiB": 50,
+    "max_run_GiB": 80,
+    "max_model_GiB": 80,
+    "max_model_hours": 24,
+    "minimum_pre_forward_free_MiB": 1024,
+    "admission_free_MiB": {
+      "QANet_CIHP_HRNetW48_512x384": 2560,
+      "M2FP_R101_CIHP": 8192,
+      "D2FP_R101_CIHP": 9216,
+      "RPR_CIHP": 6144,
+      "CPI_R50_CIHP": 14500,
+      "CPI_ConvNeXtB_CIHP": 13500,
+      "Sapiens2_0.4b": 4608,
+      "Sapiens2_0.8b": 6656,
+      "Sapiens2_1b": 9600
+    }
+  },
+  "models": [
+    {
+      "model_id": "QANet_CIHP_HRNetW48_512x384",
+      "name": "QANet",
+      "result": {
+        "model_id": "QANet_CIHP_HRNetW48_512x384",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.5617213424050259,
+        "Face_local_IoU": 0.6155115974144553,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 205318,
+            "FP": 15693,
+            "FN": 59898,
+            "GT_pixels": 265216,
+            "prediction_pixels": 221011,
+            "union": 280909,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.6155115974144553,
+            "mean_part_Dice": 0.7034040491859196,
+            "pooled_IoU": 0.7309057381571968,
+            "precision": 0.9289944844374262,
+            "recall": 0.7741538972007722,
+            "F1_Dice": 0.8445355770041565,
+            "ignored_prediction_pixels": 21942,
+            "TN": 137597,
+            "binary_confusion_target_other": [
+              [
+                205318,
+                59898
+              ],
+              [
+                15693,
+                137597
+              ]
+            ],
+            "entirely_missed_GT_parts": 48,
+            "entirely_missed_fraction": 0.125
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 631886,
+            "FP": 105575,
+            "FN": 193470,
+            "GT_pixels": 825356,
+            "prediction_pixels": 737461,
+            "union": 930931,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.49606221564443953,
+            "mean_part_Dice": 0.5789861500151622,
+            "pooled_IoU": 0.6787678141559363,
+            "precision": 0.8568398871262345,
+            "recall": 0.7655920596687975,
+            "F1_Dice": 0.8086500210837225,
+            "ignored_prediction_pixels": 3094,
+            "TN": 1132098233,
+            "binary_confusion_target_other": [
+              [
+                631886,
+                193470
+              ],
+              [
+                105575,
+                1132098233
+              ]
+            ],
+            "entirely_missed_GT_parts": 106,
+            "entirely_missed_fraction": 0.1948529411764706
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 3404732,
+            "FP": 461166,
+            "FN": 990057,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 3865898,
+            "union": 4855955,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.6293292822832006,
+            "mean_part_Dice": 0.6930434784295957,
+            "pooled_IoU": 0.7011457066632619,
+            "precision": 0.8807092168494874,
+            "recall": 0.7747202425417921,
+            "F1_Dice": 0.8243217543528765,
+            "ignored_prediction_pixels": 1361,
+            "TN": 1546880385,
+            "binary_confusion_target_other": [
+              [
+                3404732,
+                990057
+              ],
+              [
+                461166,
+                1546880385
+              ]
+            ],
+            "entirely_missed_GT_parts": 146,
+            "entirely_missed_fraction": 0.1959731543624161
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 1386698,
+            "FP": 249727,
+            "FN": 506266,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 1636425,
+            "union": 2142691,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.5597725292874376,
+            "mean_part_Dice": 0.6335131919166379,
+            "pooled_IoU": 0.6471759110389692,
+            "precision": 0.8473947782513711,
+            "recall": 0.7325538150751942,
+            "F1_Dice": 0.7858006017472146,
+            "ignored_prediction_pixels": 423,
+            "TN": 1389935619,
+            "binary_confusion_target_other": [
+              [
+                1386698,
+                506266
+              ],
+              [
+                249727,
+                1389935619
+              ]
+            ],
+            "entirely_missed_GT_parts": 135,
+            "entirely_missed_fraction": 0.20209580838323354
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.5751689061573833,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              631886,
+              12311,
+              1754,
+              7,
+              179398
+            ],
+            [
+              8819,
+              205318,
+              1949,
+              0,
+              49130
+            ],
+            [
+              10932,
+              3851,
+              3404732,
+              41592,
+              933682
+            ],
+            [
+              597,
+              0,
+              99405,
+              1386698,
+              406264
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 102.99931481074137,
+          "mean_s_per_image": 0.1309807953343261,
+          "total_s": 78.58847720059566,
+          "observed_totals_ms": {
+            "adapter_ms": 78588.47720059566,
+            "pre_module_ms": 12981.395475799218,
+            "module_call_ms": 64538.476321147755,
+            "post_module_ms": 965.3256649617106,
+            "inter_module_ms": 103.27973868697882,
+            "ownership_ms": 3055.5012703407556,
+            "crop_read_ms": 2377.07125605084,
+            "roi_packet_write_and_validation_ms": 8881.813511950895,
+            "source_read_ms": 17045.22869293578,
+            "cached_detector_read_ms": 8394.81648337096,
+            "composition_projection_ms": 5692.6557892002165,
+            "frame_packet_write_and_validation_ms": 122479.39681494609,
+            "application_from_cached_inputs_ms": 513328.8526528049
+          },
+          "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+          "peak_allocated_MiB": 346.6259765625,
+          "peak_reserved_MiB": 528.0
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 103.76077125810328,
+            "mean_s_per_image": 0.12866335636004805,
+            "total_s": 12.866335636004806,
+            "observed_totals_ms": {
+              "source_read_ms": 3076.190836261958,
+              "cached_detector_read_ms": 1380.1229000091553,
+              "composition_projection_ms": 986.2927414942533,
+              "frame_packet_write_and_validation_ms": 0.21237507462501526,
+              "application_from_cached_inputs_ms": 88433.80439188331,
+              "adapter_ms": 12866.335636004806,
+              "pre_module_ms": 2249.14841982536,
+              "module_call_ms": 10435.452706879005,
+              "post_module_ms": 163.46325492486358,
+              "inter_module_ms": 18.271254375576973,
+              "ownership_ms": 1612.455953611061,
+              "crop_read_ms": 368.5460651759058
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 343.5751953125,
+            "peak_reserved_MiB": 448.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 102.10215849351258,
+            "mean_s_per_image": 0.1266066765319556,
+            "total_s": 12.66066765319556,
+            "observed_totals_ms": {
+              "source_read_ms": 2882.555164396763,
+              "cached_detector_read_ms": 1342.3585046548396,
+              "composition_projection_ms": 967.1070140320808,
+              "frame_packet_write_and_validation_ms": 0.22597680799663067,
+              "application_from_cached_inputs_ms": 88018.23948789388,
+              "adapter_ms": 12660.66765319556,
+              "pre_module_ms": 2176.7870844341815,
+              "module_call_ms": 10312.057366594672,
+              "post_module_ms": 155.88007611222565,
+              "inter_module_ms": 15.943126054480672,
+              "ownership_ms": 1639.2402069177479,
+              "crop_read_ms": 344.1377035342157
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 343.5751953125,
+            "peak_reserved_MiB": 436.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 102.95272233235019,
+            "mean_s_per_image": 0.12766137569211422,
+            "total_s": 12.766137569211423,
+            "observed_totals_ms": {
+              "source_read_ms": 2855.3685531951487,
+              "cached_detector_read_ms": 1351.265712408349,
+              "composition_projection_ms": 1018.1115323211998,
+              "frame_packet_write_and_validation_ms": 0.22521568462252617,
+              "application_from_cached_inputs_ms": 88219.15907924995,
+              "adapter_ms": 12766.137569211423,
+              "pre_module_ms": 2256.0915895737708,
+              "module_call_ms": 10337.760532740504,
+              "post_module_ms": 155.24788945913315,
+              "inter_module_ms": 17.037557438015938,
+              "ownership_ms": 1609.8097029607743,
+              "crop_read_ms": 335.3696879930794
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 343.5751953125,
+            "peak_reserved_MiB": 448.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/qanet/QANet_CIHP_HRNetW48_512x384/weights_latest.pth",
+        "checkpoint_sha256": "cf7374ea109e05c18f06f9b6aa4747336914fa0523663b01cc771513c1cec365",
+        "native_config": "Human_Parsing_MHPv2_Study/provenance/RUN_MANIFESTS/implementation-handoff-20261015T063548Z/native_smoke/configs/QANet_CIHP_HRNetW48_512x384.yaml",
+        "native_config_sha256": "7a6dedb38c7f7a5add292c6a8587ac2c9a04a2cf111d69af47e059046d2a3f11",
+        "source": "third_party/human_parsing/QANet",
+        "source_commit": "61615c4491979569771020bc4beff86d63974829",
+        "environment": ".venvs/parser-legacy-cu113",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 69222741,
+      "native_classes": 20,
+      "upstream": "https://github.com/soeaver/QANet",
+      "implementation": "BOUND_NATIVE_CROP_ADAPTER",
+      "environment": {
+        "python": "3.9.25 (main, Oct 31 2025, 23:00:23) \n[Clang 21.1.4 ]",
+        "torch": "1.10.2+cu113",
+        "CUDA": "11.3",
+        "GPU": "Tesla T4",
+        "numpy": "1.26.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "1219ee48b0b165f181e75a901798e94d42d37c84e931b6fecc0be297d034dd7c",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "0232acd61b6610e3896330d0a408d1aacf6961a15fc8e133ca519df850370998",
+        "assembled_index_sha256": "e136256046289c3e352ac1b82ff686c7c02e3cc7657835fbca404953aea3c56a",
+        "collector_completion_sha256": "df5f079f64c9f89899ec04dc4ae4c2bf7b6e3eb1c53fa0c040958c64ee2410f9",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z"
+        ]
+      }
+    },
+    {
+      "model_id": "M2FP_R101_CIHP",
+      "name": "M2FP",
+      "result": {
+        "model_id": "M2FP_R101_CIHP",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.4100246914524015,
+        "Face_local_IoU": 0.45256262617075954,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 167066,
+            "FP": 12118,
+            "FN": 98150,
+            "GT_pixels": 265216,
+            "prediction_pixels": 179184,
+            "union": 277334,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.45256262617075954,
+            "mean_part_Dice": 0.520475009756194,
+            "pooled_IoU": 0.602399994230783,
+            "precision": 0.9323711938565944,
+            "recall": 0.6299242881274131,
+            "F1_Dice": 0.7518721872187218,
+            "ignored_prediction_pixels": 43528,
+            "TN": 141172,
+            "binary_confusion_target_other": [
+              [
+                167066,
+                98150
+              ],
+              [
+                12118,
+                141172
+              ]
+            ],
+            "entirely_missed_GT_parts": 129,
+            "entirely_missed_fraction": 0.3359375
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 526564,
+            "FP": 79956,
+            "FN": 298792,
+            "GT_pixels": 825356,
+            "prediction_pixels": 606520,
+            "union": 905312,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.3756786743648679,
+            "mean_part_Dice": 0.4344924756871813,
+            "pooled_IoU": 0.5816381534763706,
+            "precision": 0.8681725252258787,
+            "recall": 0.6379840941363485,
+            "F1_Dice": 0.7354882685372197,
+            "ignored_prediction_pixels": 749,
+            "TN": 1132123852,
+            "binary_confusion_target_other": [
+              [
+                526564,
+                298792
+              ],
+              [
+                79956,
+                1132123852
+              ]
+            ],
+            "entirely_missed_GT_parts": 216,
+            "entirely_missed_fraction": 0.39705882352941174
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 2884813,
+            "FP": 343979,
+            "FN": 1509976,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 3228792,
+            "union": 4738768,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.4542147143320953,
+            "mean_part_Dice": 0.49957238113581187,
+            "pooled_IoU": 0.6087685660070297,
+            "precision": 0.8934651101712343,
+            "recall": 0.656416724443426,
+            "F1_Dice": 0.7568131039730541,
+            "ignored_prediction_pixels": 1746,
+            "TN": 1546997572,
+            "binary_confusion_target_other": [
+              [
+                2884813,
+                1509976
+              ],
+              [
+                343979,
+                1546997572
+              ]
+            ],
+            "entirely_missed_GT_parts": 307,
+            "entirely_missed_fraction": 0.4120805369127517
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 1170986,
+            "FP": 193946,
+            "FN": 721978,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 1364932,
+            "union": 2086910,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.4001806856602412,
+            "mean_part_Dice": 0.44925485531866605,
+            "pooled_IoU": 0.5611099664096679,
+            "precision": 0.857907939736192,
+            "recall": 0.6185991915324327,
+            "F1_Dice": 0.7188602705549839,
+            "ignored_prediction_pixels": 222,
+            "TN": 1389991400,
+            "binary_confusion_target_other": [
+              [
+                1170986,
+                721978
+              ],
+              [
+                193946,
+                1389991400
+              ]
+            ],
+            "entirely_missed_GT_parts": 288,
+            "entirely_missed_fraction": 0.4311377245508982
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.420659175131991,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              526564,
+              25255,
+              4453,
+              0,
+              269084
+            ],
+            [
+              6005,
+              167066,
+              4587,
+              0,
+              87558
+            ],
+            [
+              10328,
+              13987,
+              2884813,
+              39941,
+              1445720
+            ],
+            [
+              607,
+              79,
+              62583,
+              1170986,
+              658709
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 255.00481777707284,
+          "mean_s_per_image": 0.3242811266065109,
+          "total_s": 194.56867596390657,
+          "observed_totals_ms": {
+            "adapter_ms": 194568.67596390657,
+            "pre_module_ms": 13977.192918770015,
+            "module_call_ms": 176928.27557493,
+            "post_module_ms": 3663.207470206544,
+            "inter_module_ms": 0.0,
+            "ownership_ms": 4953.888381365687,
+            "crop_read_ms": 1852.777342312038,
+            "roi_packet_write_and_validation_ms": 10871.027658693492,
+            "source_read_ms": 16896.092775743455,
+            "cached_detector_read_ms": 8641.078472137451,
+            "composition_projection_ms": 5522.679826244712,
+            "frame_packet_write_and_validation_ms": 123248.6645958852,
+            "application_from_cached_inputs_ms": 623294.3253486883
+          },
+          "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+          "peak_allocated_MiB": 1616.26318359375,
+          "peak_reserved_MiB": 3804.0
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 243.28076611873843,
+            "mean_s_per_image": 0.3016681499872357,
+            "total_s": 30.166814998723567,
+            "observed_totals_ms": {
+              "source_read_ms": 2867.6803603302687,
+              "cached_detector_read_ms": 1372.1973474603146,
+              "composition_projection_ms": 900.8003603667021,
+              "frame_packet_write_and_validation_ms": 0.14808028936386108,
+              "application_from_cached_inputs_ms": 101121.0062163882,
+              "adapter_ms": 30166.814998723567,
+              "pre_module_ms": 2294.434904353693,
+              "module_call_ms": 27240.304763894528,
+              "post_module_ms": 632.0753304753453,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1575.123024173081,
+              "crop_read_ms": 344.6790922898799
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 1337.8447265625,
+            "peak_reserved_MiB": 2466.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 244.51687601357398,
+            "mean_s_per_image": 0.30320092625683176,
+            "total_s": 30.320092625683174,
+            "observed_totals_ms": {
+              "source_read_ms": 2835.631609428674,
+              "cached_detector_read_ms": 1392.09796465002,
+              "composition_projection_ms": 938.8635791838169,
+              "frame_packet_write_and_validation_ms": 0.1495105680078268,
+              "application_from_cached_inputs_ms": 108481.63532279432,
+              "adapter_ms": 30320.092625683174,
+              "pre_module_ms": 2360.3847976773977,
+              "module_call_ms": 27310.509104281664,
+              "post_module_ms": 649.1987237241119,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1605.4247487336397,
+              "crop_read_ms": 350.1338076312095
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 1337.8447265625,
+            "peak_reserved_MiB": 2466.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 245.43513892398727,
+            "mean_s_per_image": 0.3043395722657442,
+            "total_s": 30.43395722657442,
+            "observed_totals_ms": {
+              "source_read_ms": 2813.4656364563853,
+              "cached_detector_read_ms": 1351.2987275607884,
+              "composition_projection_ms": 926.8084322102368,
+              "frame_packet_write_and_validation_ms": 0.1502495724707842,
+              "application_from_cached_inputs_ms": 103672.58166451938,
+              "adapter_ms": 30433.95722657442,
+              "pre_module_ms": 2327.4632005486637,
+              "module_call_ms": 27507.158677093685,
+              "post_module_ms": 599.3353489320725,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1582.4383706785738,
+              "crop_read_ms": 349.09820184111595
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 1337.8447265625,
+            "peak_reserved_MiB": 2466.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/m2fp/M2FP_R101_CIHP/model.pth",
+        "checkpoint_sha256": "7451e822298c8dee3781444ebd490bc43f192ca135b66ada841f16245746bad1",
+        "native_config": "third_party/human_parsing/M2FP/configs/cihp/m2fp_R101_bs16_265k.yaml",
+        "native_config_sha256": "c0e0b243100f9e3163cc88eaec6112dd918ca9526575976852ce3633541475a4",
+        "source": "third_party/human_parsing/M2FP",
+        "source_commit": "17a89decacfca347ed18bed66baec7a5847ea43c",
+        "environment": ".venvs/parser-legacy-cu113",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 63018390,
+      "native_classes": 20,
+      "upstream": "https://github.com/soeaver/M2FP",
+      "implementation": "BOUND_NATIVE_CROP_ADAPTER",
+      "environment": {
+        "python": "3.9.25 (main, Oct 31 2025, 23:00:23) \n[Clang 21.1.4 ]",
+        "torch": "1.10.2+cu113",
+        "CUDA": "11.3",
+        "GPU": "Tesla T4",
+        "numpy": "1.26.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "1219ee48b0b165f181e75a901798e94d42d37c84e931b6fecc0be297d034dd7c",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "f831e5e4af89252a49ccd2cf88f19bfbe35ed7ddcfd5221bd85e9e87277c9a5b",
+        "assembled_index_sha256": "79ec54699bd2360796adf73b7088b57911b35384fdbe537b1a88bf0e6a66f1e1",
+        "collector_completion_sha256": "39e8fdaa61ad32b61e05c280133752e0fc89782247f11eb9971822b7e840f7ae",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z"
+        ]
+      }
+    },
+    {
+      "model_id": "D2FP_R101_CIHP",
+      "name": "D2FP",
+      "result": {
+        "model_id": "D2FP_R101_CIHP",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.3715460928487095,
+        "Face_local_IoU": 0.42012757530528894,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 167649,
+            "FP": 11367,
+            "FN": 97567,
+            "GT_pixels": 265216,
+            "prediction_pixels": 179016,
+            "union": 276583,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.42012757530528894,
+            "mean_part_Dice": 0.48118958406954576,
+            "pooled_IoU": 0.6061435446140941,
+            "precision": 0.9365028824239174,
+            "recall": 0.6321224963803089,
+            "F1_Dice": 0.7547812854544472,
+            "ignored_prediction_pixels": 33944,
+            "TN": 141923,
+            "binary_confusion_target_other": [
+              [
+                167649,
+                97567
+              ],
+              [
+                11367,
+                141923
+              ]
+            ],
+            "entirely_missed_GT_parts": 154,
+            "entirely_missed_fraction": 0.4010416666666667
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 503014,
+            "FP": 78180,
+            "FN": 322342,
+            "GT_pixels": 825356,
+            "prediction_pixels": 581194,
+            "union": 903536,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.33616349070472223,
+            "mean_part_Dice": 0.38859911676413605,
+            "pooled_IoU": 0.5567171645623418,
+            "precision": 0.8654838143545873,
+            "recall": 0.6094509520740141,
+            "F1_Dice": 0.7152451032668586,
+            "ignored_prediction_pixels": 1614,
+            "TN": 1132125628,
+            "binary_confusion_target_other": [
+              [
+                503014,
+                322342
+              ],
+              [
+                78180,
+                1132125628
+              ]
+            ],
+            "entirely_missed_GT_parts": 250,
+            "entirely_missed_fraction": 0.45955882352941174
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 2621930,
+            "FP": 287047,
+            "FN": 1772859,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 2908977,
+            "union": 4681836,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.41333250707518643,
+            "mean_part_Dice": 0.4563494085330797,
+            "pooled_IoU": 0.5600217521502249,
+            "precision": 0.9013237299573011,
+            "recall": 0.5965997457443349,
+            "F1_Dice": 0.717966594220023,
+            "ignored_prediction_pixels": 948,
+            "TN": 1547054504,
+            "binary_confusion_target_other": [
+              [
+                2621930,
+                1772859
+              ],
+              [
+                287047,
+                1547054504
+              ]
+            ],
+            "entirely_missed_GT_parts": 340,
+            "entirely_missed_fraction": 0.4563758389261745
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 1102170,
+            "FP": 160447,
+            "FN": 790794,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 1262617,
+            "union": 2053411,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.3651422807662198,
+            "mean_part_Dice": 0.4102225083044635,
+            "pooled_IoU": 0.5367508014713079,
+            "precision": 0.8729250437781212,
+            "recall": 0.5822456211528587,
+            "F1_Dice": 0.6985528180072069,
+            "ignored_prediction_pixels": 177,
+            "TN": 1390024899,
+            "binary_confusion_target_other": [
+              [
+                1102170,
+                790794
+              ],
+              [
+                160447,
+                1390024899
+              ]
+            ],
+            "entirely_missed_GT_parts": 321,
+            "entirely_missed_fraction": 0.4805389221556886
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.3836914634628543,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              503014,
+              15632,
+              3170,
+              17,
+              303523
+            ],
+            [
+              5799,
+              167649,
+              2596,
+              73,
+              89099
+            ],
+            [
+              14416,
+              20020,
+              2621930,
+              30437,
+              1707986
+            ],
+            [
+              1026,
+              577,
+              68065,
+              1102170,
+              721126
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 732.0384954979343,
+          "mean_s_per_image": 0.9309089534415398,
+          "total_s": 558.5453720649239,
+          "observed_totals_ms": {
+            "adapter_ms": 558545.3720649239,
+            "pre_module_ms": 13854.034723248333,
+            "module_call_ms": 541227.8220725711,
+            "post_module_ms": 3463.5152691043913,
+            "inter_module_ms": 0.0,
+            "ownership_ms": 4665.835552150384,
+            "crop_read_ms": 1923.4461593441665,
+            "roi_packet_write_and_validation_ms": 10599.976445548236,
+            "source_read_ms": 17130.069482605904,
+            "cached_detector_read_ms": 8635.186586296186,
+            "composition_projection_ms": 5617.10115079768,
+            "frame_packet_write_and_validation_ms": 123509.3967972789,
+            "application_from_cached_inputs_ms": 964664.2077304423
+          },
+          "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+          "peak_allocated_MiB": 1697.64892578125,
+          "peak_reserved_MiB": 2962.0
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 737.5137745853393,
+            "mean_s_per_image": 0.9145170804858208,
+            "total_s": 91.45170804858208,
+            "observed_totals_ms": {
+              "source_read_ms": 2905.232757795602,
+              "cached_detector_read_ms": 1402.8369977604598,
+              "composition_projection_ms": 915.6971543561667,
+              "frame_packet_write_and_validation_ms": 0.16590207815170288,
+              "application_from_cached_inputs_ms": 166754.79942723177,
+              "adapter_ms": 91451.70804858208,
+              "pre_module_ms": 2298.841641517356,
+              "module_call_ms": 88477.60973428376,
+              "post_module_ms": 675.2566727809608,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1582.5068312697113,
+              "crop_read_ms": 342.6881597843021
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 1664.0224609375,
+            "peak_reserved_MiB": 2962.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 731.9363151778347,
+            "mean_s_per_image": 0.907601030820515,
+            "total_s": 90.7601030820515,
+            "observed_totals_ms": {
+              "source_read_ms": 2800.0902968924493,
+              "cached_detector_read_ms": 1377.0681754685938,
+              "composition_projection_ms": 922.6221712306142,
+              "frame_packet_write_and_validation_ms": 0.1637977547943592,
+              "application_from_cached_inputs_ms": 164846.94665228017,
+              "adapter_ms": 90760.1030820515,
+              "pre_module_ms": 2374.4597332552075,
+              "module_call_ms": 87714.33687023818,
+              "post_module_ms": 671.3064785581082,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1563.2476643659174,
+              "crop_read_ms": 339.67131678946316
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 1664.0224609375,
+            "peak_reserved_MiB": 2962.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 720.4676756800543,
+            "mean_s_per_image": 0.8933799178432673,
+            "total_s": 89.33799178432673,
+            "observed_totals_ms": {
+              "source_read_ms": 2859.983701258898,
+              "cached_detector_read_ms": 1363.597808405757,
+              "composition_projection_ms": 900.8496829774231,
+              "frame_packet_write_and_validation_ms": 0.15063979662954807,
+              "application_from_cached_inputs_ms": 164680.43781560846,
+              "adapter_ms": 89337.99178432673,
+              "pre_module_ms": 2369.3502796813846,
+              "module_call_ms": 86345.14230187051,
+              "post_module_ms": 623.4992027748376,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1641.675402643159,
+              "crop_read_ms": 348.24423934333026
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 1664.0224609375,
+            "peak_reserved_MiB": 2962.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/d2fp/D2FP_R101_CIHP/model.pth",
+        "checkpoint_sha256": "acdfb2eceff5768235c944a5342189303c0bb9b2512aff2a79c6cf1f5129359e",
+        "native_config": "third_party/human_parsing/D2FP/configs/cihp/d2fp_R101_bs4_1060k_prior100.yaml",
+        "native_config_sha256": "968b590f4f877f1a7c739031211ecd220a45c33989650c88d31088c17464a291",
+        "source": "third_party/human_parsing/D2FP",
+        "source_commit": "9d415948de94b1a0bb74b18cfdace68dcd75acb8",
+        "environment": ".venvs/parser-legacy-cu113",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 79703930,
+      "native_classes": 20,
+      "upstream": "https://github.com/cvlab-yongin/D2FP",
+      "implementation": "BOUND_NATIVE_CROP_ADAPTER",
+      "environment": {
+        "python": "3.9.25 (main, Oct 31 2025, 23:00:23) \n[Clang 21.1.4 ]",
+        "torch": "1.10.2+cu113",
+        "CUDA": "11.3",
+        "GPU": "Tesla T4",
+        "numpy": "1.26.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "1219ee48b0b165f181e75a901798e94d42d37c84e931b6fecc0be297d034dd7c",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "a1bb8bc63e2e90ac50f28e59b31cb43c0b904598acd0160a3b481f9c8f1ebe6b",
+        "assembled_index_sha256": "2ea50279049a31f1fc142fedec2be3d723b2f9a81f527fffe71d616b5a881444",
+        "collector_completion_sha256": "f03d4c197ccbea75da4b4cc77e47299076c851ff0946fa82b77e445569599a67",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z"
+        ]
+      }
+    },
+    {
+      "model_id": "RPR_CIHP",
+      "name": "RP-R-CNN",
+      "result": {
+        "model_id": "RPR_CIHP",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.36049314414431305,
+        "Face_local_IoU": 0.3962901796183215,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 168562,
+            "FP": 14770,
+            "FN": 96654,
+            "GT_pixels": 265216,
+            "prediction_pixels": 183332,
+            "union": 279986,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.3962901796183215,
+            "mean_part_Dice": 0.45762277246461985,
+            "pooled_IoU": 0.6020372447193788,
+            "precision": 0.919435777714747,
+            "recall": 0.6355649734555985,
+            "F1_Dice": 0.7515895734681683,
+            "ignored_prediction_pixels": 44006,
+            "TN": 138520,
+            "binary_confusion_target_other": [
+              [
+                168562,
+                96654
+              ],
+              [
+                14770,
+                138520
+              ]
+            ],
+            "entirely_missed_GT_parts": 146,
+            "entirely_missed_fraction": 0.3802083333333333
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 518123,
+            "FP": 112865,
+            "FN": 307233,
+            "GT_pixels": 825356,
+            "prediction_pixels": 630988,
+            "union": 938221,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.3119016379153892,
+            "mean_part_Dice": 0.3718619136213931,
+            "pooled_IoU": 0.5522398240926178,
+            "precision": 0.821129720375031,
+            "recall": 0.6277569921343032,
+            "F1_Dice": 0.7115393066473306,
+            "ignored_prediction_pixels": 1557,
+            "TN": 1132090943,
+            "binary_confusion_target_other": [
+              [
+                518123,
+                307233
+              ],
+              [
+                112865,
+                1132090943
+              ]
+            ],
+            "entirely_missed_GT_parts": 230,
+            "entirely_missed_fraction": 0.4227941176470588
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 2553543,
+            "FP": 306678,
+            "FN": 1841246,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 2860221,
+            "union": 4701467,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.41327611041427603,
+            "mean_part_Dice": 0.47939151884841996,
+            "pooled_IoU": 0.5431374930420654,
+            "precision": 0.89277821538965,
+            "recall": 0.5810388166530862,
+            "F1_Dice": 0.7039392089052944,
+            "ignored_prediction_pixels": 1557,
+            "TN": 1547034873,
+            "binary_confusion_target_other": [
+              [
+                2553543,
+                1841246
+              ],
+              [
+                306678,
+                1547034873
+              ]
+            ],
+            "entirely_missed_GT_parts": 236,
+            "entirely_missed_fraction": 0.3167785234899329
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 1083399,
+            "FP": 211449,
+            "FN": 809565,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 1294848,
+            "union": 2104413,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.3563016841032739,
+            "mean_part_Dice": 0.41735611466043354,
+            "pooled_IoU": 0.5148224231650346,
+            "precision": 0.8366997516310795,
+            "recall": 0.5723294262331455,
+            "F1_Dice": 0.679713232775333,
+            "ignored_prediction_pixels": 388,
+            "TN": 1389973897,
+            "binary_confusion_target_other": [
+              [
+                1083399,
+                809565
+              ],
+              [
+                211449,
+                1389973897
+              ]
+            ],
+            "entirely_missed_GT_parts": 251,
+            "entirely_missed_fraction": 0.37574850299401197
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.36944240301281517,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              518123,
+              14293,
+              3332,
+              20,
+              289588
+            ],
+            [
+              10791,
+              168562,
+              2405,
+              47,
+              83411
+            ],
+            [
+              25836,
+              21584,
+              2553543,
+              78640,
+              1715186
+            ],
+            [
+              1878,
+              364,
+              77890,
+              1083399,
+              729433
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 251.8475338029962,
+          "mean_s_per_image": 0.32026611381947684,
+          "total_s": 192.1596682916861,
+          "observed_totals_ms": {
+            "adapter_ms": 192159.6682916861,
+            "pre_module_ms": 7338.9926047530025,
+            "module_call_ms": 158837.31116331182,
+            "post_module_ms": 16572.09044205956,
+            "inter_module_ms": 9411.274081561714,
+            "ownership_ms": 3678.9193253498524,
+            "crop_read_ms": 1823.7246572971344,
+            "roi_packet_write_and_validation_ms": 10277.541662799194,
+            "source_read_ms": 16880.2910996601,
+            "cached_detector_read_ms": 8464.013026561588,
+            "composition_projection_ms": 5222.364680841565,
+            "frame_packet_write_and_validation_ms": 120886.07878843322,
+            "application_from_cached_inputs_ms": 603570.8882405888
+          },
+          "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+          "peak_allocated_MiB": 698.98193359375,
+          "peak_reserved_MiB": 1276.0
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 256.02515162749876,
+            "mean_s_per_image": 0.3174711880180985,
+            "total_s": 31.747118801809847,
+            "observed_totals_ms": {
+              "source_read_ms": 2791.307090083137,
+              "cached_detector_read_ms": 1362.0521689299494,
+              "composition_projection_ms": 920.1990193687379,
+              "frame_packet_write_and_validation_ms": 0.15324563719332218,
+              "application_from_cached_inputs_ms": 104200.80142957158,
+              "adapter_ms": 31747.118801809847,
+              "pre_module_ms": 1332.313779508695,
+              "module_call_ms": 25483.731176005676,
+              "post_module_ms": 3270.23220108822,
+              "inter_module_ms": 1660.841645207256,
+              "ownership_ms": 1641.6916099842638,
+              "crop_read_ms": 336.64917037822306
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 699.494140625,
+            "peak_reserved_MiB": 1330.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 252.47329628778502,
+            "mean_s_per_image": 0.3130668873968534,
+            "total_s": 31.30668873968534,
+            "observed_totals_ms": {
+              "source_read_ms": 2892.0813521835953,
+              "cached_detector_read_ms": 1355.464113643393,
+              "composition_projection_ms": 930.6936133652925,
+              "frame_packet_write_and_validation_ms": 0.16213161870837212,
+              "application_from_cached_inputs_ms": 104963.14850938506,
+              "adapter_ms": 31306.68873968534,
+              "pre_module_ms": 1347.8274322114885,
+              "module_call_ms": 25570.892347954214,
+              "post_module_ms": 2706.2393275555223,
+              "inter_module_ms": 1681.7296319641173,
+              "ownership_ms": 1622.999238781631,
+              "crop_read_ms": 330.43012279085815
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 699.494140625,
+            "peak_reserved_MiB": 1330.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 251.2614322777447,
+            "mean_s_per_image": 0.31156417602440345,
+            "total_s": 31.156417602440342,
+            "observed_totals_ms": {
+              "source_read_ms": 2904.9637762364,
+              "cached_detector_read_ms": 1355.1941935438663,
+              "composition_projection_ms": 922.7651404216886,
+              "frame_packet_write_and_validation_ms": 0.13084383681416512,
+              "application_from_cached_inputs_ms": 106788.97829633206,
+              "adapter_ms": 31156.417602440342,
+              "pre_module_ms": 1344.7567119728774,
+              "module_call_ms": 25567.889933940023,
+              "post_module_ms": 2620.896841166541,
+              "inter_module_ms": 1622.8741153609008,
+              "ownership_ms": 1603.568364866078,
+              "crop_read_ms": 324.6514650527388
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 699.494140625,
+            "peak_reserved_MiB": 1330.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/rp_r_cnn/RPR_CIHP/model.pth",
+        "checkpoint_sha256": "6b596210f3ea67c79aae94c4769716b3cd41d781e2dbf36e0900c1b020721d98",
+        "native_config": "Human_Parsing_CCIHP_10_Image_Pilot/configs/RPR_CIHP.yaml",
+        "native_config_sha256": "44f4c4d08b917c9e141104cc225863231ceb0fac5c84566a22e04d3c793b6bd2",
+        "source": "third_party/human_parsing/RP-R-CNN",
+        "source_commit": "dfcc227723d4bf6566356cda4513a84ed9a8ba30",
+        "environment": ".venvs/parser-legacy-cu113",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 58717320,
+      "native_classes": 20,
+      "upstream": "https://github.com/soeaver/RP-R-CNN",
+      "implementation": "BOUND_NATIVE_CROP_ADAPTER",
+      "environment": {
+        "python": "3.9.25 (main, Oct 31 2025, 23:00:23) \n[Clang 21.1.4 ]",
+        "torch": "1.10.2+cu113",
+        "CUDA": "11.3",
+        "GPU": "Tesla T4",
+        "numpy": "1.26.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "1219ee48b0b165f181e75a901798e94d42d37c84e931b6fecc0be297d034dd7c",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "dba193dc57e4e0decd944159359a0957a5d97671338ebf73d385191163032e9b",
+        "assembled_index_sha256": "3534c49bb2eab5d484888247a79b306b4d0db48b72301be46000656f3ccc23f7",
+        "collector_completion_sha256": "9fcf40fcad49d59d2b7945c26128ba7c7b6313e8ab7c42130166f21047fd1745",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z"
+        ]
+      }
+    },
+    {
+      "model_id": "CPI_R50_CIHP",
+      "name": "CPI R50",
+      "result": {
+        "model_id": "CPI_R50_CIHP",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.3022814148906013,
+        "Face_local_IoU": 0.4392201610486308,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 151844,
+            "FP": 13146,
+            "FN": 113372,
+            "GT_pixels": 265216,
+            "prediction_pixels": 164990,
+            "union": 278362,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.4392201610486308,
+            "mean_part_Dice": 0.5166493929249546,
+            "pooled_IoU": 0.5454911230699593,
+            "precision": 0.9203224437844718,
+            "recall": 0.5725295608108109,
+            "F1_Dice": 0.705912981222949,
+            "ignored_prediction_pixels": 28282,
+            "TN": 140144,
+            "binary_confusion_target_other": [
+              [
+                151844,
+                113372
+              ],
+              [
+                13146,
+                140144
+              ]
+            ],
+            "entirely_missed_GT_parts": 111,
+            "entirely_missed_fraction": 0.2890625
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 459781,
+            "FP": 125574,
+            "FN": 365575,
+            "GT_pixels": 825356,
+            "prediction_pixels": 585355,
+            "union": 950930,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.3198903520388593,
+            "mean_part_Dice": 0.38617194862328086,
+            "pooled_IoU": 0.4835066724154249,
+            "precision": 0.7854737723261952,
+            "recall": 0.5570699189198358,
+            "F1_Dice": 0.6518429359379774,
+            "ignored_prediction_pixels": 1109,
+            "TN": 1132078234,
+            "binary_confusion_target_other": [
+              [
+                459781,
+                365575
+              ],
+              [
+                125574,
+                1132078234
+              ]
+            ],
+            "entirely_missed_GT_parts": 201,
+            "entirely_missed_fraction": 0.3694852941176471
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 2077517,
+            "FP": 224983,
+            "FN": 2317272,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 2302500,
+            "union": 4619772,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.31677202309587255,
+            "mean_part_Dice": 0.3760643104339758,
+            "pooled_IoU": 0.44970119737510855,
+            "precision": 0.9022875135722042,
+            "recall": 0.4727228087628325,
+            "F1_Dice": 0.6204053610348904,
+            "ignored_prediction_pixels": 1699,
+            "TN": 1547116568,
+            "binary_confusion_target_other": [
+              [
+                2077517,
+                2317272
+              ],
+              [
+                224983,
+                1547116568
+              ]
+            ],
+            "entirely_missed_GT_parts": 274,
+            "entirely_missed_fraction": 0.36778523489932885
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 835605,
+            "FP": 118343,
+            "FN": 1057359,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 953948,
+            "union": 2011307,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.270181869537072,
+            "mean_part_Dice": 0.3223985323712768,
+            "pooled_IoU": 0.41545373232430455,
+            "precision": 0.8759439717888187,
+            "recall": 0.4414267783222502,
+            "F1_Dice": 0.5870255209855451,
+            "ignored_prediction_pixels": 254,
+            "TN": 1390067003,
+            "binary_confusion_target_other": [
+              [
+                835605,
+                1057359
+              ],
+              [
+                118343,
+                1390067003
+              ]
+            ],
+            "entirely_missed_GT_parts": 306,
+            "entirely_missed_fraction": 0.45808383233532934
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.3365161014301087,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              459781,
+              8434,
+              11020,
+              1594,
+              344527
+            ],
+            [
+              9455,
+              151844,
+              2169,
+              0,
+              101748
+            ],
+            [
+              60134,
+              14344,
+              2077517,
+              43259,
+              2199535
+            ],
+            [
+              5764,
+              499,
+              58615,
+              835605,
+              992481
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 3168.4021108886313,
+          "mean_s_per_image": 4.029151351013376,
+          "total_s": 2417.4908106080256,
+          "observed_totals_ms": {
+            "adapter_ms": 2417490.8106080256,
+            "pre_module_ms": 24117.647177074105,
+            "module_call_ms": 2337089.241048787,
+            "post_module_ms": 56283.92238216475,
+            "inter_module_ms": 0.0,
+            "ownership_ms": 4351.028264500201,
+            "crop_read_ms": 1705.4945912677795,
+            "roi_packet_write_and_validation_ms": 41523.151830770075,
+            "source_read_ms": 15899.014766793698,
+            "cached_detector_read_ms": 8458.420651732013,
+            "composition_projection_ms": 5140.639890683815,
+            "frame_packet_write_and_validation_ms": 119692.62455939315,
+            "application_from_cached_inputs_ms": 2874008.559252601
+          },
+          "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+          "peak_allocated_MiB": 12505.1181640625,
+          "peak_reserved_MiB": 13508.0
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 3211.1475371808233,
+            "mean_s_per_image": 3.981822946104221,
+            "total_s": 398.1822946104221,
+            "observed_totals_ms": {
+              "source_read_ms": 2685.8947065193206,
+              "cached_detector_read_ms": 1399.9118888750672,
+              "composition_projection_ms": 925.45610293746,
+              "frame_packet_write_and_validation_ms": 0.20011677406728268,
+              "application_from_cached_inputs_ms": 482919.0576225519,
+              "adapter_ms": 398182.2946104221,
+              "pre_module_ms": 4342.970540979877,
+              "module_call_ms": 388300.5024229642,
+              "post_module_ms": 5538.821646478027,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1652.4169275071472,
+              "crop_read_ms": 341.9984739739448
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 12987.33544921875,
+            "peak_reserved_MiB": 13430.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 3204.6720219791055,
+            "mean_s_per_image": 3.9737933072540907,
+            "total_s": 397.3793307254091,
+            "observed_totals_ms": {
+              "source_read_ms": 2578.671275638044,
+              "cached_detector_read_ms": 1368.972246069461,
+              "composition_projection_ms": 938.2942588999867,
+              "frame_packet_write_and_validation_ms": 0.17554964870214462,
+              "application_from_cached_inputs_ms": 480929.50131418183,
+              "adapter_ms": 397379.3307254091,
+              "pre_module_ms": 4555.92939350754,
+              "module_call_ms": 387407.9525775742,
+              "post_module_ms": 5415.448754327372,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1642.1619255561382,
+              "crop_read_ms": 345.6695559434593
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 12987.33544921875,
+            "peak_reserved_MiB": 13430.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 3193.9974201208493,
+            "mean_s_per_image": 3.960556800949853,
+            "total_s": 396.0556800949853,
+            "observed_totals_ms": {
+              "source_read_ms": 2761.3131932448596,
+              "cached_detector_read_ms": 1374.1501872427762,
+              "composition_projection_ms": 936.76359183155,
+              "frame_packet_write_and_validation_ms": 0.14874781481921673,
+              "application_from_cached_inputs_ms": 479836.9506560266,
+              "adapter_ms": 396055.6800949853,
+              "pre_module_ms": 4298.287571873516,
+              "module_call_ms": 386310.0142974872,
+              "post_module_ms": 5447.378225624561,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1616.3332762662321,
+              "crop_read_ms": 338.79383676685393
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 12987.33544921875,
+            "peak_reserved_MiB": 13430.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/cpi_parser/CPI_R50_CIHP/model.pth",
+        "checkpoint_sha256": "e58f8cb4b4fb3b7513e4dd2efb2c8aece07fd237404789204b8b9863f2b7cf35",
+        "native_config": "third_party/human_parsing/CPI-Parser/configs/COSParser/causal_parser_r50_inter_8_135k_cihp.py",
+        "native_config_sha256": "62b39d8753d5ce8afc137fab5857757024e999ac49a3023645c239a8c4511575",
+        "source": "third_party/human_parsing/CPI-Parser",
+        "source_commit": "d62cae523ba913fec4a7fda5816bc1d96bbf644d",
+        "environment": ".venvs/parser-legacy-cu113",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 46567335,
+      "native_classes": 20,
+      "upstream": "https://github.com/HAG-uestc/CPI-Parser",
+      "implementation": "CPI_FEATURE_BRANCH_SCHEDULE_3",
+      "environment": {
+        "python": "3.9.25 (main, Oct 31 2025, 23:00:23) \n[Clang 21.1.4 ]",
+        "torch": "1.10.2+cu113",
+        "CUDA": "11.3",
+        "GPU": "Tesla T4",
+        "numpy": "1.26.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "1219ee48b0b165f181e75a901798e94d42d37c84e931b6fecc0be297d034dd7c",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "b440a5e63229946004d664b796c4b733541c1322f0cc7bee5a015058054dd209",
+        "assembled_index_sha256": "8b0d7d0b7148bdcf3087fc523bc3bafd3be1a2aa78264001bc695941ec29297b",
+        "collector_completion_sha256": "3bea227096893cb783ab3b42fd5f5f5435aa8aef45653af667e5b17b8627a44f",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z"
+        ]
+      }
+    },
+    {
+      "model_id": "CPI_ConvNeXtB_CIHP",
+      "name": "CPI ConvNeXt-B",
+      "result": {
+        "model_id": "CPI_ConvNeXtB_CIHP",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.49424601455300027,
+        "Face_local_IoU": 0.59953495993833,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 202778,
+            "FP": 14806,
+            "FN": 62438,
+            "GT_pixels": 265216,
+            "prediction_pixels": 217584,
+            "union": 280022,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.59953495993833,
+            "mean_part_Dice": 0.6827171930369439,
+            "pooled_IoU": 0.7241502453378663,
+            "precision": 0.9319527171115524,
+            "recall": 0.7645767977799228,
+            "F1_Dice": 0.8400082850041425,
+            "ignored_prediction_pixels": 55755,
+            "TN": 138484,
+            "binary_confusion_target_other": [
+              [
+                202778,
+                62438
+              ],
+              [
+                14806,
+                138484
+              ]
+            ],
+            "entirely_missed_GT_parts": 60,
+            "entirely_missed_fraction": 0.15625
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 652399,
+            "FP": 145147,
+            "FN": 172957,
+            "GT_pixels": 825356,
+            "prediction_pixels": 797546,
+            "union": 970503,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.511330508921694,
+            "mean_part_Dice": 0.5906648078746194,
+            "pooled_IoU": 0.6722277004810907,
+            "precision": 0.8180079895078152,
+            "recall": 0.7904455774235603,
+            "F1_Dice": 0.8039906291322582,
+            "ignored_prediction_pixels": 3165,
+            "TN": 1132058661,
+            "binary_confusion_target_other": [
+              [
+                652399,
+                172957
+              ],
+              [
+                145147,
+                1132058661
+              ]
+            ],
+            "entirely_missed_GT_parts": 107,
+            "entirely_missed_fraction": 0.19669117647058823
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 3046434,
+            "FP": 334374,
+            "FN": 1348355,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 3380808,
+            "union": 4729163,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.5198527375941686,
+            "mean_part_Dice": 0.5781733866390172,
+            "pooled_IoU": 0.6441803761046088,
+            "precision": 0.9010964242867385,
+            "recall": 0.6931923239090659,
+            "F1_Dice": 0.7835884498643642,
+            "ignored_prediction_pixels": 1046,
+            "TN": 1547007177,
+            "binary_confusion_target_other": [
+              [
+                3046434,
+                1348355
+              ],
+              [
+                334374,
+                1547007177
+              ]
+            ],
+            "entirely_missed_GT_parts": 194,
+            "entirely_missed_fraction": 0.26040268456375837
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 1279508,
+            "FP": 152040,
+            "FN": 613456,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 1431548,
+            "union": 2045004,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.4515547971431381,
+            "mean_part_Dice": 0.5098108395256115,
+            "pooled_IoU": 0.625675059804284,
+            "precision": 0.8937932922961717,
+            "recall": 0.6759283324986635,
+            "F1_Dice": 0.7697418448181267,
+            "ignored_prediction_pixels": 586,
+            "TN": 1390033306,
+            "binary_confusion_target_other": [
+              [
+                1279508,
+                613456
+              ],
+              [
+                152040,
+                1390033306
+              ]
+            ],
+            "entirely_missed_GT_parts": 223,
+            "entirely_missed_fraction": 0.3338323353293413
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.5205682508993327,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              652399,
+              10840,
+              1250,
+              0,
+              160867
+            ],
+            [
+              9627,
+              202778,
+              2517,
+              0,
+              50294
+            ],
+            [
+              37830,
+              30248,
+              3046434,
+              24995,
+              1255282
+            ],
+            [
+              5383,
+              8373,
+              54056,
+              1279508,
+              545644
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 556.078308429154,
+          "mean_s_per_image": 0.7071462488857408,
+          "total_s": 424.2877493314445,
+          "observed_totals_ms": {
+            "adapter_ms": 424287.7493314445,
+            "pre_module_ms": 23971.965016797185,
+            "module_call_ms": 386986.98852723464,
+            "post_module_ms": 13328.795787412673,
+            "inter_module_ms": 0.0,
+            "ownership_ms": 4213.220184203237,
+            "crop_read_ms": 1714.3841253127903,
+            "roi_packet_write_and_validation_ms": 13630.315704504028,
+            "source_read_ms": 15647.935755550861,
+            "cached_detector_read_ms": 8284.076379612088,
+            "composition_projection_ms": 5060.209607006982,
+            "frame_packet_write_and_validation_ms": 120976.49914794602,
+            "application_from_cached_inputs_ms": 817582.956624683
+          },
+          "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+          "peak_allocated_MiB": 10365.28564453125,
+          "peak_reserved_MiB": 13386.0
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 566.8859962625579,
+            "mean_s_per_image": 0.7029386353655718,
+            "total_s": 70.29386353655718,
+            "observed_totals_ms": {
+              "source_read_ms": 2864.027078030631,
+              "cached_detector_read_ms": 1361.3054433371872,
+              "composition_projection_ms": 936.3313785288483,
+              "frame_packet_write_and_validation_ms": 0.2124616876244545,
+              "application_from_cached_inputs_ms": 160036.48337628692,
+              "adapter_ms": 70293.86353655718,
+              "pre_module_ms": 4788.091488648206,
+              "module_call_ms": 64022.481471300125,
+              "post_module_ms": 1483.2905766088516,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1604.770669946447,
+              "crop_read_ms": 331.0153482016176
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 10365.28564453125,
+            "peak_reserved_MiB": 12402.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 566.2551288710787,
+            "mean_s_per_image": 0.7021563598001376,
+            "total_s": 70.21563598001376,
+            "observed_totals_ms": {
+              "source_read_ms": 2825.3962812013924,
+              "cached_detector_read_ms": 1348.7483891658485,
+              "composition_projection_ms": 935.7584565877914,
+              "frame_packet_write_and_validation_ms": 0.1970126759260893,
+              "application_from_cached_inputs_ms": 158273.12501543202,
+              "adapter_ms": 70215.63598001376,
+              "pre_module_ms": 4885.141054634005,
+              "module_call_ms": 63874.33782336302,
+              "post_module_ms": 1456.157102016732,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1598.5393966548145,
+              "crop_read_ms": 334.427360445261
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 10365.28564453125,
+            "peak_reserved_MiB": 12402.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 571.1147919346038,
+            "mean_s_per_image": 0.7081823419989086,
+            "total_s": 70.81823419989087,
+            "observed_totals_ms": {
+              "source_read_ms": 2778.4479663241655,
+              "cached_detector_read_ms": 1380.4608609061688,
+              "composition_projection_ms": 955.5552175734192,
+              "frame_packet_write_and_validation_ms": 0.16565434634685516,
+              "application_from_cached_inputs_ms": 163610.30708253384,
+              "adapter_ms": 70818.23419989087,
+              "pre_module_ms": 5363.18888887763,
+              "module_call_ms": 64026.13265207037,
+              "post_module_ms": 1428.9126589428633,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1615.9919472411275,
+              "crop_read_ms": 338.97290751338005
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 10365.28564453125,
+            "peak_reserved_MiB": 12402.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/cpi_parser/CPI_ConvNeXtB_CIHP/model.pth",
+        "checkpoint_sha256": "25b7b12527e550f161b7ad538bd9300a74a0ae73c59a2dfb392ad22161a318c5",
+        "native_config": "third_party/human_parsing/CPI-Parser/configs/COSParser/causal_parser_convnext_b_inter_8_135k_cihp.py",
+        "native_config_sha256": "3756068bcc364afcdec9c385d11872f59f92661a98d1eb9bf1e83851f9b29117",
+        "source": "third_party/human_parsing/CPI-Parser",
+        "source_commit": "d62cae523ba913fec4a7fda5816bc1d96bbf644d",
+        "environment": ".venvs/parser-legacy-cu113",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 107444791,
+      "native_classes": 20,
+      "upstream": "https://github.com/HAG-uestc/CPI-Parser",
+      "implementation": "CPI_PERSON_CHUNK_RESTORATION_1",
+      "environment": {
+        "python": "3.9.25 (main, Oct 31 2025, 23:00:23) \n[Clang 21.1.4 ]",
+        "torch": "1.10.2+cu113",
+        "CUDA": "11.3",
+        "GPU": "Tesla T4",
+        "numpy": "1.26.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "1219ee48b0b165f181e75a901798e94d42d37c84e931b6fecc0be297d034dd7c",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "53095513dc8f44e2c9f9ebd132e7795a2db1c1583be4b973114adc77b1267994",
+        "assembled_index_sha256": "733390240373299fbbb9c0800d4115e224db5fc8387522a13b8589ed68a10090",
+        "collector_completion_sha256": "44af08af33de668f8114d1db1a3a0c5034ac2067e66aea00113caf7c73744858",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z"
+        ]
+      }
+    },
+    {
+      "model_id": "Sapiens2_0.4b",
+      "name": "Sapiens2 0.4B",
+      "result": {
+        "model_id": "Sapiens2_0.4b",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.495687254088464,
+        "Face_local_IoU": 0.6022749949012256,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 221049,
+            "FP": 26093,
+            "FN": 44167,
+            "GT_pixels": 265216,
+            "prediction_pixels": 247142,
+            "union": 291309,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.6022749949012256,
+            "mean_part_Dice": 0.6832288519941359,
+            "pooled_IoU": 0.7588128070193506,
+            "precision": 0.8944210211133681,
+            "recall": 0.8334678149131274,
+            "F1_Dice": 0.8628693218413688,
+            "ignored_prediction_pixels": 85749,
+            "TN": 127197,
+            "binary_confusion_target_other": [
+              [
+                221049,
+                44167
+              ],
+              [
+                26093,
+                127197
+              ]
+            ],
+            "entirely_missed_GT_parts": 63,
+            "entirely_missed_fraction": 0.1640625
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 679898,
+            "FP": 253627,
+            "FN": 145458,
+            "GT_pixels": 825356,
+            "prediction_pixels": 933525,
+            "union": 1078983,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.464121998753152,
+            "mean_part_Dice": 0.553213609882387,
+            "pooled_IoU": 0.6301285562423133,
+            "precision": 0.7283125786668809,
+            "recall": 0.8237633215242877,
+            "F1_Dice": 0.7731028989454091,
+            "ignored_prediction_pixels": 1957,
+            "TN": 1131950181,
+            "binary_confusion_target_other": [
+              [
+                679898,
+                145458
+              ],
+              [
+                253627,
+                1131950181
+              ]
+            ],
+            "entirely_missed_GT_parts": 98,
+            "entirely_missed_fraction": 0.1801470588235294
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 3605006,
+            "FP": 741620,
+            "FN": 789783,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 4346626,
+            "union": 5136409,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.5540352063164296,
+            "mean_part_Dice": 0.6313690965642356,
+            "pooled_IoU": 0.7018533765515947,
+            "precision": 0.8293803055519384,
+            "recall": 0.820291031036985,
+            "F1_Dice": 0.8248106284852051,
+            "ignored_prediction_pixels": 1391,
+            "TN": 1546599931,
+            "binary_confusion_target_other": [
+              [
+                3605006,
+                789783
+              ],
+              [
+                741620,
+                1546599931
+              ]
+            ],
+            "entirely_missed_GT_parts": 141,
+            "entirely_missed_fraction": 0.18926174496644296
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 1469877,
+            "FP": 412390,
+            "FN": 423087,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 1882267,
+            "union": 2305354,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.4689045571958102,
+            "mean_part_Dice": 0.54479824095513,
+            "pooled_IoU": 0.637592751481985,
+            "precision": 0.7809078095721808,
+            "recall": 0.7764949571148738,
+            "F1_Dice": 0.7786951315032113,
+            "ignored_prediction_pixels": 286,
+            "TN": 1389772956,
+            "binary_confusion_target_other": [
+              [
+                1469877,
+                423087
+              ],
+              [
+                412390,
+                1389772956
+              ]
+            ],
+            "entirely_missed_GT_parts": 185,
+            "entirely_missed_fraction": 0.27694610778443113
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.5223341892916543,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              679898,
+              6637,
+              6006,
+              0,
+              132815
+            ],
+            [
+              11733,
+              221049,
+              3120,
+              0,
+              29314
+            ],
+            [
+              53854,
+              19718,
+              3605006,
+              21030,
+              695181
+            ],
+            [
+              25780,
+              4250,
+              125765,
+              1469877,
+              267292
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 1379.84516822213,
+          "mean_s_per_image": 1.754703105589142,
+          "total_s": 1052.8218633534852,
+          "observed_totals_ms": {
+            "adapter_ms": 1052821.8633534852,
+            "pre_module_ms": 26151.537080295384,
+            "module_call_ms": 1024514.0393860638,
+            "post_module_ms": 2156.2868871260434,
+            "inter_module_ms": 0.0,
+            "ownership_ms": 2336.0669747926295,
+            "crop_read_ms": 1347.34753286466,
+            "roi_packet_write_and_validation_ms": 6077.9826724901795,
+            "source_read_ms": 13897.299276432022,
+            "cached_detector_read_ms": 4000.4333262331784,
+            "composition_projection_ms": 4455.020621186122,
+            "frame_packet_write_and_validation_ms": 46806.16547563113,
+            "application_from_cached_inputs_ms": 1190030.0503221806
+          },
+          "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+          "peak_allocated_MiB": 2158.11279296875,
+          "peak_reserved_MiB": 2586.0
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 1431.391344184146,
+            "mean_s_per_image": 1.774925266788341,
+            "total_s": 177.4925266788341,
+            "observed_totals_ms": {
+              "source_read_ms": 2633.8331585284323,
+              "cached_detector_read_ms": 665.857977932319,
+              "composition_projection_ms": 977.6126174256206,
+              "frame_packet_write_and_validation_ms": 0.12866780161857605,
+              "application_from_cached_inputs_ms": 201463.40149245225,
+              "adapter_ms": 177492.5266788341,
+              "pre_module_ms": 5982.429753290489,
+              "module_call_ms": 171151.03837149218,
+              "post_module_ms": 359.05855405144393,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 912.2788421809673,
+              "crop_read_ms": 280.169835081324
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 2158.11279296875,
+            "peak_reserved_MiB": 2586.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 1431.8179395031034,
+            "mean_s_per_image": 1.7754542449838482,
+            "total_s": 177.54542449838482,
+            "observed_totals_ms": {
+              "source_read_ms": 2607.106226263568,
+              "cached_detector_read_ms": 676.3671219814569,
+              "composition_projection_ms": 969.6084025781602,
+              "frame_packet_write_and_validation_ms": 0.11465605348348618,
+              "application_from_cached_inputs_ms": 201323.91922967508,
+              "adapter_ms": 177545.42449838482,
+              "pre_module_ms": 5929.051382699981,
+              "module_call_ms": 171228.20595814846,
+              "post_module_ms": 388.16715753637254,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 906.769750174135,
+              "crop_read_ms": 277.57307793945074
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 2158.11279296875,
+            "peak_reserved_MiB": 2586.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 1433.9955341776893,
+            "mean_s_per_image": 1.7781544623803347,
+            "total_s": 177.81544623803347,
+            "observed_totals_ms": {
+              "source_read_ms": 2652.4614095687866,
+              "cached_detector_read_ms": 659.4977162312716,
+              "composition_projection_ms": 997.9616685304791,
+              "frame_packet_write_and_validation_ms": 0.09949668310582638,
+              "application_from_cached_inputs_ms": 201383.6710790638,
+              "adapter_ms": 177815.44623803347,
+              "pre_module_ms": 5771.995072485879,
+              "module_call_ms": 171686.5676282905,
+              "post_module_ms": 356.8835372570902,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 901.2783670332283,
+              "crop_read_ms": 283.16627256572247
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 2158.11279296875,
+            "peak_reserved_MiB": 2586.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/sapiens2/0.4b/sapiens2_0.4b_seg.safetensors",
+        "checkpoint_sha256": "b85fdb50b7d6123a967d5ee4a505e222baff8d2f7ad6bbf353578c1a61dfbac9",
+        "native_config": "third_party/human_parsing/sapiens2/sapiens/dense/configs/seg/shutterstock_goliath/sapiens2_0.4b_seg_shutterstock_goliath-1024x768.py",
+        "native_config_sha256": "f4bd201e0293278807e2a8c02e700163972d095df9288beede84aabfee1725d5",
+        "source": "third_party/human_parsing/sapiens2",
+        "source_commit": "7e5bae88456ac418ff0e58e74106c9fe192055d4",
+        "environment": ".venvs/sapiens2-pilot",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 406601693,
+      "native_classes": 29,
+      "upstream": "https://github.com/facebookresearch/sapiens2",
+      "implementation": "BOUND_NATIVE_CROP_ADAPTER",
+      "environment": {
+        "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+        "torch": "2.14.0+cu130",
+        "CUDA": "13.0",
+        "GPU": "Tesla T4",
+        "numpy": "2.5.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "6527f2cb20e636daf86c5e6410763f67f8bbea4eca2b548c0a36828233fad39b",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "f97c85066eaec17549eeb69f61fc4b84863cdada518ce86126f75bee3812b2b1",
+        "assembled_index_sha256": "658478200d3ee2a1da1e86aea85814d46893efa718afa54ada8d1552527488b5",
+        "collector_completion_sha256": "a042523eac376fe1d05e09df9d27fe2429d44c62ca27fd852e92acea176c10ca",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z"
+        ]
+      }
+    },
+    {
+      "model_id": "Sapiens2_0.8b",
+      "name": "Sapiens2 0.8B",
+      "result": {
+        "model_id": "Sapiens2_0.8b",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.504804192688857,
+        "Face_local_IoU": 0.6172926194643171,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 224238,
+            "FP": 28248,
+            "FN": 40978,
+            "GT_pixels": 265216,
+            "prediction_pixels": 252486,
+            "union": 293464,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.6172926194643171,
+            "mean_part_Dice": 0.6943434879300905,
+            "pooled_IoU": 0.7641073521794837,
+            "precision": 0.8881205294550985,
+            "recall": 0.8454919763513513,
+            "F1_Dice": 0.8662821468721388,
+            "ignored_prediction_pixels": 89618,
+            "TN": 125042,
+            "binary_confusion_target_other": [
+              [
+                224238,
+                40978
+              ],
+              [
+                28248,
+                125042
+              ]
+            ],
+            "entirely_missed_GT_parts": 57,
+            "entirely_missed_fraction": 0.1484375
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 645577,
+            "FP": 179240,
+            "FN": 179779,
+            "GT_pixels": 825356,
+            "prediction_pixels": 824817,
+            "union": 1004596,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.467868616027615,
+            "mean_part_Dice": 0.549043675120352,
+            "pooled_IoU": 0.6426235023830476,
+            "precision": 0.782691190894465,
+            "recall": 0.7821800532134012,
+            "F1_Dice": 0.7824355385768643,
+            "ignored_prediction_pixels": 2934,
+            "TN": 1132024568,
+            "binary_confusion_target_other": [
+              [
+                645577,
+                179779
+              ],
+              [
+                179240,
+                1132024568
+              ]
+            ],
+            "entirely_missed_GT_parts": 119,
+            "entirely_missed_fraction": 0.21875
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 3682770,
+            "FP": 592824,
+            "FN": 712019,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 4275594,
+            "union": 4987613,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.5584841377097207,
+            "mean_part_Dice": 0.6262655424110848,
+            "pooled_IoU": 0.738383270714869,
+            "precision": 0.8613469847698355,
+            "recall": 0.83798562342811,
+            "F1_Dice": 0.8495057254102847,
+            "ignored_prediction_pixels": 1322,
+            "TN": 1546748727,
+            "binary_confusion_target_other": [
+              [
+                3682770,
+                712019
+              ],
+              [
+                592824,
+                1546748727
+              ]
+            ],
+            "entirely_missed_GT_parts": 153,
+            "entirely_missed_fraction": 0.20536912751677852
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 1505577,
+            "FP": 374356,
+            "FN": 387387,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 1879933,
+            "union": 2267320,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.48805982432923517,
+            "mean_part_Dice": 0.5600813861687749,
+            "pooled_IoU": 0.6640337490958489,
+            "precision": 0.80086737133717,
+            "recall": 0.7953542698117873,
+            "F1_Dice": 0.798101299876461,
+            "ignored_prediction_pixels": 312,
+            "TN": 1389810990,
+            "binary_confusion_target_other": [
+              [
+                1505577,
+                387387
+              ],
+              [
+                374356,
+                1389810990
+              ]
+            ],
+            "entirely_missed_GT_parts": 189,
+            "entirely_missed_fraction": 0.28293413173652693
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.532926299382722,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              645577,
+              9597,
+              2705,
+              231,
+              167246
+            ],
+            [
+              7217,
+              224238,
+              1263,
+              0,
+              32498
+            ],
+            [
+              49921,
+              22842,
+              3682770,
+              26876,
+              612380
+            ],
+            [
+              9613,
+              4695,
+              84610,
+              1505577,
+              288469
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 2887.895528734253,
+          "mean_s_per_image": 3.672440480707058,
+          "total_s": 2203.464288424235,
+          "observed_totals_ms": {
+            "adapter_ms": 2203464.288424235,
+            "pre_module_ms": 24366.72851582989,
+            "module_call_ms": 2176960.475572385,
+            "post_module_ms": 2137.0843360200524,
+            "inter_module_ms": 0.0,
+            "ownership_ms": 2224.159254459664,
+            "crop_read_ms": 1343.5907075181603,
+            "roi_packet_write_and_validation_ms": 5812.177590560168,
+            "source_read_ms": 13919.471748173237,
+            "cached_detector_read_ms": 3933.6576170753688,
+            "composition_projection_ms": 4367.028783541173,
+            "frame_packet_write_and_validation_ms": 46237.36450239085,
+            "application_from_cached_inputs_ms": 2338626.6385761555
+          },
+          "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+          "peak_allocated_MiB": 3798.54931640625,
+          "peak_reserved_MiB": 4346.0
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 2952.7228284728594,
+            "mean_s_per_image": 3.6613763073063454,
+            "total_s": 366.13763073063456,
+            "observed_totals_ms": {
+              "source_read_ms": 2323.6329508945346,
+              "cached_detector_read_ms": 641.2726598791778,
+              "composition_projection_ms": 951.8689953256398,
+              "frame_packet_write_and_validation_ms": 0.12049917131662369,
+              "application_from_cached_inputs_ms": 389641.7828449048,
+              "adapter_ms": 366137.63073063456,
+              "pre_module_ms": 4123.224546667188,
+              "module_call_ms": 361652.91513572447,
+              "post_module_ms": 361.4910482428968,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 894.37027531676,
+              "crop_read_ms": 282.0245346520096
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 3798.54931640625,
+            "peak_reserved_MiB": 4346.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 2950.7911047492657,
+            "mean_s_per_image": 3.6589809698890896,
+            "total_s": 365.89809698890895,
+            "observed_totals_ms": {
+              "source_read_ms": 2295.2130204066634,
+              "cached_detector_read_ms": 657.7998693101108,
+              "composition_projection_ms": 943.7178911175579,
+              "frame_packet_write_and_validation_ms": 0.1127228606492281,
+              "application_from_cached_inputs_ms": 389289.67382153496,
+              "adapter_ms": 365898.09698890895,
+              "pre_module_ms": 4186.24896928668,
+              "module_call_ms": 361348.9429540932,
+              "post_module_ms": 362.90506552904844,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 860.7328166253865,
+              "crop_read_ms": 278.9621052797884
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 3798.54931640625,
+            "peak_reserved_MiB": 4346.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 2948.90160227923,
+            "mean_s_per_image": 3.6566379868262446,
+            "total_s": 365.6637986826245,
+            "observed_totals_ms": {
+              "source_read_ms": 2313.661059131846,
+              "cached_detector_read_ms": 668.1963864248246,
+              "composition_projection_ms": 936.5084150340408,
+              "frame_packet_write_and_validation_ms": 0.12337625958025455,
+              "application_from_cached_inputs_ms": 389578.80482566543,
+              "adapter_ms": 365663.7986826245,
+              "pre_module_ms": 4090.3521936852485,
+              "module_call_ms": 361186.4605275914,
+              "post_module_ms": 386.9859613478184,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 889.9837899953127,
+              "crop_read_ms": 289.9902474600822
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 3798.54931640625,
+            "peak_reserved_MiB": 4346.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/sapiens2/0.8b/sapiens2_0.8b_seg.safetensors",
+        "checkpoint_sha256": "e7c1655b7e11678ba200d4ce743be13aeb97eb5ce0a0907f8e6817aabe6b2eec",
+        "native_config": "third_party/human_parsing/sapiens2/sapiens/dense/configs/seg/shutterstock_goliath/sapiens2_0.8b_seg_shutterstock_goliath-1024x768.py",
+        "native_config_sha256": "967f27e2a596da57cb87598412197138eb73674d4e83c12ccab73e41c0df738a",
+        "source": "third_party/human_parsing/sapiens2",
+        "source_commit": "7e5bae88456ac418ff0e58e74106c9fe192055d4",
+        "environment": ".venvs/sapiens2-pilot",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 827531997,
+      "native_classes": 29,
+      "upstream": "https://github.com/facebookresearch/sapiens2",
+      "implementation": "BOUND_NATIVE_CROP_ADAPTER",
+      "environment": {
+        "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+        "torch": "2.14.0+cu130",
+        "CUDA": "13.0",
+        "GPU": "Tesla T4",
+        "numpy": "2.5.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "6527f2cb20e636daf86c5e6410763f67f8bbea4eca2b548c0a36828233fad39b",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "80b00d9580247cbcc6f94cfd2530f4eb0b83a283a73e9469eecbaef95b41a23f",
+        "assembled_index_sha256": "1ad92caa5485689615d70a7d585482f954ccb7d2cf3b76f8bb780a0b32b68519",
+        "collector_completion_sha256": "7ef2c18f880db9cdbc39d45e064c690eeb9f717a2f3dce5e552b458d52a2dc52",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z"
+        ]
+      }
+    },
+    {
+      "model_id": "Sapiens2_1b",
+      "name": "Sapiens2 1B",
+      "result": {
+        "model_id": "Sapiens2_1b",
+        "status": "COMPLETE",
+        "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+        "strict_complete": true,
+        "expected": 600,
+        "completed": 600,
+        "missing": 0,
+        "duplicate": 0,
+        "primary_mIoU3_part_mean": 0.5682335932640135,
+        "Face_local_IoU": 0.6626619730975625,
+        "targets": {
+          "Face_local": {
+            "GT_parts": 384,
+            "TP": 226294,
+            "FP": 27205,
+            "FN": 38922,
+            "GT_pixels": 265216,
+            "prediction_pixels": 253499,
+            "union": 292421,
+            "unmatched_GT_parts": 34,
+            "mean_part_IoU": 0.6626619730975625,
+            "mean_part_Dice": 0.7396315816029766,
+            "pooled_IoU": 0.773863710198652,
+            "precision": 0.8926820224142896,
+            "recall": 0.8532441481660231,
+            "F1_Dice": 0.8725176638423797,
+            "ignored_prediction_pixels": 92471,
+            "TN": 126085,
+            "binary_confusion_target_other": [
+              [
+                226294,
+                38922
+              ],
+              [
+                27205,
+                126085
+              ]
+            ],
+            "entirely_missed_GT_parts": 53,
+            "entirely_missed_fraction": 0.13802083333333334
+          },
+          "Hair": {
+            "GT_parts": 544,
+            "TP": 677888,
+            "FP": 136304,
+            "FN": 147468,
+            "GT_pixels": 825356,
+            "prediction_pixels": 814192,
+            "union": 961660,
+            "unmatched_GT_parts": 62,
+            "mean_part_IoU": 0.5450098415904285,
+            "mean_part_Dice": 0.6317956775879133,
+            "pooled_IoU": 0.7049144188174614,
+            "precision": 0.8325898559553521,
+            "recall": 0.8213280087622795,
+            "F1_Dice": 0.8269205903090364,
+            "ignored_prediction_pixels": 1859,
+            "TN": 1132067504,
+            "binary_confusion_target_other": [
+              [
+                677888,
+                147468
+              ],
+              [
+                136304,
+                1132067504
+              ]
+            ],
+            "entirely_missed_GT_parts": 89,
+            "entirely_missed_fraction": 0.1636029411764706
+          },
+          "Upper": {
+            "GT_parts": 745,
+            "TP": 3672766,
+            "FP": 578158,
+            "FN": 722023,
+            "GT_pixels": 4394789,
+            "prediction_pixels": 4250924,
+            "union": 4972947,
+            "unmatched_GT_parts": 131,
+            "mean_part_IoU": 0.6158554248466794,
+            "mean_part_Dice": 0.6884115471623885,
+            "pooled_IoU": 0.7385491942705201,
+            "precision": 0.8639923931832232,
+            "recall": 0.8357092911627839,
+            "F1_Dice": 0.8496155262151311,
+            "ignored_prediction_pixels": 4057,
+            "TN": 1546763393,
+            "binary_confusion_target_other": [
+              [
+                3672766,
+                722023
+              ],
+              [
+                578158,
+                1546763393
+              ]
+            ],
+            "entirely_missed_GT_parts": 135,
+            "entirely_missed_fraction": 0.18120805369127516
+          },
+          "Lower": {
+            "GT_parts": 668,
+            "TP": 1579864,
+            "FP": 416421,
+            "FN": 313100,
+            "GT_pixels": 1892964,
+            "prediction_pixels": 1996285,
+            "union": 2309385,
+            "unmatched_GT_parts": 111,
+            "mean_part_IoU": 0.5438355133549324,
+            "mean_part_Dice": 0.6268121908225599,
+            "pooled_IoU": 0.6841059416251513,
+            "precision": 0.7914020292693679,
+            "recall": 0.8345980166553616,
+            "F1_Dice": 0.8124262550430688,
+            "ignored_prediction_pixels": 464,
+            "TN": 1389768925,
+            "binary_confusion_target_other": [
+              [
+                1579864,
+                313100
+              ],
+              [
+                416421,
+                1389768925
+              ]
+            ],
+            "entirely_missed_GT_parts": 135,
+            "entirely_missed_fraction": 0.20209580838323354
+          }
+        },
+        "localization": {
+          "0.5": {
+            "TP": 624,
+            "FN": 145,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 113,
+            "annotated_person_recall": 0.811443433029909,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          },
+          "0.75": {
+            "TP": 561,
+            "FN": 208,
+            "GT": 769,
+            "predictions": 737,
+            "ambiguous": 0,
+            "identical_GT_geometry_groups": 0,
+            "F1": null,
+            "ignored_predictions": 26,
+            "all_predictions": 763,
+            "precision": null,
+            "unmatched_predictions": 176,
+            "annotated_person_recall": 0.729518855656697,
+            "AP": null,
+            "null_reason": "PARTIAL_PERSON_INVENTORY_NO_CERTIFIED_GLOBAL_NEGATIVE_DOMAIN"
+          }
+        },
+        "Macro4_local": 0.5918406882224008,
+        "cross_class_confusion": {
+          "GT_rows": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower"
+          ],
+          "prediction_columns": [
+            "Hair",
+            "Face_local",
+            "Upper",
+            "Lower",
+            "OTHER"
+          ],
+          "counts": [
+            [
+              677888,
+              9097,
+              3773,
+              0,
+              134598
+            ],
+            [
+              9564,
+              226294,
+              2397,
+              1,
+              26960
+            ],
+            [
+              10528,
+              6337,
+              3672766,
+              48216,
+              656942
+            ],
+            [
+              1763,
+              1377,
+              57633,
+              1579864,
+              252327
+            ]
+          ],
+          "domain": "positive GT pixels of each annotated person-part",
+          "OTHER": "prediction background and mapped non-target native labels"
+        },
+        "annotation_scope": "annotated person-parts; source zero remains unassigned"
+      },
+      "timing": {
+        "quality": {
+          "complete": true,
+          "images_with_complete_timer": 600,
+          "expected_images": 600,
+          "observed_ROIs": 763,
+          "mean_ms_per_ROI": 4068.984338564818,
+          "mean_s_per_image": 5.174391750541593,
+          "total_s": 3104.635050324956,
+          "observed_totals_ms": {
+            "adapter_ms": 3104635.050324956
+          },
+          "peak_allocated_MiB": 6222.80810546875,
+          "peak_reserved_MiB": 6938.0,
+          "application_from_cached_inputs_total_s": null,
+          "component_limitation": "quality adapter intervals assembled from accepted ROI observations across two processes; interrupted-frame application/I-O totals unavailable",
+          "peak_scope": "maximum observed process peak across accepted ROI calls in both quality segments"
+        },
+        "dedicated_rounds": {
+          "1": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 4196.540829918963,
+            "mean_s_per_image": 5.203710629099515,
+            "total_s": 520.3710629099514,
+            "observed_totals_ms": {
+              "source_read_ms": 2518.374106613919,
+              "cached_detector_read_ms": 685.220392420888,
+              "composition_projection_ms": 1021.2908654939383,
+              "frame_packet_write_and_validation_ms": 0.11283159255981445,
+              "application_from_cached_inputs_ms": 546473.8729659002,
+              "adapter_ms": 520371.06290995143,
+              "pre_module_ms": 5974.643982248381,
+              "module_call_ms": 514007.98173318617,
+              "post_module_ms": 388.4371945168823,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 1026.0538281872869,
+              "crop_read_ms": 376.2598684988916
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 6222.80810546875,
+            "peak_reserved_MiB": 6938.0
+          },
+          "2": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 4207.298685682022,
+            "mean_s_per_image": 5.2170503702457065,
+            "total_s": 521.7050370245706,
+            "observed_totals_ms": {
+              "source_read_ms": 2468.166679609567,
+              "cached_detector_read_ms": 701.3632620219141,
+              "composition_projection_ms": 980.2390660624951,
+              "frame_packet_write_and_validation_ms": 0.11907052248716354,
+              "application_from_cached_inputs_ms": 544835.9412706923,
+              "adapter_ms": 521705.0370245706,
+              "pre_module_ms": 6035.855443915352,
+              "module_call_ms": 515288.6627991684,
+              "post_module_ms": 380.51878148689866,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 974.753187270835,
+              "crop_read_ms": 288.49956300109625
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 6222.80810546875,
+            "peak_reserved_MiB": 6938.0
+          },
+          "3": {
+            "clean_complete": true,
+            "complete": true,
+            "images_with_complete_timer": 100,
+            "expected_images": 100,
+            "observed_ROIs": 124,
+            "mean_ms_per_ROI": 4233.936942554259,
+            "mean_s_per_image": 5.250081808767281,
+            "total_s": 525.0081808767281,
+            "observed_totals_ms": {
+              "source_read_ms": 2490.86038232781,
+              "cached_detector_read_ms": 687.5435737892985,
+              "composition_projection_ms": 990.7147304620594,
+              "frame_packet_write_and_validation_ms": 0.1276778057217598,
+              "application_from_cached_inputs_ms": 548291.5863303933,
+              "adapter_ms": 525008.1808767281,
+              "pre_module_ms": 6246.8516391236335,
+              "module_call_ms": 518377.8168251738,
+              "post_module_ms": 383.51241243071854,
+              "inter_module_ms": 0.0,
+              "ownership_ms": 981.9837254472077,
+              "crop_read_ms": 272.7881052996963
+            },
+            "peak_scope": "process CUDA allocated/reserved during measured ROI calls",
+            "peak_allocated_MiB": 6222.80810546875,
+            "peak_reserved_MiB": 6938.0
+          }
+        }
+      },
+      "binding": {
+        "checkpoint": "models/human_parsing/sapiens2/1b/sapiens2_1b_seg.safetensors",
+        "checkpoint_sha256": "4b73c44963b377e93fcb4c4053f72a189836a22d05e12c30383046b9cd3c5bd4",
+        "native_config": "third_party/human_parsing/sapiens2/sapiens/dense/configs/seg/shutterstock_goliath/sapiens2_1b_seg_shutterstock_goliath-1024x768.py",
+        "native_config_sha256": "d33d8802741cb7b0cddc09ac3b2f780a801932bdeb88dc097c22a43996fef61d",
+        "source": "third_party/human_parsing/sapiens2",
+        "source_commit": "7e5bae88456ac418ff0e58e74106c9fe192055d4",
+        "environment": ".venvs/sapiens2-pilot",
+        "route": "FROZEN_YOLO26X_RGB_ROI_POST_MASK_OWNERSHIP"
+      },
+      "parameters": 1470819805,
+      "native_classes": 29,
+      "upstream": "https://github.com/facebookresearch/sapiens2",
+      "implementation": "BOUND_NATIVE_CROP_ADAPTER",
+      "environment": {
+        "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+        "torch": "2.14.0+cu130",
+        "CUDA": "13.0",
+        "GPU": "Tesla T4",
+        "numpy": "2.5.4",
+        "FP32": true,
+        "AMP": false,
+        "TF32": false
+      },
+      "package_freeze_sha256": "6527f2cb20e636daf86c5e6410763f67f8bbea4eca2b548c0a36828233fad39b",
+      "membership": {
+        "images": {
+          "expected": 600,
+          "completed": 600,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        },
+        "ROI": {
+          "expected": 763,
+          "completed": 763,
+          "missing": 0,
+          "unexpected": 0,
+          "duplicate": 0,
+          "strict_complete": true,
+          "missing_ids": []
+        }
+      },
+      "provenance": {
+        "metrics_sha256": "0c1c152fc325e3eb45a2ef6ade446473ee02ff8be40faf7a2d397260ec5a2ae3",
+        "assembled_index_sha256": "463c9ddd91f68e2357269826a7f4dd1e8c445e284d011cc87cc2e20be5e0a144",
+        "collector_completion_sha256": "c35bf421d171f060cc139571d3aad4483984bc5114b84bf7814c15d7931cded0",
+        "canonical_primary_source": "METRICS.json; collector primary:null predates scoring",
+        "quality_run_ids": [
+          "cctv600-fresh-20261117T093921424617Z",
+          "cctv600-1b-continuation-20261118T032146603433Z"
+        ]
+      }
+    }
+  ],
+  "provenance": {
+    "config_sha256": "99bc30b7c8aab695b3b8bdd5680b1b748c77287f0257ee5089ff24935ca198dd",
+    "manifest_sha256": "8fc497a8321b81defe1a8392cd16f08468c286a8e7e1d5b691655bb5e997f40a",
+    "GT_bindings_sha256": "7a5c2a79ae9ccb9d5d10df2d5178f58aeebb05e307302eab3e3b02ee387ee374",
+    "result_index_sha256": "c7baf8750d2c95ec5a1e99f5dd9bf01aec06687af405b4e0aa25749ba5ff37fe",
+    "timing_summary_sha256": "7f008304c5d10d835ea4b81749438b860d7c250b677e98d6ca37b5f6a7d8ab2c",
+    "completion_sha256": "9b55621d2b6209f393c20a5cecb9ea733a7c31584a5db23ccc4bb7cd17b6802a",
+    "launch_commits": [
+      "d172d7830f8dfc3ac306633eeb4e6dad36bc07e4",
+      "2b5fcf3eff3226afdd9628e476e43de818762d64"
+    ],
+    "CPU_acceptance": {
+      "status": "PASS",
+      "config_sha256": "1636bcabae4d4f8804a8329a6027891497f73017f9484fd597a5e00567d74bbe",
+      "protocol_sha256": "b409043aca666cbfeb14700252faa0795a8d920b7f971048855bb864c186c13b",
+      "model_calls": 0,
+      "at_utc": "2026-11-17T09:41:28.052505+00:00"
+    },
+    "continuation_CPU_acceptance": {
+      "status": "PASS",
+      "model_calls": 0,
+      "config_sha256": "99bc30b7c8aab695b3b8bdd5680b1b748c77287f0257ee5089ff24935ca198dd",
+      "inherited_acceptance_sha256": "80402af998d419e65ecca415e8b477668fc4a921ee6600442fd645d5e01989ee"
+    },
+    "source_hashes": {
+      "CCTV_Human_Parsing_Benchmark/scripts/controlled_roi_core.py": "15561c1c560f26d8d3a565d54f1a3a07be31ddbf927059443e6a826bf83a8cdd",
+      "CCTV_Human_Parsing_Benchmark/scripts/controlled_roi_models.py": "0db6acadddfd81fda0dcf782fba221d92614f824009021f773d9784429da958c",
+      "Human_Parsing_CCTV600_Benchmark/src/prepare.py": "5b4c2f7130dbb4b48133932c3b7b31800219dae176be55628cee731dfde7ea45",
+      "Human_Parsing_CCTV600_Benchmark/src/batch.py": "8bcf31999601eb35cc7cb4999b3af4370c6fc8153dae22e40a68f91e92058341",
+      "Human_Parsing_CCTV600_Benchmark/src/acceptance.py": "80142205fee98ef81382122851ea7851e08f34604dd2396fc1bfc6fcad6cd0a7",
+      "Human_Parsing_CCTV600_Benchmark/src/worker.py": "9a493f34b76c7215bf1a5c0e7968d14dc8d442c86d70d7ddd3eebaee0bea9b47",
+      "Human_Parsing_CCTV600_Benchmark/src/progress.py": "2ade83a6045b26b63b79d770f67e02f8d8c6042846afe49e806822cdb8698c52",
+      "Human_Parsing_CCTV600_Benchmark/src/common.py": "d0974473b1cd8e478a655fe429bbfc426b3bb8787d357ad26b5da3eecc55e2b7",
+      "Human_Parsing_CCTV600_Benchmark/src/report.py": "1d17b045d6d4e3637f66b37407ef807e9cc9ddaa8df2239557ad755cf0c5fec3",
+      "Human_Parsing_CCTV600_Benchmark/src/evaluation.py": "fcad2eeec4189611e69de730019543409ddbbc648a6f2b6365f681cdd9914b1f",
+      "Human_Parsing_CCTV600_Benchmark/src/reconcile.py": "5cbaf2b44bf4a3f2a185bd4e2da51cbba814a642f784c84642563233ad5b987a",
+      "Human_Parsing_CCTV600_Benchmark/src/gallery.py": "541a17e0c35d64f0fd960411b48a8bc1a4e12279dcbfe47170a7311f849787bb",
+      "Human_Parsing_CCTV600_Benchmark/src/launch.py": "9fea54f66f72fb0a7a6fbff10cf2b04f6f94845c7a5281eb18f1f3a1821b257a",
+      "Human_Parsing_CCTV600_Benchmark/src/correct_qanet.py": "27188398dfeb15386a73377547a3c252fd14b74dd69e95e8e725f84cfcaa0382",
+      "Human_Parsing_CCTV600_Benchmark/src/reference_parts600.py": "a2f4a5c68462e9628686fd1015c1280c9a86a8f6a55d16513ec4e9b0988a7003",
+      "Human_Parsing_CCTV600_Benchmark/src/reference_collection.py": "ce308b79fdad6dae59475fe6276e17ae857cfe4229fbbfcfb3151b8fe5eb97de",
+      "Human_Parsing_Benchmark/src/common_view/reference_parts.py": "44d73dda9f692ee59be9ef8448a96c6a65c3ee2d0347b9cdecec661f14ea8913",
+      "Human_Parsing_CCTV600_Benchmark/src/scoped_run.py": "fd0d1b3bb2fa72354a88834a782f7278305f83ff8ebe3dbb22826ca5cd0d9b7a",
+      "Human_Parsing_CCTV600_Benchmark/src/scoped_metrics.py": "d5bc9e90538d158f1781e0ef4ce8c24c3aa90cf52d1eb8acac29d9ac986bb726",
+      "Human_Parsing_CCTV600_Benchmark/src/scoped_acceptance.py": "70c99c67a55d25cd0e7be76b03b2c240bd299fe282f87f17153f5e1d56f2ffba",
+      "Human_Parsing_CCTV600_Benchmark/src/finish_sapiens1b.py": "f9249586bb50818b50a1778e3c0ab318f96dc4c8347ea0bd9d16ba7cc0c87039"
+    }
+  },
+  "detector": {
+    "model": "YOLO26x-Seg",
+    "run_id": "cctv600-20261116T073208561699Z",
+    "checkpoint_sha256": "92b3de0065766a17180d6219858717dc9d03cdce8a3ca9576c97fd75aabb64f3",
+    "packet_audit_sha256": "be61639243b337f1fa4e18f8bef065464c39e9d30d312016fe7eb247633448be",
+    "settings": {
+      "imgsz": 640,
+      "rect": false,
+      "retina_masks": true,
+      "ap_confidence_floor": 0.001,
+      "fixed_confidence": 0.25,
+      "nms_iou": 0.7,
+      "max_detections": 1000
+    }
+  },
+  "gallery": {
+    "images": 16,
+    "models_per_image": 9,
+    "panels_per_image": 11,
+    "manifest_sha256": "974bf1eb30ba0477b7f1f2c04201b2898a38cc9c55b0ef2ee45e846365f2c8c0",
+    "PNG_hashes_verified": 16,
+    "selection": "original frozen sixteen samples",
+    "private": true,
+    "display_composition_only": true
+  },
+  "publication": {
+    "source": "src/publication.py",
+    "source_sha256": "b786ba8706d3d9bae23c0932e36437b620085b6d838d887f62b5739a8044234c",
+    "new_model_calls": 0,
+    "new_saved_mask_rescores": 0,
+    "statistics_source": "accepted canonical aggregates",
+    "CSV_rows": {
+      "SUMMARY": 9,
+      "PER_TARGET": 36,
+      "TIMING": 36
+    },
+    "checks": [
+      "integer/ratio arithmetic",
+      "membership",
+      "27 timing rounds",
+      "CSV values",
+      "local links and anchors"
+    ]
+  }
+}

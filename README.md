@@ -1,206 +1,67 @@
 # Human Parsing บน CCTV Human Parsing 600 Dataset
 
-**รอบปัจจุบันใช้วิธี shared reference ของงาน CIHP/CCTV เดิม** ตามคำขอเริ่มรอบใหม่วันที่ 17 พฤศจิกายน 2026 คะแนนหลักเป็น **Macro4-local** พร้อม **mIoU3 (part-mean), Face-local, Precision, Recall และ F1/Dice**
+**ปิดรอบครบ 9/9 โมเดล — 600 ภาพและ 763 ROI ต่อโมเดล** พร้อม dedicated timing บน Tesla T4 ครบโมเดลละ 3 รอบ รายงานนี้ใช้คำตอบของบุคคลและส่วนที่มี annotation ไม่ใช่คะแนนเต็มฉาก
 
-[ผลสรุปครบ 9 โมเดล](reports/CCTV600_RESULTS_TH.md) · [สถานะ](STATUS.md) · [แม่แบบ shared-reference protocol](configs/SHARED_REFERENCE_V1.json) · [Scorer](src/reference_parts600.py) · [Controller/continuation](src/reference_collection.py) · [บันทึกงาน](WORK_LOG.md) · [Dataset CCTV600](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
+[รายงานผลฉบับเต็ม](reports/CCTV600_RESULTS_TH.md) · [คะแนน CSV](metrics/SUMMARY.csv) · [รายคลาส CSV](metrics/PER_TARGET.csv) · [เวลา CSV](metrics/TIMING.csv) · [Result index/hashes](metrics/RESULT_INDEX.json) · [สถานะ](STATUS.md) · [Dataset/คู่มือ annotation](https://github.com/folklazy/CCTV-Human-Parsing-600-Dataset)
 
-## ข้อมูลและขอบเขตการประเมิน
+## ผลหลัก
 
-ผู้ใช้สั่งให้เริ่มผล parsing ใหม่ทั้งหมด รอบนี้ตั้ง parser prediction reuse เป็น0 ทุก checkpoint ใช้ quality inference ใหม่บน600ภาพ พร้อม TRAIN warmupหนึ่ง call ต่อ process และรอบจับเวลาที่อนุญาตไว้ ผลรอบก่อนเก็บเป็นประวัติแยกจาก current run ส่วน frozen YOLO cache และ RGB crops เป็น model inputs ร่วมของทั้งเก้าระบบ
+**Sapiens2 1B ได้ Macro4-local สูงสุด 59.184%** ตามด้วย **QANet 57.517%** ต่างกัน **1.667 จุดเปอร์เซ็นต์** Sapiens2 1B สูงสุดด้าน Hair และ Face-local ส่วน QANet สูงสุดด้าน Upper/Lower เมื่อใช้ Mean-part IoU การเลือกนี้อ้างคุณภาพบน reference ชุดนี้ ไม่ใช่ deployment acceptance หรือผลนัยสำคัญทางสถิติ
 
-Dataset ส่งมอบมี 600 ภาพและ annotation ของบุคคลที่เลือก ผู้จัดทำยืนยันว่ามีคนบางส่วนไม่ได้ annotate Source ID0 ใช้ Unassigned คะแนน parsing จะอ้าง GT person-parts ที่มีคำตอบ ส่วน unmatched detections เก็บเป็น diagnostics และ person recall มี denominator เป็นคนที่มี GT การรายงาน full-scene AP/precision/F1 ต้องมี negative domain ที่รับรองครบ
+| โมเดล | Hair % | Face-local % | Upper % | Lower % | mIoU3 % | Macro4-local % |
+| --- | --- | --- | --- | --- | --- | --- |
+| QANet | 49.606 | 61.551 | 62.933 | 55.977 | 56.172 | 57.517 |
+| M2FP | 37.568 | 45.256 | 45.421 | 40.018 | 41.002 | 42.066 |
+| D2FP | 33.616 | 42.013 | 41.333 | 36.514 | 37.155 | 38.369 |
+| RP-R-CNN | 31.190 | 39.629 | 41.328 | 35.630 | 36.049 | 36.944 |
+| CPI R50 | 31.989 | 43.922 | 31.677 | 27.018 | 30.228 | 33.652 |
+| CPI ConvNeXt-B | 51.133 | 59.953 | 51.985 | 45.155 | 49.425 | 52.057 |
+| Sapiens2 0.4B | 46.412 | 60.227 | 55.404 | 46.890 | 49.569 | 52.233 |
+| Sapiens2 0.8B | 46.787 | 61.729 | 55.848 | 48.806 | 50.480 | 53.293 |
+| Sapiens2 1B | 54.501 | 66.266 | 61.586 | 54.384 | 56.823 | 59.184 |
 
-ผลตรวจ GT domain ด้วย CPU ครบ600 ภาพให้ตัวหาร Hair544/Face384/Upper745/Lower668 และคนผ่านเกณฑ์769 รายการ ผลรอบใหม่ปิดครบทั้งเก้าโมเดลแล้ว รวมการจับเวลาโมเดลละสามรอบ ดู [รายงานผล](reports/CCTV600_RESULTS_TH.md) และ [สถานะ](STATUS.md)
+![คะแนนรายส่วนของเก้าโมเดล](reports/figures/QUALITY_OVERVIEW.png)
 
-จำนวน GT และรายละเอียดการเปิด R3 ในหัวข้อถัดไปเก็บเป็นประวัติการทดลอง ส่วนแหล่งข้อมูลและคำตอบปัจจุบันให้ยึด dataset CURRENT.json และ membership hash ที่ประกาศใน STATUS
+## อ่านคะแนนให้ตรงคำถาม
 
-## ขอบเขตการทดสอบที่ตกลงไว้
-
-ประชากร600ภาพ ใช้ GT ของบุคคลที่เลือก annotate, source ID0 เป็น Unassigned และใช้ YOLO crop/ownership ตาม pipeline ที่ประกาศ แต่ละ parser ทำนาย native classes ทั้งหมดก่อน project ไปยังสี่เป้าหมาย
-
-| ผลส่งมอบ | นิยามที่ต้องใช้ |
+| ชื่อ | ความหมาย |
 | --- | --- |
-| IoU รายคลาส | Mean-part IoU พร้อม pooled IoU โดย Face ใช้ Face-local |
-| Precision / Recall / F1-Dice รายคลาส | รวม TP/FP/FN ของ GT person-part tasks ก่อนหาร |
-| Confusion matrix | GTสี่คลาสไปยัง predictionสี่คลาสและ OTHER บน GT positive domain พร้อม binary matrixรายคลาสสำหรับ TP/FP/FN/TN |
-| ค่าเฉลี่ยสี่คลาส | Macro4-local เฉลี่ย Hair/Face-local/Upper/Lower คลาสละ25% พร้อม mIoU3 (part-mean) ตาม protocol |
-| ส่วนที่พลาดทั้งหมด | จำนวนและสัดส่วน eligible GT parts ที่ TP=0 รวมกรณีเจ้าของที่จับคู่ไม่ได้ |
-| เวลาประมวลผล | Per-ROI, per-image และผลรวม parsing work พร้อม scope ของ interval และ timer completeness |
-| Peak VRAM | Peak allocated/reserved ของ process พร้อม resource-policy และ sharing observations |
-| ความครบถ้วน | Exact600 IDs ไม่ซ้ำ พร้อม ROI membership, failed/invalid/missing และ STRICT_COMPLETE |
-| Person diagnostics | Annotated-person recall และ unmatched predictions ส่วน full-scene AP/Precision/F1 ใช้ null ตาม coverage |
+| Mean-part IoU | คิด IoU ของแต่ละ GT part ก่อนเฉลี่ย แต่ละส่วนมีน้ำหนักเท่ากัน |
+| Face-local | คิด IoU ภายในกรอบ GT Face พอดี โดยใช้ Sapiens Face_Neck + facial subparts เป็น proxy |
+| Macro4-local | เฉลี่ย Hair/Face-local/Upper/Lower คลาสละ 25% |
+| mIoU3 part-mean | เฉลี่ย Hair/Upper/Lower เท่ากัน ไม่ใช่ C3 global เดิม |
+| Pooled IoU / Precision / Recall / F1-Dice | รวมพิกเซล TP/FP/FN ก่อนหาร อ่านแยกจาก Mean-part |
 
-Prediction OTHER ใน cross-class matrix รวมผลทำนายนอกสี่เป้าหมายตาม mapping ที่ประกาศ การนับใน matrix นี้อ้างเฉพาะ GT positive pixels ส่วน binary matrices ใช้ domain ของแต่ละ person-part จึงครอบคลุมการทายเกินขอบ GT ด้วย Source Unassigned มีความหมายตาม dataset
+GT ที่ใช้จริง: **769 คน; Hair 544 / Face 384 / Upper 745 / Lower 668 ส่วน** Missing parts ไม่เท่ากับ confirmed absent คน GT ที่จับคู่ไม่ได้ยังได้ศูนย์และอยู่ในตัวหาร Source ID0 เป็น Unassigned; full-scene person AP/Precision/F1 และ global semantic background metrics ยังไม่รองรับจาก coverage นี้
 
-### ขั้นเตรียมเปิดรัน
+## Pipeline และการเปรียบเทียบ
 
-1. สร้าง GT bindings, matching และ config ของรอบใหม่จาก manifest ส่งมอบ พร้อม source/protocol hashes
-2. ใช้ scoped_metrics.py แยกจาก frozen source สำหรับ partial-person diagnostics, cross-class matrix, TP=0 part counts และสรุป peak VRAM ตามขอบเขตข้างต้น
-3. ตรวจ CPU acceptance และ freeze membership โดย reused parser predictions เป็น0 และ pending ครบทุก ROI job ต่อโมเดล
-4. ตรวจ GPU/disk/process guards แล้วเปิดคิว sequential ใน tmux เก็บ log และสถานะที่ตรวจได้ หยุดหลังเก้า checkpoints และรอบจับเวลาที่อนุญาต
-5. เก็บ progress และ execution diagnostics ระหว่าง inference แล้วประเมินคุณภาพหลัง collection จบ ตรวจ STRICT_COMPLETE และสร้างรายงานจาก saved outputs
+ภาพ → frozen YOLO26x-Seg → RGB person crop พร้อม context 10% → native parser FP32/batch1/no extra TTA → original-grid mask → YOLO mask ownership หลังทำนาย → native-class mapping → GT bbox matching/part scoring
 
-สถานะ implementation และผลตรวจจริงให้อ้าง [STATUS](STATUS.md)
+ทุกโมเดลใช้ input population, YOLO cache/crops, GT valid domain และ matcher ร่วมกัน คะแนนอ้าง checkpoint + application configuration การใช้ native20/native29, Face_Neck proxy และ Dress/Apparel เป็น OTHER ไม่ทำให้ taxonomy เท่ากันทั้งหมด ขอบเขต Face-local และเกณฑ์ขนาด ≥50 px เป็นกติกาเฉพาะที่ประกาศไว้
 
-## งานเดิมที่ใช้อ้างอิง
+## รายละเอียดที่เปิดดูได้
 
-ตรวจทั้ง working copy และ publication repository `folklazy/Human_Parsing_Study` ก่อนปรับรอบนี้ แหล่งที่เลือกใช้คือ shared-reference run `shared-c3-face-local-20261108T083533Z` ซึ่งใช้กติกาเดียวกันใน CIHP 5,000 ภาพและ CCTV 90 ภาพ
+- [Precision/Recall/F1 และจำนวนส่วนที่พลาด](reports/CCTV600_RESULTS_TH.md#precision-recall-f1-และความครบของแต่ละส่วน) พร้อม counts/support/union และสูตร
+- [Confusion matrix](reports/CCTV600_RESULTS_TH.md#confusion-matrix-และการอ่านความผิดพลาด): binary 2×2 ครบ 36 ชุด และ cross-class 4×5 ครบเก้าโมเดล
+- [เวลาแต่ละขั้นและ Peak VRAM](reports/CCTV600_RESULTS_TH.md#เวลาและทรัพยากร): แยก quality run กับ dedicated timing รวมถึงหน่วยต่อ ROI/ภาพ/ทั้งชุด
+- [Model/checkpoint/config/environment bindings](reports/CCTV600_RESULTS_TH.md#รุ่นโมเดลและ-provenance) รวม implementation revisions ของ CPI และ hashes
+- [หลักฐานมาตรฐานและข้อจำกัด](reports/CCTV600_RESULTS_TH.md#มาตรฐาน-แหล่งอ้างอิง-และขอบเขตคำอ้าง): paper/official implementation แต่ละแหล่งรองรับเรื่องใด และกติกาใดออกแบบเอง
+- [ตรวจเทียบ CCTV90](reports/CCTV600_RESULTS_TH.md#cctv90-comparison): สูตรร่วมกัน แต่ภาพ/GT/matcher/YOLO cache/timer ไม่เหมือนกันทุกประการ
 
-| แหล่งที่ตรวจ | สิ่งที่นำมาใช้ |
-| --- | --- |
-| Working/publication copy commit `29f7030` รายงาน CIHP และ CCTV ที่อัปเดต 9 พฤศจิกายน 2026 | Mean-part IoU, mIoU3 (part-mean), Face-local และ Macro4-local |
-| `Human_Parsing_Benchmark/src/common_view/reference_parts.py` | ฟังก์ชัน counts และ summarize ที่ใช้คำนวณรายส่วนจริง |
-| `Human_Parsing_Benchmark/protocol/SHARED_C3_FACE_LOCAL_V1.json` | Positive person-part eligibility, missed-person penalty และกรอบ Face-local |
-| GitHub main snapshot `8505cbf4ca7ba1bec338a33b3f678d5e6c8fb194` | รายงานก่อนหน้าใช้ global C4-P/C3 ใน CIHP และ Macro4/Face-domain ใน CCTV เป็นคนละ revision กับ shared Face-local |
+ภาพ RGB/GT/predictions จริงอยู่ใน private gallery ชุด **16 ภาพเดิม × 9 โมเดล** ไม่เลือกตามคะแนน อ่าน [วิธีเปิด gallery](reports/CCTV600_RESULTS_TH.md#ภาพเปรียบเทียบจาก-saved-predictions) ภาพสถิติใน Git ไม่มีภาพ dataset
 
-Repository ที่ตรวจคือ [Human Parsing Study](https://github.com/folklazy/Human_Parsing_Study) ส่วน source hashes และ exact reference bindings ของรอบนี้เก็บใน private run config การเลือกรอบอ้างอิงระบุไว้ชัดเพราะชื่อ C4-P, Macro4 และ Face-local ในประวัติใช้วิธีรวมคะแนนและพื้นที่คำนวณต่างกัน
-
-## เป้าหมายและประชากร
-
-เปรียบเทียบเก้า pretrained checkpoints บน accepted dataset 600 ภาพ ใช้ frozen YOLO26x-Seg predictions ชุดเดียวกันและ RGB person crops ของ cohort นี้ โมเดลประกอบด้วย QANet, M2FP, D2FP, RP-R-CNN, CPI R50, CPI ConvNeXt-B และ Sapiens2 segmentation 0.4B/0.8B/1B
-
-GT มี person bbox 774 กรอบ โดย 769 กรอบมีด้านยาวบนภาพต้นฉบับ ≥50 px อีก 5 กรอบเป็นกลุ่มยกเว้น Dataset มี masks ของ Hair/Face/Upper/Lower พร้อม image-local person ID นิยาม source labels และไฟล์ annotation คงตาม dataset release 1.0.0
-
-เมื่อผ่าน common ignore/QA มี GT person-parts ที่ใช้ประเมิน Hair 544, Face 390, Upper 740 และ Lower 665 รายการ จำนวนส่วนเป็นตัวหารรายคลาส คนหนึ่งอาจมีหลายคลาสและหลาย polygon ที่รวมเป็นส่วนเดียว
-
-## Pipeline และผลเดิมที่นำกลับมาใช้
-
-1. อ่าน accepted YOLO26x-Seg cache ของ detector run `cctv600-20261116T073208561699Z` เลือก person confidence ≥0.25
-2. ใช้ RGB crop จากภาพต้นฉบับ เพิ่ม context 10% แต่ละด้านและขยายให้ครอบคลุม frozen detector mask
-3. Parser รับภาพ RGB พร้อมบริบทรอบคน ใช้ native preprocessing ของ checkpoint นั้นใน FP32, batch 1, eval, ไม่มี AMP/TF32/extra TTA
-4. ระบบที่คืนหลาย native instances เลือกผลด้วย predicted-box IoU กับ designated YOLO box ≥0.50 ตามกติกา prediction-only เดิม
-5. Map native20/native29 masks กลับ original grid และใช้ YOLO mask จัด ownership หลัง parsing
-6. เก็บ native outputs, candidate masks, geometry, hashes และ source references ก่อนประเมินผล
-
-ผล native ที่ bindings ตรงกันนำกลับมาใช้ใน assembled index ของรอบใหม่ IDs ที่ยังขาดประมวลผลใน fresh linked collection แยกจาก parent attempts ทุกผลระบุ model/checkpoint/config/source/environment/input และ packet identity การ reuse ตรวจจาก artifacts จริง
-
-## ตัวชี้วัดที่ใช้
-
-| ชื่อในรายงาน | วิธีคำนวณ | บอกอะไร |
-| --- | --- | --- |
-| **Hair / Upper / Lower IoU** หรือ Mean-part IoU | คิด IoU ของ GT part แต่ละคน แล้วเฉลี่ยภายในคลาส | คุณภาพของส่วนที่มี GT โดยแต่ละส่วนมีน้ำหนักเท่ากัน |
-| **Face-local IoU** | คิด IoU ภายในกรอบพอดีของ GT Face แล้วเฉลี่ยราย GT Face | Agreement ของ face candidate ภายในกรอบอ้างอิงเดียวกันทุกโมเดล |
-| **mIoU3 (part-mean)** | เฉลี่ย Mean-part IoU ของ Hair/Upper/Lower เท่ากัน | คะแนนรวมสามคลาสหลัก |
-| **Macro4-local** | เฉลี่ย Hair/Face-local/Upper/Lower คลาสละ 25% | คะแนนรวมสี่คลาสหลัก |
-| **Pooled IoU** | รวม TP/FP/FN ของทุก GT part ภายในคลาสก่อนเข้าสูตร | คุณภาพจากจำนวนพิกเซลรวม ส่วนใหญ่มีน้ำหนักมากกว่า |
-| **Precision / Recall / F1-Dice** | รวม counts ภายในคลาสแล้วหารตามสูตรด้านล่าง | การทายเกิน การเก็บ GT ได้ครบ และสมดุลทั้งสอง |
-| **Annotated-person recall / unmatched predictions** | จับคู่ bbox ที่ 0.50/0.75; รายงานคน GT ที่พบ/พลาดและ unmatched diagnostics | Full-scene person Precision/F1/AP เป็น null เพราะ inventory ไม่ครบ |
-
-ทุกค่าแสดงเป็น % จาก full-precision canonical statistics แล้วจึงปัดเศษ สูตรพื้นฐานคือ
-
-```text
-IoU = TP / (TP + FP + FN)
-Precision = TP / (TP + FP)
-Recall = TP / (TP + FN)
-F1/Dice = 2TP / (2TP + FP + FN)
-
-mIoU3 (part-mean) = (Hair + Upper + Lower) / 3
-Macro4-local = (Hair + Face-local + Upper + Lower) / 4
-```
-
-ตัวอย่างสมมติ ส่วน Hair สองคนมี IoU 0% และ 100% จะได้ Mean-part IoU 50% แม้คนที่สองมีพื้นที่ผมมากกว่า ส่วน Pooled IoU ต้องรวมจำนวนพิกเซลจริงก่อนหาร ตารางทั้งสองจึงใช้แหล่ง counts เดียวกันแต่ aggregation ต่างกัน
-
-Confusion matrix รายคลาสเป็น binary matrix `[[TP,FN],[FP,TN]]` แถวเป็น GT target/other คอลัมน์เป็น prediction target/other หน่วยเป็นพิกเซลสะสมจากงาน person-part ของคลาสนั้น การนับพื้นที่ valid ทำแยกตามส่วน จึงต้องอ่าน TN ตามหน่วยงานอ้างอิงนี้
-
-## พื้นที่คำนวณและการจับคู่คน
-
-### Hair, Upper และ Lower
-
-ใช้ prediction ของคนที่จับคู่แล้วเทียบกับ GT part ของเจ้าของคนนั้นบน shared valid grid ทั้งภาพ พิกเซล prediction ที่เกิน GT part เป็น FP ส่วน GT ที่ทำนายขาดเป็น FN งานนี้อ้างขอบเขต positive part mask ที่ผู้จัดทำตรวจรับ
-
-พื้นที่ unassigned คงความหมายใน dataset source ในงาน binary person-part พื้นที่นอก reference part ของเจ้าของนั้นใช้เป็น non-target การตีความนี้ใช้เฉพาะงานส่วนที่มี GT อ้างอิง การรับรอง background ทั้งฉากต้องมีหลักฐานของงาน full-scene แยกกำกับ
-
-### Face-local
-
-สร้างกรอบสี่เหลี่ยมครอบ GT Face พอดี ไม่มี margin และตัดกับ shared valid grid ภายในกรอบ prediction ส่วนเกินยังเป็น FP ส่วนที่ขาดเป็น FN พื้นที่นอกกรอบไม่เข้าสู่คะแนน Face-local กรอบใช้ใน scoring หลัง inference
-
-CIHP parsers ใช้ Face ID 13 ส่วน Sapiens ใช้ Face_Neck และ facial subparts ตาม mapping เดิม ผล Face-local อธิบาย agreement ภายในกรอบอ้างอิง ส่วนคุณภาพ full-frame face-only และ neck ต้องมีข้อกำหนดเพิ่ม
-
-### Person matching ที่เหมาะกับ GT CCTV600
-
-CCTV600 ส่งมอบ bbox และ masks สี่ส่วน รอบนี้จึงใช้ frozen GT-first bbox matcher โดยเรียง prediction ตาม confidence/box geometry แล้วเลือก eligible GT ที่ IoU สูงสุด คะแนนรายส่วนใช้ bbox IoU ≥0.50 และมี person diagnostics ที่ ≥0.75 ด้วย Unmatched prediction ที่ overlap ignore-rectangle union แบบ IoA ≥0.50 ได้สถานะ ignore
-
-งานอ้างอิง CIHP/CCTV90 ใช้ GT-person-mask matching การปรับเป็น bbox matching เป็นข้อแตกต่างที่ประกาศสำหรับ CCTV600 การจับคู่ใช้ geometry และ scores ตามกติกาเดียวกันทุก parser คนที่จับคู่ไม่เจอใช้ prediction ว่าง ส่วนที่มี GT ยังคงอยู่ในตัวหารและมี IoU 0
-
-## GT และ mapping
-
-รวม source components ที่เป็นคลาส/owner เดียวกัน เก็บช่องว่างจากการบดบัง ใช้ common VOID สำหรับ explicit ignore, คนต่ำกว่า 50 px, class/owner conflicts และ degenerate shapes ตาม current fresh CONFIG โดยไม่ใช้ historical shape-index exclusions ข้อกำหนดทั้งหมดใช้ร่วมกันทุกโมเดล
-
-| Target | CIHP native IDs | Sapiens native IDs |
-| --- | --- | --- |
-| Hair | 2 | 4 |
-| Face candidate | 13 | 3 และ 24–28 |
-| Upper | 5, 7 | 23 |
-| Lower | 9, 12 | 13 |
-| OTHER | คลาสที่เหลือ รวม Dress 6 | คลาสที่เหลือ รวม Apparel 1 |
-
-GT source IDs ยังเป็น Hair=1, Face=2, Upper=3, Lower=4 ส่วน shared scorer ใช้ Face=1, Hair=2, Upper=3, Lower=4 การแปลงระบุใน protocol เพื่อป้องกันสลับ Hair/Face การรวม subclasses ทำจาก projected masks ก่อนนับพิกเซล
-
-Dataset ยังมีข้อจำกัดเรื่อง cross-zone garments และคุณภาพขอบ annotation ตาม release QA ผลรอบนี้อธิบาย checkpoint พร้อม application configuration บน reference ที่ผู้จัดทำยอมรับ
-
-## Interruption และการแก้ที่บันทึกไว้
-
-- QANet มี timer setup error ก่อน learned forward ในรอบแรก แก้การจับเวลาที่ registered modules และเก็บประวัติเดิม
-- RP-R-CNN เคยหยุดด้วย `KeyError: parsing` การแก้ใหม่รับเป็น empty prediction เฉพาะเมื่อ traceback ยืนยัน native result มีจำนวนคนศูนย์ ผล nonempty ที่ผิด contract ยังทำให้หยุด
-- CPI R50 เคยหยุดด้วย `PRE_FORWARD_FREE_VRAM_GUARD` ก่อน forward ของ ROI ถัดไป รอบใหม่อนุญาตให้คืนเฉพาะ unused PyTorch cache ของ process เดิมก่อนตรวจ guard เดิมอีกครั้ง พร้อมบันทึกก่อน/หลังและเวลาที่ใช้
-
-การแก้ CPI คง threshold ของ resource guard, weights, input resolution, precision, batch, deterministic settings และ environment เดิม เมื่อทรัพยากรยังไม่พอหรือเกิด CUDA/model error จะเก็บผลและหยุดโมเดลนั้น ทุก attempt มีประวัติ ไม่มี automatic model/OOM retry
-
-## เวลาและทรัพยากร
-
-| Metric | หน่วยและตัวหาร |
-| --- | --- |
-| **Mean ms/ROI** | ผลรวม accepted adapter intervals หารจำนวน ROI ที่มี timer |
-| **Mean s/image** | ผลรวม parsing work ของ ROI ทุกคน หารจำนวนภาพ 600 ภาพ แล้วแสดงวินาที |
-| **Total parsing s** | ผลรวม accepted adapter intervals ของประชากร เมื่อ timer ครบตามเกณฑ์ |
-| **Complete image timers** | จำนวนภาพที่มีเวลาครบทุก ROI ภาพไม่มี ROI มี parsing work ศูนย์ |
-| **Clean timing rounds** | จำนวนรอบที่ผ่าน admission/contamination checks จากสามรอบ |
-
-เก็บ pre/module/inter-module/post timings, ownership, map-back, output/readback และ peak allocated/reserved ตาม collector เดิม Model forward ทำนาย native classes ทั้งหมด เวลา per-class แยกอิสระไม่ได้ บันทึกการคืน cache เป็น resource housekeeping เพิ่มต่างหาก
-
-ใช้ T4 ที่ตรวจพบจริง Quality inference ใช้ resource guards เดิมและคงงานภายนอกไว้ Dedicated timing ใช้ 100 ภาพ/124 ROIs ต่อรอบ ×3 และ TRAIN warmup 10 calls ต่อรอบ ส่วน quality process ใหม่มี TRAIN warmupหนึ่ง call ขอบเขต native APIs และ native file I/O ยังต่างกัน จึงอธิบายเวลาเป็น scoped diagnostics
-
-## วิธีดูสถานะและผล
-
-รันจาก workspace `Human-Body-Extraction`
+## ตรวจรายงานและสร้างตารางซ้ำ
 
 ```bash
-.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/scoped_run.py --status --watch
+python3 src/publication.py --check
+python3 src/publication.py --from-index metrics/RESULT_INDEX.json
 ```
 
-Progress viewer แสดง reused/new native ROIs และ PID ที่ทำงานจริง กด Ctrl+C ใน viewer เพื่อออก Session tmux ที่ใช้จริงอ้างจาก LAUNCH.json ของ current run กด Ctrl+B แล้ว D เพื่อ detach tmux
+คำสั่งแรกใช้ Python standard library ส่วนคำสั่งสร้างกราฟต้องมี numpy/matplotlib ใน environment เดิมที่รองรับ เป็นงาน CPU จาก accepted aggregates ไม่มี inference/rescore/download ข้อมูลคนละภาพไม่ขึ้น Git และ null ไม่ถูกแทนด้วย 0 รายละเอียดการรันโมเดลต้องมี private assets และ workspace adapters ตาม bindings ไม่ใช่ติดตั้งจาก requirements แล้ว reproduce ได้ทันที
 
-Ctrl+C ในหน้าที่กำลังรัน controller จะสั่งหยุดคิวและ worker ที่ controller ดูแล ส่วน Ctrl+C ในหน้าคำสั่ง --status --watch จะหยุดเฉพาะ viewer การออกจาก tmux โดยให้งานทำต่อให้กด Ctrl+B แล้ว D
+[Source scorer](src/scoped_metrics.py) · [Native collector](src/reference_collection.py) · [Timer](src/worker.py) · [Publication source](src/publication.py) · [บันทึกงาน](WORK_LOG.md)
 
-คำสั่งเปิดรอบ fresh ใหม่ครบเก้าโมเดล ตรวจ readiness และ CPU acceptance ก่อนเปิด tmux อัตโนมัติ
+แหล่งอ้างอิงหลัก: [CIHP/PGN](https://arxiv.org/abs/1808.00157v1), [MMSegmentation IoUMetric](https://github.com/open-mmlab/mmsegmentation/blob/v1.2.2/mmseg/evaluation/metrics/iou_metric.py), [NightOwls](https://www.nightowls-dataset.org/examples/), [Datasheets for Datasets](https://arxiv.org/abs/1803.09010v8) ใช้ประกอบการออกแบบและตรวจสูตร ไม่ใช่การรับรอง protocol/annotation ของชุดนี้จากเจ้าของ paper
 
-```bash
-.venv/bin/python Human_Parsing_CCTV600_Benchmark/src/scoped_run.py --start
-```
-
-คำสั่งนี้ตรวจ duplicate controller/worker และสร้าง output ใหม่ ใช้สำหรับสั่งเปิดรอบใหม่ การดูงานที่กำลังรันให้ใช้ --status --watch
-
-Artifact root ปัจจุบันอยู่ใน `outputs/CURRENT.json` เมื่อจบมี `BATCH_COMPLETION.json` และรายงานหลัก `BATCH_REPORT_TH.md` พร้อม `TARGET_RESULTS.csv`, `TIMING_SUMMARY.json`, รายโมเดล `METRICS.json` และ `PER_IMAGE_RUNTIME.csv` ชุดภาพ 16 ภาพเดิมอยู่ที่ `gallery/index.html` พร้อม manifest ภาพจริงและ raw outputs เก็บแบบ private
-
-STRICT_COMPLETE ต้องมี exact 600 unique image IDs และ native ROI membership ครบทุกงาน คะแนนของระบบที่ยังไม่ครบเป็น null พร้อมจำนวนและเหตุผล ส่วน null ที่เกิดจากตัวหารศูนย์แสดงตาม support โดยมี provenance กำกับ
-
-## สถานะของรอบก่อน
-
-Protocol AD4 และ configs/outputs ก่อน restart เก็บเป็นประวัติใน Git และ parent run records ทางเข้าปัจจุบันใช้ shared-reference protocol ข้างต้น การเลือกวิธีครั้งนี้ทำตามคำขอผู้ใช้หลังมีผล CIHP/CCTV เดิมแล้ว จึงมีเหตุผลจากวิธีอ้างอิงและข้อกำหนด GT กำกับ
-
-Sapiens2 มีข้อกำหนดการใช้ code/weights รวมข้อจำกัด surveillance ใน license การนำผลหรือโมเดลไปใช้งานปลายทางต้องพิจารณาสิทธิ์ของเจ้าของโมเดลตามเงื่อนไขเดิม
-
-## การปิดรอบ Sapiens2 1B
-
-ปิดครบแล้ว 18 พฤศจิกายน 2026 เวลา 11:12:31 น. (Asia/Bangkok) รายละเอียดด้านล่างอธิบายวิธี continuation ที่ใช้จริง ผลสุดท้ายอยู่ใน [รายงานรวม](reports/CCTV600_RESULTS_TH.md)
-
-แปดโมเดลมี canonical metricsครบ600ภาพและ clean timingครบสามรอบแล้ว 1Bถูกหยุดจาก storage inspection ที่พบ directory ชั่วคราวเปลี่ยนชื่อระหว่างการอ่านด้วย du การแก้เฉพาะ orchestration อยู่ใน src/finish_sapiens1b.py โดยต้องได้ผล scanที่สำเร็จ และลองอ่านซ้ำสูงสุดสามครั้งเฉพาะ ENOENT เกณฑ์พื้นที่และหน่วยความจำใช้ค่าเดิม
-
-Continuation ตรวจ integer native29 packets และ crop/checkpoint/config bindings ของ accepted ROIจาก fresh experiment เดิม แล้วประมวลผลเฉพาะ pending jobs ผลแปดโมเดลและ timingเดิมคงเป็น source of truth พร้อม hashes ส่วน1Bคำนวณ saved-mask scoresเมื่อ assembled viewครบ600 IDs และเปิด dedicated timingสามรอบตามแผน จากนั้นสร้าง BATCH_REPORT_TH.md และเผยแพร่ reports/CCTV600_RESULTS_TH.md เป็นผลส่งมอบ
-
-เวลา quality ของ1Bเป็นผลรวม accepted adapter intervals ข้ามสองprocess โดยมีwarmupของแต่ละprocessบันทึกแยก Application/I-O totals ของเฟรมที่ถูกขัดจังหวะให้ null และเก็บต้นทุน/ข้อผิดพลาดของ parent attemptไว้ใน provenance
-
-
-## การอ่านผลเทียบกับ CCTV90
-
-[ผลตรวจ CCTV90 กับ CCTV600](reports/CCTV600_RESULTS_TH.md#cctv90-comparison) มีคะแนนทั้งเก้าโมเดล, ความต่าง GT/matching/input, timer scope และ dedicated timing จริง Protocol ของรอบนี้ freeze ใน `outputs/CURRENT.json` → `CONFIG.json` ค่า `protocol`; ไฟล์ `configs/SHARED_REFERENCE_V1.json` เป็นแม่แบบอ้างอิงก่อน fresh orchestration และไม่แทน current run bindings
+สถานะและไฟล์ evidence ที่ระบุ run เก่าเป็น historical snapshots ให้ยึด [result index ปัจจุบัน](metrics/RESULT_INDEX.json) และรายงานหลักสำหรับผลส่งมอบ ประวัติการขัดจังหวะเก็บไว้ ไม่มีการนำ failed attempts มาปิดบังด้วย final failed=0

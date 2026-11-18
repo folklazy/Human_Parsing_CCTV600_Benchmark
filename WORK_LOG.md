@@ -97,3 +97,10 @@ Controller จบเวลา 11:12:31 น. Asia/Bangkok; canonical RESULT_INDEX
 ## 2026-11-18 — ตรวจสาเหตุผลต่าง CCTV90/CCTV600
 
 เทียบ canonical CCTV90 shared-reference กับ CCTV600 โดยไม่ inference/full rescore ใหม่ Model/config/source/environment path bindings ตรงทั้งเก้า; shared helper hashesตรง11ไฟล์ สูตร counts/aggregation ร่วมกัน แต่ matcher เปลี่ยน mask-optimal เป็น bbox-greedy, GT support/VOID ต่างกัน ตรวจภาพ SHAซ้ำ24ภาพ (22มีROI/2ว่าง): detection countsเท่ากัน, crop setพร้อมPNGhashตรง7/22ภาพที่มีROI ความต่าง bbox/maskส่วนมากเล็กน้อย วัด overlap33ROIเพื่อไม่ตีความ hash mismatchเกินจริง เพิ่มตารางMacro4/เวลา/dedicated3-round meansในรายงานเดิม แก้ README person precisionและ protocol template scope ไม่แก้ frozen sources/metrics/GT
+
+
+## 2026-11-18T12:01:45+07:00 — จัดชุดผลส่งมอบตาม CCTV90
+
+ตรวจรายงาน CCTV90 ฉบับล่าสุดใน publication checkout commit29f7030 แล้วจัดหน้าแรก CCTV600 ให้มีผลปัจจุบันเพียงชุดเดียว แก้ตัวหารเก่าค้างในREADMEเป็น Hair544/Face384/Upper745/Lower668 สร้าง aggregate index/CSV และภาพสถิติจาก canonical values พร้อม model/config/environment/implementation hashes แยก metric มาตรฐานจาก Face-local/Mean-part/Macro4 ที่ออกแบบเอง และแยก quality/dedicated timing กับ null ของ1B I/O
+
+เพิ่ม publication.py แยกจาก frozen scorer/controller ไม่โหลดtorch/models ตรวจ gallery16 PNG hashesและmodel membership9ทุกภาพ เปิดดูตัวอย่างหนึ่งภาพเพื่อตรวจคำอธิบายpalette; ไม่รับรองsemantic correctnessทั้ง16ภาพเพิ่ม รายงานรูปจริงยังprivate สร้างเพียงกราฟสถิติและlegendบนGit CPU tests6กรณีผ่าน รวมliteralcounts/null/membership/crossmatrix/unknownmapping/privacy/unit/doublecount/duplicateJSON ตรวจCSVทุกค่ากับindexและanchorsภายใน; external14URLsตอบHTTP200 ไม่แก้predictions/GT/scientificconfig/frozeninferencesources

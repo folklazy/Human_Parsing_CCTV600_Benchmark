@@ -12,6 +12,14 @@
 
 ผลปัจจุบันยังจำกัดเฉพาะ annotated person-parts ตาม dataset contract ไม่รับรอง full-scene person AP/Precision/F1 เก็บประวัติ interruption และ failure ของ parent ไว้ครบ
 
+## ผลส่งมอบบน GitHub
+
+หน้าแรกและ[รายงานหลัก](reports/CCTV600_RESULTS_TH.md) แสดงผลปัจจุบันครบเก้าโมเดล พร้อมภาพคะแนน/confusion 36 ชุด, สูตร/ตัวหาร, quality timing/dedicated timing/เวลาแต่ละขั้น, checkpoint/config/environment และแหล่งอ้างอิง
+
+[metrics/RESULT_INDEX.json](metrics/RESULT_INDEX.json) เป็น normalized derived index ผูก canonical metrics/completion/source hashes และรักษา legacy null ไว้ตามที่มา CSV มี SUMMARY 9 แถว, PER_TARGET 36 แถว และ TIMING 36 แถว ไม่มีภาพ/annotations/raw ledgers ขึ้น Git
+
+Publication ตรวจด้วย CPU จาก saved aggregate เท่านั้น ไม่มี inference/full rescore ใหม่ อ่าน `evidence/READINESS.json` และ `evidence/CPU_ACCEPTANCE.json` เดิมเป็น historical snapshot ของ R3; หลักฐาน fresh campaign และ continuation ที่ใช้กับผลส่งมอบอยู่ใน provenance ของ result index ปัจจุบัน
+
 ## บันทึกสถานะก่อนปิดรอบ
 
 ข้อความด้านล่างเป็น snapshot ขณะ continuation กำลังทำงาน ไม่ใช่สถานะปัจจุบัน

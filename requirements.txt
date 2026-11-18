@@ -6,6 +6,8 @@ Pillow
 scipy
 pycocotools
 opencv-python
+# CPU publication figures only; does not change any native model environment.
+matplotlib
 # Inference uses .venvs/parser-legacy-cu113 for the six legacy parsers and
 # .venvs/sapiens2-pilot for Sapiens2. Checkpoint/native config/source/shim hashes
 # and complete environment package versions are frozen in outputs/<run>/CONFIG.json
